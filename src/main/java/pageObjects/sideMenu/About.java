@@ -9,4 +9,5 @@ public class About extends BaseClass {
 	public static WebElement versionNumber() {
 		return driver.findElement(By.xpath("//Text[contains(@Name,'Version')]"));
 	}
+
 }

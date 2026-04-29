@@ -12,7 +12,10 @@ public class RegressionTests extends BaseClass
 		clearPreviousSessionData();
 		launchWinAppDriver();
 		launchApplication();
+		verifyIncorrectCredentials();
 		loginToApplication();
 		verifyBuildVersion();
+		deleteAllExistingConnectionProfiles();
+		createConnectionProfile();
 	}
 }

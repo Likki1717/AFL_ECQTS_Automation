@@ -11,12 +11,12 @@ public class SideMenu extends BaseClass {
 		return driver.findElementByAccessibilityId("LogoutButton");
 	}
 
-	public static WebElement dashboardOption() {
+	public static WebElement dashboardButton() {
 		return driver.findElement(By.xpath("//Text[@Name='Dashboard']"));
 	}
 
-	public static WebElement aboutOption() {
-		return driver.findElementByAccessibilityId("AboutButton");
+	public static WebElement aboutButton() {
+		return driver.findElementByName("About");
 	}
 
 	public static WebElement settingsButton() {

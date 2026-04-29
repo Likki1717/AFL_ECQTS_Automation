@@ -2,7 +2,7 @@ package base;
 
 public class TestData {
 	public static String testEnvironment = "Dev"; // Dev /QA/Soft Release/Soft Release Second Prod/Prod/Second Prod
-	public static String expectedAppVersion = "7.6.6.0";
+	public static String expectedAppVersion = "7.6.6.1";
 	
 	// All local paths to be updated from system
 	public static String localStateFolderPath = "C:\\Users\\sumeeth\\AppData\\Local\\Packages\\" + appId().split("!")[0]
