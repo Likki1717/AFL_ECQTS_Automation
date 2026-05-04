@@ -1,5 +1,6 @@
 package pageObjects.CommonPages;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import base.BaseClass;
@@ -16,6 +17,14 @@ public class SignIn extends BaseClass {
 
 	public static WebElement signInButton() {
 		return driver.findElementByAccessibilityId("LoginButton");
+	}
+
+	public static boolean isloginFailureDisplayed() {
+		return isElementDisplayed(By.xpath("//Text[@Name='Login Failed']"), 5);
+	}
+
+	public static WebElement okButtonOnLoginFailurePopup() {
+		return driver.findElement(By.xpath("//Button[@Name='OK']"));
 	}
 
 }

@@ -16,6 +16,8 @@ public class RegressionTests extends BaseClass
 		loginToApplication();
 		verifyBuildVersion();
 		deleteAllExistingConnectionProfiles();
-		createConnectionProfile();
+	//	createConnectionProfile();
+	//	updateTestSettings();
+		softAssert.assertAll();
 	}
 }

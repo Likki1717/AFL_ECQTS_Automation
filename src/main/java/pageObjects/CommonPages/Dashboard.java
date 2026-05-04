@@ -3,7 +3,7 @@ package pageObjects.CommonPages;
 import org.openqa.selenium.WebElement;
 
 import base.BaseClass;
-import io.appium.java_client.MobileBy;
+import io.appium.java_client.MobileBy.ByAccessibilityId;
 
 public class Dashboard extends BaseClass {
 
@@ -12,7 +12,7 @@ public class Dashboard extends BaseClass {
 	}
 
 	public static boolean isFiberTestModuleDisplayed() {
-		return isElementDisplayed(MobileBy.AccessibilityId("Fiber TestButton"), 40000);
+		return isElementDisplayed(ByAccessibilityId.AccessibilityId("Fiber TestButton"), 40);
 	}
 
 	public static WebElement FiberTestModule() {

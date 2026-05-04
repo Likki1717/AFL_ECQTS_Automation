@@ -1,5 +1,7 @@
 package pageObjects.sideMenu.settings;
 
-public class AppSettings {
+import base.BaseClass;
 
+public class AppSettings extends BaseClass{
+	
 }

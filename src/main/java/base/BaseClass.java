@@ -7,19 +7,19 @@ import java.net.Socket;
 import java.net.URI;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
+import org.testng.asserts.SoftAssert;
 
 import io.appium.java_client.windows.WindowsDriver;
 import pageObjects.CommonPages.Dashboard;
 import pageObjects.CommonPages.SideMenu;
 import pageObjects.CommonPages.SignIn;
 import pageObjects.sideMenu.About;
-
+import pageObjects.sideMenu.Settings;
+import pageObjects.sideMenu.settings.ConnectionProfiles;
 
 public class BaseClass {
 	public static WindowsDriver<?> driver;
@@ -27,25 +27,44 @@ public class BaseClass {
 	public static WebDriverWait wait;
 	public static Robot robot;
 	public static DesiredCapabilities capabilities;
+	public static SoftAssert softAssert = new SoftAssert();
 
 	public static void clearPreviousSessionData() throws Exception {
 		int deleteAttempts = 0;
 
 		// Folder path that needs to be cleared before starting a new session
-		File localStateFolder = new File(TestData.localStateFolderPath);
+		File secureStorageFolder = new File(TestData.secureStorageFolderPath);
 
-		// Keep trying to delete the folder if it exists
-		while (localStateFolder.exists()) {
+		// Keep trying to delete the secureStorageFolder folder if it exists, this will
+		// make sure the app is not logged In
+		while (secureStorageFolder.exists()) {
 			if (deleteAttempts == 0) {
 				deleteAttempts++;
-				deleteDirectory(localStateFolder);
+				deleteDirectory(secureStorageFolder);
 			} else {
 				// If deletion failed, likely due to files being in use
 				System.out.println("****Close any open app / file and run the script again****");
 				System.exit(0);
 			}
 		}
-		// Ensure SOR directory exists; create it if missing
+
+		File OcrReportFolder = new File(TestData.OCR_Report_Path);
+
+		// Delete the OCR Report folder if it exists, to verify if the newly downloaded
+		// Ocr file is available in this folder
+		while (OcrReportFolder.exists()) {
+			if (deleteAttempts == 0) {
+				deleteAttempts++;
+				deleteDirectory(OcrReportFolder);
+			} else {
+				// If deletion failed, likely due to files being in use
+				System.out.println("****Close any open app / file and run the script again****");
+				System.exit(0);
+			}
+		}
+
+		// Create SOR files folder it if missing, to verify if the nelwy downloaded Sor
+		// file is available in this folder
 		File sorFolder = new File(TestData.SOR_Files_Path);
 		if (!sorFolder.exists()) {
 			sorFolder.mkdirs();
@@ -128,18 +147,23 @@ public class BaseClass {
 			System.exit(0);
 		}
 	}
-	
-	public static void verifyIncorrectCredentials()
-	{
-		
+
+	public static void verifyIncorrectCredentials() {
+		SignIn.usernameField().sendKeys(TestData.username);
+		SignIn.passwordField().sendKeys("Invalid password");
+		SignIn.signInButton().click();
+		softAssert.assertTrue(SignIn.isloginFailureDisplayed(), "Tried for 5 secs, Login failed message was not visible");
+		SignIn.okButtonOnLoginFailurePopup().click();
 	}
 
 	public static void loginToApplication() {
 		try {
+			SignIn.usernameField().clear();
 			SignIn.usernameField().sendKeys(TestData.username);
+			SignIn.passwordField().clear();
 			SignIn.passwordField().sendKeys(TestData.password);
 			SignIn.signInButton().click();
-			Assert.assertTrue(Dashboard.isFiberTestModuleDisplayed(),
+			softAssert.assertTrue(Dashboard.isFiberTestModuleDisplayed(),
 					"Tried for 40 secs, Fiber Test module was not visible after login");
 		} catch (Exception e) {
 			System.out.println("****Exception in loginToApplication()****");
@@ -147,9 +171,9 @@ public class BaseClass {
 		}
 	}
 
-	public static boolean isElementDisplayed(By locator, int timeoutMilliSeconds) {
+	public static boolean isElementDisplayed(By locator, int timeoutSeconds) {
 		try {
-			wait = new WebDriverWait(driver, timeoutMilliSeconds);
+			wait = new WebDriverWait(driver, timeoutSeconds);
 			wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
 			return true;
 		} catch (Exception e) {
@@ -162,62 +186,91 @@ public class BaseClass {
 			Dashboard.openNavigationButton().click();
 			SideMenu.aboutButton().click();
 			String appVersion = About.versionNumber().getText();
-			Assert.assertTrue(appVersion.contains(TestData.expectedAppVersion),
+			softAssert.assertTrue(appVersion.contains(TestData.expectedAppVersion),
 					"Expected build version was " + TestData.expectedAppVersion + " but found " + appVersion);
+			String expectedTextInPortalLink = (TestData.testEnvironment.equals("Dev")
+					|| TestData.testEnvironment.equals("QA")) ? TestData.testEnvironment.toLowerCase()
+							: TestData.prodWebUrl;
+			softAssert.assertTrue(About.portalLink().getText().contains(expectedTextInPortalLink),
+					"Environment specific portal link is not displayed in About page");
+			About.additionalInformationButton().click();
+			softAssert.assertTrue(
+					About.appLink().getText().contains(TestData.testEnvironment.replaceAll("\\s+", "").toLowerCase()),
+					"Environment specific app link is not displayed in About page");
+			About.checkForUpdatesButton().click();
+			softAssert.assertTrue(About.isLatestVersionMessageDisplayed(),
+					"Tried for 5 seconds, you're on latest version text was not visible");
 		} catch (Exception e) {
 			System.out.println("****Exception in verifyBuildVersion()****");
 		}
 	}
-	
-	public static void deleteAllExistingConnectionProfiles()
-	{
-		
-	}
-	
-	public static void createConnectionProfile() {
+
+	public static void deleteAllExistingConnectionProfiles() {
 		try {
-			Side_Menu.settingsButton();
-			Thread.sleep(2000);
-			try {
-				Connection_Profiles_Page.connection_Profiles_Dropdown().click();
-			} catch (Exception e) {
-				actions.moveToElement(Connection_Profiles_Page.no_Connection_Profiles_Text()).build().perform();
+			Dashboard.openNavigationButton().click();
+			SideMenu.settingsButton().click();
+			Settings.connectionProfilesButton().click();
+			while (ConnectionProfiles.isDeleteProfileButtonDisplayed()) {
+				ConnectionProfiles.deleteProfileButton().click();
+				ConnectionProfiles.yesButtonOnDeleteProfilePopup().click();
 			}
-			int profilesCount = Connection_Profiles_Page.list_Of_Profiles().size();
-//		System.out.println("Total Existing Profiles - " + profilesCount);
-			for (int i = 0; i < profilesCount; i++) {
-				// System.out.println("Profile " + (i+1) + " --> " +
-				// Connection_Profiles_Page.list_Of_Profiles().get(i).getText());
-				if (Connection_Profiles_Page.list_Of_Profiles().get(i).getText()
-						.equalsIgnoreCase(Test_Data.connection_Profile_Name)) {
-					System.out.println("\n****" + Test_Data.connection_Profile_Name
-							+ " profile already EXISTS, hence not creating it again ****");
-//					Connection_Profiles_Page.connection_Profiles_Dropdown().click();
-					Connection_Profiles_Page.selectNeededProfile().click();
-					return;
-				}
-				if (i == (profilesCount - 1)) {
-					Connection_Profiles_Page.connection_Profiles_Dropdown().click();
-				}
-			}
-			Connection_Profiles_Page.create_New_Connection_Profile_Button().click();
-			Connection_Profiles_Page.connection_Profile_Name().click();
-			Connection_Profiles_Page.connection_Profile_Name().sendKeys(Test_Data.connection_Profile_Name);
-			Connection_Profiles_Page.connection_Profile_Instrument_Type()
-					.sendKeys(Test_Data.connection_Profile_Instrument_Type);
-			Thread.sleep(1000);
-			Connection_Profiles_Page.connection_Profile_IpAddress().click();
-			Connection_Profiles_Page.connection_Profile_IpAddress().clear();
-			Connection_Profiles_Page.connection_Profile_IpAddress().sendKeys(Test_Data.connection_Profile_IpAddress);
-			Connection_Profiles_Page.connection_Profile_Port().click();
-			Connection_Profiles_Page.connection_Profile_Port().clear();
-			Connection_Profiles_Page.connection_Profile_Port().sendKeys(Test_Data.connection_Profile_Port);			
-			actions.sendKeys(Keys.PAGE_DOWN).build().perform();
-			Thread.sleep(500);
-			actions.moveToElement(Connection_Profiles_Page.save_Button()).click().build().perform();
+			softAssert.assertTrue(ConnectionProfiles.isNoProfilesFoundTextDisplayed(),
+					"Tried for 5 seconds, No existing profiles found text was not visible");
 		} catch (Exception e) {
-			System.out.println("****Exception in create_Connection_Profile()****");
-			e.printStackTrace();
+			System.out.println("****Exception in deleteAllExistingConnectionProfiles()****");
 		}
 	}
+
+//	public static void createConnectionProfile() {
+//		try {
+//			Side_Menu.settingsButton();
+//			Thread.sleep(2000);
+//			try {
+//				Connection_Profiles_Page.connection_Profiles_Dropdown().click();
+//			} catch (Exception e) {
+//				actions.moveToElement(Connection_Profiles_Page.no_Connection_Profiles_Text()).build().perform();
+//			}
+//			int profilesCount = Connection_Profiles_Page.list_Of_Profiles().size();
+////		System.out.println("Total Existing Profiles - " + profilesCount);
+//			for (int i = 0; i < profilesCount; i++) {
+//				// System.out.println("Profile " + (i+1) + " --> " +
+//				// Connection_Profiles_Page.list_Of_Profiles().get(i).getText());
+//				if (Connection_Profiles_Page.list_Of_Profiles().get(i).getText()
+//						.equalsIgnoreCase(Test_Data.connection_Profile_Name)) {
+//					System.out.println("\n****" + Test_Data.connection_Profile_Name
+//							+ " profile already EXISTS, hence not creating it again ****");
+////					Connection_Profiles_Page.connection_Profiles_Dropdown().click();
+//					Connection_Profiles_Page.selectNeededProfile().click();
+//					return;
+//				}
+//				if (i == (profilesCount - 1)) {
+//					Connection_Profiles_Page.connection_Profiles_Dropdown().click();
+//				}
+//			}
+//			Connection_Profiles_Page.create_New_Connection_Profile_Button().click();
+//			Connection_Profiles_Page.connection_Profile_Name().click();
+//			Connection_Profiles_Page.connection_Profile_Name().sendKeys(Test_Data.connection_Profile_Name);
+//			Connection_Profiles_Page.connection_Profile_Instrument_Type()
+//					.sendKeys(Test_Data.connection_Profile_Instrument_Type);
+//			Thread.sleep(1000);
+//			Connection_Profiles_Page.connection_Profile_IpAddress().click();
+//			Connection_Profiles_Page.connection_Profile_IpAddress().clear();
+//			Connection_Profiles_Page.connection_Profile_IpAddress().sendKeys(Test_Data.connection_Profile_IpAddress);
+//			Connection_Profiles_Page.connection_Profile_Port().click();
+//			Connection_Profiles_Page.connection_Profile_Port().clear();
+//			Connection_Profiles_Page.connection_Profile_Port().sendKeys(Test_Data.connection_Profile_Port);
+//			actions.sendKeys(Keys.PAGE_DOWN).build().perform();
+//			Thread.sleep(500);
+//			actions.moveToElement(Connection_Profiles_Page.save_Button()).click().build().perform();
+//		} catch (Exception e) {
+//			System.out.println("****Exception in create_Connection_Profile()****");
+//			e.printStackTrace();
+//		}
+//	}
+//
+//	public static void updateTestSettings()
+//	{
+//		 Update Display Realtime Plot toggle Off
+//		 Update Enable Offline Reports toggle Off
+//	}
 }
