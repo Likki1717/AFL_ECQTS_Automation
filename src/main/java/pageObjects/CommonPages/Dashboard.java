@@ -15,7 +15,15 @@ public class Dashboard extends BaseClass {
 		return isElementDisplayed(ByAccessibilityId.AccessibilityId("Fiber TestButton"), 40);
 	}
 
-	public static WebElement FiberTestModule() {
+	public static WebElement fiberTestModule() {
 		return driver.findElementByAccessibilityId("Fiber TestButton");
+	}
+	
+	public static WebElement importDataModule() {
+		return driver.findElementByAccessibilityId("Import Data");
+	}
+	
+	public static boolean isImportDataModuleDisplayed() {
+		return isElementDisplayed(ByAccessibilityId.AccessibilityId("Import Data"), 2);
 	}
 }
