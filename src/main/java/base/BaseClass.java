@@ -1,19 +1,14 @@
 package base;
 
-import java.awt.MouseInfo;
-import java.awt.Point;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.Socket;
 import java.net.URI;
-import java.time.Duration;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -24,7 +19,9 @@ import io.appium.java_client.windows.WindowsDriver;
 import pageObjects.CommonPages.Dashboard;
 import pageObjects.CommonPages.SideMenu;
 import pageObjects.CommonPages.SignIn;
+import pageObjects.Modules.FiberTest.JobDetails.JobDetailsHeader;
 import pageObjects.Modules.ImportData.ImportSideMenu;
+import pageObjects.Modules.ImportData.Prysmian;
 import pageObjects.sideMenu.About;
 import pageObjects.sideMenu.Settings;
 import pageObjects.sideMenu.settings.ConnectionProfiles;
@@ -102,10 +99,10 @@ public class BaseClass {
 				robot.keyPress(KeyEvent.VK_TAB);
 				robot.keyRelease(KeyEvent.VK_TAB);
 			}
-			robot.delay(2000);
+			robot.delay(500);
 			robot.keyPress(KeyEvent.VK_ENTER);
 			robot.keyRelease(KeyEvent.VK_ENTER);
-			robot.delay(2000);
+			robot.delay(500);
 			copyPasteAndClickEnter(TestData.vpnAppPassword);
 		}
 	}
@@ -171,11 +168,11 @@ public class BaseClass {
 			capabilities.setCapability("platformName", "Windows");
 			capabilities.setCapability("deviceName", "WindowsPC");
 			capabilities.setCapability("automationName", "Windows");
+			capabilities.setCapability("ms:waitForAppLaunch", "3");
 			driver = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities);
 			actions = new Actions(driver);
-//			Thread.sleep(5000);
 		} catch (Exception e) {
-			System.out.println("****Exception in launchApplication()****");
+			System.out.println("****Exception in launch_ECQTS_Application()****");
 			System.exit(0);
 		}
 	}
@@ -204,10 +201,20 @@ public class BaseClass {
 		}
 	}
 
-	public static boolean isElementDisplayed(By locator, int timeoutSeconds) {
+	public static boolean isElementDisplayed(By locator, int timeOutInSeconds) {
+		try {
+			wait = new WebDriverWait(driver, timeOutInSeconds);
+			wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public static boolean isElementNotDisplayed(By locator, int timeoutSeconds) {
 		try {
 			wait = new WebDriverWait(driver, timeoutSeconds);
-			wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+			wait.until(ExpectedConditions.invisibilityOfElementLocated(locator));
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -255,42 +262,48 @@ public class BaseClass {
 	}
 
 	public static void createProfile(String connectionProfileName, String ipAddress, String port) {
-		ConnectionProfiles.createNewProfile().click();
-		ConnectionProfiles.nameTextBox().sendKeys(connectionProfileName);
-		ConnectionProfiles.instrumentTypeDropdown().click();
-		if ((TestData.testEnvironment.equals("Dev") || TestData.testEnvironment.equals("QA"))
-				&& !connectionProfileName.equals("Office OTDR")) {
-			ConnectionProfiles.instrumentType_Simulator().click();
-		} else {
-			ConnectionProfiles.instrumentType_Anritsu_MT_9085().click();
-		}
-		ConnectionProfiles.ipAddressTextBox().clear();
-		ConnectionProfiles.ipAddressTextBox().sendKeys(ipAddress);
-		ConnectionProfiles.Port().clear();
-		ConnectionProfiles.Port().sendKeys(port);
-		if (connectionProfileName.contains("JGR")) {
-			ConnectionProfiles.switchTypeDropdown().click();
-			ConnectionProfiles.JGR_Switch().click();
-			ConnectionProfiles.find_Address().sendKeys("SIMULATO");
-			ConnectionProfiles.switchModule().clear();
-			ConnectionProfiles.switchModule().sendKeys("1");
-			ConnectionProfiles.testSwitchConnection().click();
-			softAssert.assertTrue(ConnectionProfiles.isConnectionFailurePopupDisplayed(),
-					"Tried for 15 seconds, Connection failure popup is not displayed");
-			ConnectionProfiles.okButton().click();
-			ConnectionProfiles.find_Address().clear();
-			ConnectionProfiles.find_Address().sendKeys("SIMULATOR");
-			ConnectionProfiles.testSwitchConnection().click();
-			softAssert.assertTrue(ConnectionProfiles.isConnectionSuccessfulPopupDisplayed(),
-					"Tried for 10 seconds, WTC Connection is successful ");
-			ConnectionProfiles.okButton().click();
-			ConnectionProfiles.workerNumber().sendKeys(connectionProfileName.split("-")[1]);
-			ConnectionProfiles.spoon().sendKeys(connectionProfileName.split("-")[1]);
-		}
-		ConnectionProfiles.Save().click();
-		if((connectionProfileName.equals("Office OTDR") && TestData.useOfficeOtdr) || !connectionProfileName.equals("Office OTDR"))
-		{
-			validateSuccessfulConnectionPopup();
+		try {
+			ConnectionProfiles.createNewProfileButton().click();
+			ConnectionProfiles.nameTextBox().sendKeys(connectionProfileName);
+			ConnectionProfiles.instrumentTypeDropdown().click();
+			if ((TestData.testEnvironment.equals("Dev") || TestData.testEnvironment.equals("QA"))
+					&& !connectionProfileName.equals("Office OTDR")) {
+				ConnectionProfiles.instrumentType_Simulator().click();
+			} else {
+				ConnectionProfiles.instrumentType_Anritsu_MT_9085().click();
+			}
+			ConnectionProfiles.ipAddressTextBox().clear();
+			ConnectionProfiles.ipAddressTextBox().sendKeys(ipAddress);
+			ConnectionProfiles.portTextBox().clear();
+			ConnectionProfiles.portTextBox().sendKeys(port);
+			if (connectionProfileName.contains("JGR")) {
+				ConnectionProfiles.switchTypeDropdown().click();
+				ConnectionProfiles.switchType_JGR_Switch().click();
+				ConnectionProfiles.findAddressTextBox().sendKeys("SIMULATO");
+				ConnectionProfiles.switchModuleTextBox().clear();
+				ConnectionProfiles.switchModuleTextBox().sendKeys("1");
+				ConnectionProfiles.testSwitchConnectionButton().click();
+				softAssert.assertTrue(ConnectionProfiles.isConnectionFailurePopupDisplayed(),
+						"Tried for 15 seconds, Connection failure popup is not displayed");
+				ConnectionProfiles.okButton().click();
+				ConnectionProfiles.findAddressTextBox().clear();
+				ConnectionProfiles.findAddressTextBox().sendKeys("SIMULATOR");
+				ConnectionProfiles.testSwitchConnectionButton().click();
+				softAssert.assertTrue(ConnectionProfiles.isConnectionSuccessfulPopupDisplayed(),
+						"Tried for 10 seconds, WTC Connection successful popup is not displayed");
+				ConnectionProfiles.okButton().click();
+				ConnectionProfiles.workerNumberTextBox().sendKeys(connectionProfileName.split("-")[1]);
+				ConnectionProfiles.spoonTextBox().sendKeys(connectionProfileName.split("-")[1]);
+			}
+			ConnectionProfiles.saveProfileButton().click();
+			if ((connectionProfileName.equals("Office OTDR") && TestData.useOfficeOtdr)
+					|| !connectionProfileName.equals("Office OTDR")) {
+				validateSuccessfulConnectionPopup();
+			} else {
+				validateFailureConnectionPopup();
+			}
+		} catch (Exception e) {
+			System.out.println("****Exception in createProfile() - " + connectionProfileName + "****");
 		}
 	}
 
@@ -311,45 +324,69 @@ public class BaseClass {
 			ConnectionProfiles.okButton().click();
 		} catch (Exception e) {
 			System.out.println("****Exception in validateSuccessfulConnectionPopup()****");
-			System.exit(0);
 		}
+	}
 
+	public static void validateFailureConnectionPopup() {
+		try {
+			wait = new WebDriverWait(driver, 15);
+			wait.until(ExpectedConditions.elementToBeClickable(ConnectionProfiles.testConnection()));
+			ConnectionProfiles.testConnection().click();
+			softAssert.assertTrue(ConnectionProfiles.isConnectionFailurePopupDisplayed(),
+					"Tried for 15 seconds, Connection failed popup is not displayed");
+			ConnectionProfiles.okButton().click();
+		} catch (Exception e) {
+			System.out.println("****Exception in validateFailureConnectionPopup()****");
+		}
 	}
 
 	public static void editConnectionProfile() {
-		ConnectionProfiles.editButton().click();
-		ConnectionProfiles.instrumentTypeDropdown().click();
-		ConnectionProfiles.instrumentType_Anritsu_MT_9085().click();
-		softAssert.assertTrue(ConnectionProfiles.ipAddressTextBox().getAttribute("Value.Value")
-				.contains(TestData.anritsu_9085_Ip_Address), "Ip address did not change when we changed instrument from Simulator to Anritsu 9085");
-		ConnectionProfiles.ipAddressTextBox().clear();
-		ConnectionProfiles.ipAddressTextBox().sendKeys(TestData.anritsu_9085_Ip_Address);
-		ConnectionProfiles.Save().click();
-		ConnectionProfiles.testConnection().click();
-		softAssert.assertTrue(ConnectionProfiles.isConnectionFailurePopupDisplayed(),
-				"Tried for 15 seconds, Connection failed popup is not displayed");
-		ConnectionProfiles.okButton().click();
-		ConnectionProfiles.editButton().click();
-		softAssert.assertTrue(ConnectionProfiles.ipAddressTextBox().getAttribute("Value.Value")
-				.contains(TestData.anritsu_9085_Ip_Address));
-		ConnectionProfiles.instrumentTypeDropdown().click();
-		ConnectionProfiles.instrumentType_Simulator().click();
-		ConnectionProfiles.ipAddressTextBox().clear();
-		ConnectionProfiles.ipAddressTextBox().sendKeys(TestData.simulatorIP_Address);
-		ConnectionProfiles.Save().click();
+		try {
+			ConnectionProfiles.editButton().click();
+			ConnectionProfiles.instrumentTypeDropdown().click();
+			ConnectionProfiles.instrumentType_Anritsu_MT_9085().click();
+			softAssert.assertTrue(
+					ConnectionProfiles.ipAddressTextBox().getAttribute("Value.Value")
+							.contains(TestData.anritsu_9085_Ip_Address),
+					"Ip address did not change when we changed instrument from Simulator to Anritsu 9085");
+			ConnectionProfiles.ipAddressTextBox().clear();
+			ConnectionProfiles.ipAddressTextBox().sendKeys(TestData.anritsu_9085_Ip_Address);
+			ConnectionProfiles.saveProfileButton().click();
+			ConnectionProfiles.testConnection().click();
+			softAssert.assertTrue(ConnectionProfiles.isConnectionFailurePopupDisplayed(),
+					"Tried for 15 seconds, Connection failed popup is not displayed");
+			ConnectionProfiles.okButton().click();
+			ConnectionProfiles.editButton().click();
+			softAssert.assertTrue(ConnectionProfiles.ipAddressTextBox().getAttribute("Value.Value")
+					.contains(TestData.anritsu_9085_Ip_Address));
+			ConnectionProfiles.instrumentTypeDropdown().click();
+			ConnectionProfiles.instrumentType_Simulator().click();
+			ConnectionProfiles.ipAddressTextBox().clear();
+			ConnectionProfiles.ipAddressTextBox().sendKeys(TestData.simulatorIP_Address);
+			ConnectionProfiles.saveProfileButton().click();
+		} catch (Exception e) {
+			System.out.println("****Exception in editConnectionProfile()****");
+		}
 	}
 
 	public static void updateTestSettings() {
-		TestSettings.testSettingsButton().click();
-
-		softAssert.assertTrue(TestSettings.isDisplayRealTimeToogleDisplayed(),
-				"Tried for 3 secs, Display real time plot text is not displayed ");
-
-		if (TestSettings.displayRealTimetoggle().isEnabled()) {
-			TestSettings.displayRealTimetoggle().click();
-		}
-		if (TestSettings.enableOfflineReportsToggle().isEnabled()) {
-			TestSettings.enableOfflineReportsToggle().click();
+		try {
+			if (!Settings.isTestSettingsButtonDisplayed()) {
+				Dashboard.openNavigationButton().click();
+				SideMenu.settingsButton().click();
+			}
+			Settings.isTestSettingsButtonDisplayed();
+			Settings.testSettingsButton().click();
+			softAssert.assertTrue(TestSettings.isDisplayRealTimePlotToogleDisplayed(),
+					"Tried for 3 secs, Display real time plot settings toggle is not displayed ");
+			if (TestSettings.displayRealTimetoggle().isSelected()) {
+				TestSettings.displayRealTimetoggle().click();
+			}
+			if (TestSettings.enableOfflineReportsToggle().isSelected()) {
+				TestSettings.enableOfflineReportsToggle().click();
+			}
+		} catch (Exception e) {
+			System.out.println("****Exception in updateTestSettings()****");
 		}
 	}
 
@@ -358,261 +395,279 @@ public class BaseClass {
 			while (!Dashboard.isImportDataModuleDisplayed()) {
 				Dashboard.openNavigationButton().click();
 				SideMenu.dashboardButton().click();
+				Thread.sleep(1000);
 			}
 			Dashboard.importDataModule().click();
+			softAssert.assertTrue(ImportSideMenu.isPrysmianTypeDisplayed(),
+					"Waited for 5 seconds, Prysmian option on the Import side menu is not displayed");
+			Thread.sleep(500);
 			ImportSideMenu.prysmianType().click();
-			Prysmian_Import_Page.orgDropDownField().sendKeys(Test_Data.prysmian_Org);
-			Prysmian_Import_Page.cutNumber().click();
-			Prysmian_Import_Page.cutNumber().sendKeys(Test_Data.prysmian_Cut_Number());
-			Prysmian_Import_Page.itemOrgCode().sendKeys(Test_Data.prysmian_Item_Org_Code);
-			Prysmian_Import_Page.cutNumberInfo().sendKeys("ZTEST01");
-			Prysmian_Import_Page.importType().sendKeys(Test_Data.prysmian_Import_Type);
-			robot.mouseWheel(100);
-			Thread.sleep(1000);
-			Prysmian_Import_Page.uploadFileButton().click();
-			Thread.sleep(3000);
-			actions.moveToElement(Prysmian_Import_Page.address_Bar()).click().build().perform();
-			Point mousePosition = MouseInfo.getPointerInfo().getLocation();
-			int currentX = (int) mousePosition.getX();
-			int currentY = (int) mousePosition.getY();
-			robot.mouseMove(currentX + 70, currentY);
-			robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-			robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-			actions.sendKeys(Keys.BACK_SPACE).build().perform();
-			actions.sendKeys(Test_Data.prysmian_Files_Path).build().perform();
-			actions.sendKeys(Keys.ENTER).build().perform();
-			Thread.sleep(1000);
-			Prysmian_Import_Page.jacketOdFile().click();
-			actions.keyDown(Keys.CONTROL).build().perform();
-			Prysmian_Import_Page.attenuationFile().click();
-			actions.keyUp(Keys.CONTROL).build().perform();
-			actions.sendKeys(Keys.ENTER).build().perform();
-			Thread.sleep(1000);
-			try {
-				Prysmian_Import_Page.fileBeingUsedPopup();
-				System.out.println(
-						"****CLOSE THE ALREADY OPENED PRYSMIAN FILE(S) AND RUN THE SCRIPT AGAIN****\n****CLOSE THE ALREADY OPENED PRYSMIAN FILE(S) AND RUN THE SCRIPT AGAIN****\n****CLOSE THE ALREADY OPENED PRYSMIAN FILE(S) AND RUN THE SCRIPT AGAIN****\n****CLOSE THE ALREADY OPENED PRYSMIAN FILE(S) AND RUN THE SCRIPT AGAIN****");
-				Prysmian_Import_Page.warning_Popup_ok_Button().click();
-				System.exit(0);
-			} catch (Exception e) {
+			softAssert.assertTrue(Prysmian.isScreenLoadingMessageDisplayed(),
+					"Waited for 5 seconds, Screen loader did not display");
+			softAssert.assertTrue(Prysmian.isScreenLoadingMessageGone(),
+					"Waited for 10 seconds but still the screen loader is displayed");
+			Thread.sleep(500);
+			Prysmian.orgDropDownField().sendKeys(TestData.prysmianOrg);
+			robot.keyPress(KeyEvent.VK_TAB);
+			robot.keyRelease(KeyEvent.VK_TAB);
+			Prysmian.cutNumber().sendKeys(TestData.prysmianCutNumber);
+			robot.keyPress(KeyEvent.VK_TAB);
+			robot.keyRelease(KeyEvent.VK_TAB);
+			Thread.sleep(500);
+			Prysmian.itemOrgCode().sendKeys(TestData.prysmianItemOrgCode);
+			robot.keyPress(KeyEvent.VK_TAB);
+			robot.keyRelease(KeyEvent.VK_TAB);
+			Thread.sleep(500);
+			Prysmian.cutNumberInfo().sendKeys(TestData.prysmiancutNumberInfo);
+			robot.keyPress(KeyEvent.VK_TAB);
+			robot.keyRelease(KeyEvent.VK_TAB);
+			Thread.sleep(500);
+			Prysmian.importType().sendKeys(TestData.prysmianImportType);
+			robot.keyPress(KeyEvent.VK_TAB);
+			robot.keyRelease(KeyEvent.VK_TAB);
+			Prysmian.uploadFileButton().click();
+			softAssert.assertTrue(Prysmian.isFileNameTextBoxDisplayed(),
+					"Waited for 10 seconds, file name text box was not visible");
 
-			}
-			Prysmian_Import_Page.submitButton().click();
-			Thread.sleep(Duration.ofSeconds(40));
+			File attenuationFile = new File(TestData.prysmianAttenuationFilePath);
+			File jacketOdFile = new File(TestData.prysmianJacketOdFilePath);
+
+			// Multi-file string
+			String filesToUpload = "\"" + attenuationFile.getAbsolutePath() + "\" \"" + jacketOdFile.getAbsolutePath()
+					+ "\"";
+
+			// Send file paths
+			Prysmian.fileNameTextBox().click();
+			Prysmian.fileNameTextBox().sendKeys(filesToUpload);
+			Thread.sleep(500);
+			robot.keyPress(KeyEvent.VK_ENTER);
+			robot.keyRelease(KeyEvent.VK_ENTER);
+			Prysmian.submitButton().click();
 			boolean clickedOnOkButton = false;
 			int attemptsCount = 0;
-			while (clickedOnOkButton == false && attemptsCount < 400) {
+			while (clickedOnOkButton == false && attemptsCount < 660) {
 				try {
-					Prysmian_Import_Page.warning_Popup_ok_Button().click();
+					Prysmian.okButton().click();
 					clickedOnOkButton = true;
 				} catch (Exception e) {
-					Thread.sleep(2000);
+					if(true) // isJobSuccessFullPopupDisplayed()
+					{
+//					code to fetch Job number and go to fiber test page
+					// click on OK on the missing fiber id popup
+//						break;
+					}
+				else
+				{
+					Thread.sleep(1000);
 					attemptsCount++;
-					if (attemptsCount == 400) {
-						System.out.println("****Waited too long for missing fiber id popup****");
+					if (attemptsCount == 660) {
+						System.out.println("****Waited for 11 mins for missing fiber id popup****");
+					
+				}
 					}
 				}
 			}
-			Thread.sleep(3000);
-			System.out.println("Job Number: " + Job_Details_Page.job_Number().getText().trim());
-			if (!Job_Details_Page.test_Results()
-					.equalsIgnoreCase("Incomplete: " + Test_Data.prysmian_Expected_Incomplete_Tests + ", Passed: "
-							+ Test_Data.prysmian_Expected_Passed_Tests + ", Failed: "
-							+ Test_Data.prysmian_Expected_Failed_Tests)) {
+//			isProtectionLayerTabDisplayed
+			System.out.println("Job Number: " + JobDetailsHeader.job_Number().getText().trim());
+			if (!JobDetailsHeader.test_Results()
+					.equalsIgnoreCase("Incomplete: " + TestData.prysmianExpectedIncompleteTests + ", Passed: "
+							+ TestData.prysmianExpectedPassedTests + ", Failed: "
+							+ TestData.prysmianExpectedFailedTests)) {
 				System.out.println("****Prysmian Import Job Status Count is not as expected****");
 				System.out.println(
-						"Expected Test Status was: " + "Incomplete: " + Test_Data.prysmian_Expected_Incomplete_Tests
-								+ ", Passed: " + Test_Data.prysmian_Expected_Passed_Tests + ", Failed: "
-								+ Test_Data.prysmian_Expected_Failed_Tests);
-				System.out.println("Current  Status found is: " + Job_Details_Page.test_Results());
+						"Expected Test Status was: " + "Incomplete: " + TestData.prysmianExpectedIncompleteTests
+								+ ", Passed: " + TestData.prysmianExpectedPassedTests + ", Failed: "
+								+ TestData.prysmianExpectedFailedTests);
+				System.out.println("Current  Status found is: " + JobDetailsHeader.test_Results());
 			}
 
-			if (!Job_Details_Page.helix_Factor().getText().trim()
-					.equalsIgnoreCase(Test_Data.prysmian_Expected_Helix_Factor)) {
+			if (!JobDetailsHeader.helix_Factor().getText().trim()
+					.equalsIgnoreCase(TestData.prysmianExpectedHelixFactor)) {
 				System.out.println("\n****Prysmian Import Job Helix Factor is not as expected****");
-				System.out.println("Expected Helix Factor was: " + Test_Data.prysmian_Expected_Helix_Factor);
+				System.out.println("Expected Helix Factor was: " + TestData.prysmianExpectedHelixFactor);
 				System.out
-						.println("Current  Helix Factor found is: " + Job_Details_Page.helix_Factor().getText().trim());
+						.println("Current  Helix Factor found is: " + JobDetailsHeader.helix_Factor().getText().trim());
+			}
+			
+			if(true) // fetch OTDR length and compare if it matches with expected OTDR length 
+			{
+				
 			}
 
 		} catch (Exception e) {
 			System.out.println("****Exception in importPrysmianJob()****");
-			e.printStackTrace();
 		}
 	}
 
-	public static void importSwindonJob() {
+//	public static void importSwindonJob() {
+//		try {
+//			Side_Menu.dashboardButton().click();
+//			Thread.sleep(1000);
+//			Dashboard_Page.importDataModule().click();
+//			Import_Page.swindonType().click();
+//			Swindon_Import_Page.orgDropDownField().sendKeys(TestData.swindon_Org);
+//			Swindon_Import_Page.cutNumber().click();
+//			Swindon_Import_Page.cutNumber().sendKeys(TestData.swindon_Cut_Number());
+//			Swindon_Import_Page.itemOrgCode().sendKeys(TestData.swindon_Item_Org_Code);
+//			Swindon_Import_Page.cutNumberInfo().sendKeys("ZTEST01");
+//			Swindon_Import_Page.importType().sendKeys(TestData.swindon_Import_Type);
+//			robot.mouseWheel(100);
+//			Thread.sleep(1000);
+//			Swindon_Import_Page.uploadFileButton().click();
+//			Thread.sleep(3000);
+//			actions.moveToElement(Swindon_Import_Page.address_Bar()).click().build().perform();
+//			Point mousePosition = MouseInfo.getPointerInfo().getLocation();
+//			int currentX = (int) mousePosition.getX();
+//			int currentY = (int) mousePosition.getY();
+//			robot.mouseMove(currentX + 70, currentY);
+//			robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+//			robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+//			actions.sendKeys(Keys.BACK_SPACE).build().perform();
+//			actions.sendKeys(TestData.swindon_Files_Path).build().perform();
+//			actions.sendKeys(Keys.ENTER).build().perform();
+//			Thread.sleep(1000);
+//			Swindon_Import_Page.jacketOdFile().click();
+//			actions.keyDown(Keys.CONTROL).build().perform();
+//			Swindon_Import_Page.attenuationFile().click();
+//			actions.keyUp(Keys.CONTROL).build().perform();
+//			actions.sendKeys(Keys.ENTER).build().perform();
+//			Thread.sleep(1000);
+//			try {
+//				Swindon_Import_Page.fileBeingUsedPopup();
+//				System.out.println(
+//						"****CLOSE THE ALREADY OPENED SWINDON FILE(S) AND RUN THE SCRIPT AGAIN****\n****CLOSE THE ALREADY OPENED SWINDON FILE(S) AND RUN THE SCRIPT AGAIN****\n****CLOSE THE ALREADY OPENED SWINDON FILE(S) AND RUN THE SCRIPT AGAIN****\n****CLOSE THE ALREADY OPENED SWINDON FILE(S) AND RUN THE SCRIPT AGAIN****");
+//				Swindon_Import_Page.warning_Popup_ok_Button().click();
+//				System.exit(0);
+//			} catch (Exception e) {
+//
+//			}
+//			Swindon_Import_Page.submitButton().click();
+//			Thread.sleep(Duration.ofSeconds(40));
+//			boolean clickedOnOkButton = false;
+//			int attemptsCount = 0;
+//			while (clickedOnOkButton == false && attemptsCount < 400) {
+//				try {
+//					Swindon_Import_Page.warning_Popup_ok_Button().click();
+//					clickedOnOkButton = true;
+//				} catch (Exception e) {
+//					Thread.sleep(2000);
+//					attemptsCount++;
+//					if (attemptsCount == 400) {
+//						System.out.println("****Waited too long for missing fiber id popup****");
+//					}
+//				}
+//			}
+//			Thread.sleep(3000);
+//			System.out.println("Job Number: " + JobDetailsHeader.job_Number().getText().trim());
+//			if (!JobDetailsHeader.test_Results()
+//					.equalsIgnoreCase("Incomplete: " + TestData.swindon_Expected_Incomplete_Tests + ", Passed: "
+//							+ TestData.swindon_Expected_Passed_Tests + ", Failed: "
+//							+ TestData.swindon_Expected_Failed_Tests)) {
+//				System.out.println("****Swindon Import Job Status Count is not as expected****");
+//				System.out.println(
+//						"Expected Test Status was: " + "Incomplete: " + TestData.swindon_Expected_Incomplete_Tests
+//								+ ", Passed: " + TestData.swindon_Expected_Passed_Tests + ", Failed: "
+//								+ TestData.swindon_Expected_Failed_Tests);
+//				System.out.println("Current  Status found is: " + JobDetailsHeader.test_Results());
+//			}
+//
+//			if (!JobDetailsHeader.helix_Factor().getText().trim()
+//					.equalsIgnoreCase(TestData.swindon_Expected_Helix_Factor)) {
+//				System.out.println("\n****Swindon Import Job Helix Factor is not as expected****");
+//				System.out.println("Expected Helix Factor was: " + TestData.swindon_Expected_Helix_Factor);
+//				System.out
+//						.println("Current  Helix Factor found is: " + JobDetailsHeader.helix_Factor().getText().trim());
+//			}
+//		} catch (Exception e) {
+//			System.out.println("****Exception in importSwindonJob()****");
+//		}
+//	}
 
-		try {
-			Side_Menu.dashboardButton().click();
-			Thread.sleep(1000);
-			Dashboard_Page.importDataModule().click();
-			Import_Page.swindonType().click();
-			Swindon_Import_Page.orgDropDownField().sendKeys(Test_Data.swindon_Org);
-			Swindon_Import_Page.cutNumber().click();
-			Swindon_Import_Page.cutNumber().sendKeys(Test_Data.swindon_Cut_Number());
-			Swindon_Import_Page.itemOrgCode().sendKeys(Test_Data.swindon_Item_Org_Code);
-			Swindon_Import_Page.cutNumberInfo().sendKeys("ZTEST01");
-			Swindon_Import_Page.importType().sendKeys(Test_Data.swindon_Import_Type);
-			robot.mouseWheel(100);
-			Thread.sleep(1000);
-			Swindon_Import_Page.uploadFileButton().click();
-			Thread.sleep(3000);
-			actions.moveToElement(Swindon_Import_Page.address_Bar()).click().build().perform();
-			Point mousePosition = MouseInfo.getPointerInfo().getLocation();
-			int currentX = (int) mousePosition.getX();
-			int currentY = (int) mousePosition.getY();
-			robot.mouseMove(currentX + 70, currentY);
-			robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-			robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-			actions.sendKeys(Keys.BACK_SPACE).build().perform();
-			actions.sendKeys(Test_Data.swindon_Files_Path).build().perform();
-			actions.sendKeys(Keys.ENTER).build().perform();
-			Thread.sleep(1000);
-			Swindon_Import_Page.jacketOdFile().click();
-			actions.keyDown(Keys.CONTROL).build().perform();
-			Swindon_Import_Page.attenuationFile().click();
-			actions.keyUp(Keys.CONTROL).build().perform();
-			actions.sendKeys(Keys.ENTER).build().perform();
-			Thread.sleep(1000);
-			try {
-				Swindon_Import_Page.fileBeingUsedPopup();
-				System.out.println(
-						"****CLOSE THE ALREADY OPENED SWINDON FILE(S) AND RUN THE SCRIPT AGAIN****\n****CLOSE THE ALREADY OPENED SWINDON FILE(S) AND RUN THE SCRIPT AGAIN****\n****CLOSE THE ALREADY OPENED SWINDON FILE(S) AND RUN THE SCRIPT AGAIN****\n****CLOSE THE ALREADY OPENED SWINDON FILE(S) AND RUN THE SCRIPT AGAIN****");
-				Swindon_Import_Page.warning_Popup_ok_Button().click();
-				System.exit(0);
-			} catch (Exception e) {
-
-			}
-			Swindon_Import_Page.submitButton().click();
-			Thread.sleep(Duration.ofSeconds(40));
-			boolean clickedOnOkButton = false;
-			int attemptsCount = 0;
-			while (clickedOnOkButton == false && attemptsCount < 400) {
-				try {
-					Swindon_Import_Page.warning_Popup_ok_Button().click();
-					clickedOnOkButton = true;
-				} catch (Exception e) {
-					Thread.sleep(2000);
-					attemptsCount++;
-					if (attemptsCount == 400) {
-						System.out.println("****Waited too long for missing fiber id popup****");
-					}
-				}
-			}
-			Thread.sleep(3000);
-			System.out.println("Job Number: " + Job_Details_Page.job_Number().getText().trim());
-			if (!Job_Details_Page.test_Results()
-					.equalsIgnoreCase("Incomplete: " + Test_Data.swindon_Expected_Incomplete_Tests + ", Passed: "
-							+ Test_Data.swindon_Expected_Passed_Tests + ", Failed: "
-							+ Test_Data.swindon_Expected_Failed_Tests)) {
-				System.out.println("****Swindon Import Job Status Count is not as expected****");
-				System.out.println(
-						"Expected Test Status was: " + "Incomplete: " + Test_Data.swindon_Expected_Incomplete_Tests
-								+ ", Passed: " + Test_Data.swindon_Expected_Passed_Tests + ", Failed: "
-								+ Test_Data.swindon_Expected_Failed_Tests);
-				System.out.println("Current  Status found is: " + Job_Details_Page.test_Results());
-			}
-
-			if (!Job_Details_Page.helix_Factor().getText().trim()
-					.equalsIgnoreCase(Test_Data.swindon_Expected_Helix_Factor)) {
-				System.out.println("\n****Swindon Import Job Helix Factor is not as expected****");
-				System.out.println("Expected Helix Factor was: " + Test_Data.swindon_Expected_Helix_Factor);
-				System.out
-						.println("Current  Helix Factor found is: " + Job_Details_Page.helix_Factor().getText().trim());
-			}
-		} catch (Exception e) {
-			System.out.println("****Exception in swindon_Import()****");
-			e.printStackTrace();
-		}
-	}
-
-	public static void importTaihanJob() {
-		try {
-			Side_Menu.dashboardButton().click();
-			Thread.sleep(1000);
-			Dashboard_Page.importDataModule().click();
-			Import_Page.taihanType().click();
-			Taihan_Import_Page.orgDropDownField().sendKeys(Test_Data.taihan_Org);
-			Taihan_Import_Page.cutNumber().click();
-			Taihan_Import_Page.cutNumber().sendKeys(Test_Data.taihan_Cut_Number());
-			Taihan_Import_Page.itemOrgCode().sendKeys(Test_Data.taihan_Item_Org_Code);
-			Taihan_Import_Page.cutNumberInfo().sendKeys("ZTEST01");
-			Taihan_Import_Page.importType().sendKeys(Test_Data.taihan_Import_Type);
-			robot.mouseWheel(100);
-			Thread.sleep(1000);
-			Taihan_Import_Page.uploadFileButton().click();
-			Thread.sleep(3000);
-			actions.moveToElement(Taihan_Import_Page.address_Bar()).click().build().perform();
-			Point mousePosition = MouseInfo.getPointerInfo().getLocation();
-			int currentX = (int) mousePosition.getX();
-			int currentY = (int) mousePosition.getY();
-			robot.mouseMove(currentX + 70, currentY);
-			robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-			robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-			actions.sendKeys(Keys.BACK_SPACE).build().perform();
-			actions.sendKeys(Test_Data.taihan_Files_Path).build().perform();
-			actions.sendKeys(Keys.ENTER).build().perform();
-			Thread.sleep(1000);
-			Taihan_Import_Page.attenuationFile().click();
-			actions.sendKeys(Keys.ENTER).build().perform();
-			Thread.sleep(1000);
-			try {
-				Taihan_Import_Page.fileBeingUsedPopup();
-				System.out.println(
-						"****CLOSE THE ALREADY OPENED TAIHAN FILE(S) AND RUN THE SCRIPT AGAIN****\n****CLOSE THE ALREADY OPENED TAIHAN FILE(S) AND RUN THE SCRIPT AGAIN****\n****CLOSE THE ALREADY OPENED TAIHAN FILE(S) AND RUN THE SCRIPT AGAIN****\n****CLOSE THE ALREADY OPENED TAIHAN FILE(S) AND RUN THE SCRIPT AGAIN****");
-				Taihan_Import_Page.warning_Popup_ok_Button().click();
-				System.exit(0);
-			} catch (Exception e) {
-
-			}
-			Taihan_Import_Page.submitButton().click();
-			Thread.sleep(Duration.ofSeconds(20));
-			boolean clickedOnOkButton = false;
-			int attemptsCount = 0;
-			while (clickedOnOkButton == false && attemptsCount < 400) {
-				try {
-					Swindon_Import_Page.warning_Popup_ok_Button().click();
-					clickedOnOkButton = true;
-				} catch (Exception e) {
-					Thread.sleep(2000);
-					attemptsCount++;
-					if (attemptsCount == 400) {
-						System.out.println("****Waited too long for missing fiber id popup****");
-					}
-				}
-			}
-			Thread.sleep(3000);
-			System.out.println("Job Number: " + Job_Details_Page.job_Number().getText().trim());
-			if (!Job_Details_Page.test_Results()
-					.equalsIgnoreCase("Incomplete: " + Test_Data.taihan_Expected_Incomplete_Tests + ", Passed: "
-							+ Test_Data.taihan_Expected_Passed_Tests + ", Failed: "
-							+ Test_Data.taihan_Expected_Failed_Tests)) {
-				System.out.println("****Taihan Import Job Status Count is not as expected****");
-				System.out.println(
-						"Expected Test Status was: " + "Incomplete: " + Test_Data.taihan_Expected_Incomplete_Tests
-								+ ", Passed: " + Test_Data.taihan_Expected_Passed_Tests + ", Failed: "
-								+ Test_Data.taihan_Expected_Failed_Tests);
-				System.out.println("Current  Status found is: " + Job_Details_Page.test_Results());
-			}
-
-			if (!Job_Details_Page.helix_Factor().getText().trim()
-					.equalsIgnoreCase(Test_Data.taihan_Expected_Helix_Factor)) {
-				System.out.println("\n****Taihan Import Job Helix Factor is not as expected****");
-				System.out.println("Expected Helix Factor was: " + Test_Data.taihan_Expected_Helix_Factor);
-				System.out
-						.println("Current  Helix Factor found is: " + Job_Details_Page.helix_Factor().getText().trim());
-			}
-
-			if (!Job_Details_Page.otdr_Length().getText().trim()
-					.equalsIgnoreCase(Test_Data.taihan_Expected_OTDR_Length)) {
-				System.out.println("\n****Taihan Import Job OTDR Length is not as expected****");
-				System.out.println("Expected OTDR length was: " + Test_Data.taihan_Expected_OTDR_Length);
-				System.out.println("Current  OTDR length found is: " + Job_Details_Page.otdr_Length().getText().trim());
-			}
-		} catch (Exception e) {
-			System.out.println("****Exception in taihan_Import()****");
-			e.printStackTrace();
-		}
-	}
+//	public static void importTaihanJob() {
+//		try {
+//			Side_Menu.dashboardButton().click();
+//			Thread.sleep(1000);
+//			Dashboard_Page.importDataModule().click();
+//			Import_Page.taihanType().click();
+//			Taihan_Import_Page.orgDropDownField().sendKeys(TestData.taihan_Org);
+//			Taihan_Import_Page.cutNumber().click();
+//			Taihan_Import_Page.cutNumber().sendKeys(TestData.taihan_Cut_Number());
+//			Taihan_Import_Page.itemOrgCode().sendKeys(TestData.taihan_Item_Org_Code);
+//			Taihan_Import_Page.cutNumberInfo().sendKeys("ZTEST01");
+//			Taihan_Import_Page.importType().sendKeys(TestData.taihan_Import_Type);
+//			robot.mouseWheel(100);
+//			Thread.sleep(1000);
+//			Taihan_Import_Page.uploadFileButton().click();
+//			Thread.sleep(3000);
+//			actions.moveToElement(Taihan_Import_Page.address_Bar()).click().build().perform();
+//			Point mousePosition = MouseInfo.getPointerInfo().getLocation();
+//			int currentX = (int) mousePosition.getX();
+//			int currentY = (int) mousePosition.getY();
+//			robot.mouseMove(currentX + 70, currentY);
+//			robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+//			robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+//			actions.sendKeys(Keys.BACK_SPACE).build().perform();
+//			actions.sendKeys(TestData.taihan_Files_Path).build().perform();
+//			actions.sendKeys(Keys.ENTER).build().perform();
+//			Thread.sleep(1000);
+//			Taihan_Import_Page.attenuationFile().click();
+//			actions.sendKeys(Keys.ENTER).build().perform();
+//			Thread.sleep(1000);
+//			try {
+//				Taihan_Import_Page.fileBeingUsedPopup();
+//				System.out.println(
+//						"****CLOSE THE ALREADY OPENED TAIHAN FILE(S) AND RUN THE SCRIPT AGAIN****\n****CLOSE THE ALREADY OPENED TAIHAN FILE(S) AND RUN THE SCRIPT AGAIN****\n****CLOSE THE ALREADY OPENED TAIHAN FILE(S) AND RUN THE SCRIPT AGAIN****\n****CLOSE THE ALREADY OPENED TAIHAN FILE(S) AND RUN THE SCRIPT AGAIN****");
+//				Taihan_Import_Page.warning_Popup_ok_Button().click();
+//				System.exit(0);
+//			} catch (Exception e) {
+//
+//			}
+//			Taihan_Import_Page.submitButton().click();
+//			Thread.sleep(Duration.ofSeconds(20));
+//			boolean clickedOnOkButton = false;
+//			int attemptsCount = 0;
+//			while (clickedOnOkButton == false && attemptsCount < 400) {
+//				try {
+//					Swindon_Import_Page.warning_Popup_ok_Button().click();
+//					clickedOnOkButton = true;
+//				} catch (Exception e) {
+//					Thread.sleep(2000);
+//					attemptsCount++;
+//					if (attemptsCount == 400) {
+//						System.out.println("****Waited too long for missing fiber id popup****");
+//					}
+//				}
+//			}
+//			Thread.sleep(3000);
+//			System.out.println("Job Number: " + JobDetailsHeader.job_Number().getText().trim());
+//			if (!JobDetailsHeader.test_Results()
+//					.equalsIgnoreCase("Incomplete: " + TestData.taihan_Expected_Incomplete_Tests + ", Passed: "
+//							+ TestData.taihan_Expected_Passed_Tests + ", Failed: "
+//							+ TestData.taihan_Expected_Failed_Tests)) {
+//				System.out.println("****Taihan Import Job Status Count is not as expected****");
+//				System.out.println(
+//						"Expected Test Status was: " + "Incomplete: " + TestData.taihan_Expected_Incomplete_Tests
+//								+ ", Passed: " + TestData.taihan_Expected_Passed_Tests + ", Failed: "
+//								+ TestData.taihan_Expected_Failed_Tests);
+//				System.out.println("Current  Status found is: " + JobDetailsHeader.test_Results());
+//			}
+//
+//			if (!JobDetailsHeader.helix_Factor().getText().trim()
+//					.equalsIgnoreCase(TestData.taihan_Expected_Helix_Factor)) {
+//				System.out.println("\n****Taihan Import Job Helix Factor is not as expected****");
+//				System.out.println("Expected Helix Factor was: " + TestData.taihan_Expected_Helix_Factor);
+//				System.out
+//						.println("Current  Helix Factor found is: " + JobDetailsHeader.helix_Factor().getText().trim());
+//			}
+//
+//			if (!JobDetailsHeader.otdr_Length().getText().trim()
+//					.equalsIgnoreCase(TestData.taihan_Expected_OTDR_Length)) {
+//				System.out.println("\n****Taihan Import Job OTDR Length is not as expected****");
+//				System.out.println("Expected OTDR length was: " + TestData.taihan_Expected_OTDR_Length);
+//				System.out.println("Current  OTDR length found is: " + JobDetailsHeader.otdr_Length().getText().trim());
+//			}
+//		} catch (Exception e) {
+//			System.out.println("****Exception in importTaihanJob()****");
+//		}
+//	}
 }

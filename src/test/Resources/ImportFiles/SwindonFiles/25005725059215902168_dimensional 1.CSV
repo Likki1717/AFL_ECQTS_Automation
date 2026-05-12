@@ -1,0 +1,38 @@
+PASS,,,,,
+,,,,,
+Customer:  AFL,,Lot Number:  250592,,,
+Job-Launch:    800432-39214,,,,,
+Filename:        25005725059215902168,,,,,
+,,,,Test identifier:  ,
+,,,,,
+,,,,,
+Test Performed,measured / recorded,Pass/Fail,Min Val,Max Val,Remove
+Metal Tube / Pipe OD,0,PASS,0,0,TRUE
+Metal Tube / Pipe wall thickness,0,PASS,0,0,TRUE
+1st ( jacket) OD,11.1,FAIL,9.89,10.29,FALSE
+1st wall minimum thickness,1.56,PASS,1.05,,FALSE
+Average  wall thickness,1.69,PASS,1.35,,FALSE
+2nd jacket OD,0,PASS,0,0,TRUE
+2nd wall minimum thickness,0,PASS,0,,TRUE
+2nd wall average thickness,,PASS,0,,TRUE
+Cable Construction to QCWI-035,YES,PASS,,,FALSE
+Water penetration test ,PASS,PASS,,,FALSE
+Cable length by the mark,20390,PASS,,,FALSE
+Cable length units,feet,PASS,,,FALSE
+Armouring OD,0,PASS,0,0,TRUE
+Wire count,0,PASS,,,TRUE
+Wire OD,0,PASS,0,0,TRUE
+Wire Lay Direction,0,PASS,,,TRUE
+Operator,Neil Bewley,PASS,,,FALSE
+,,,,,
+,,,,,
+ISE Seq Mark        0 feet,Customer Request Length  20299 feet,,,,
+OSE Seq Mark     20390 feet,Actual Ship Length                    20390 feet,,,,
+,,,,,
+1310 Attenuation Threshold,0.35,,IOR,1.4675,
+1550 Attenuation Threshold,0.2,,IOR,1.4681,
+1625 Attenuation Threshold,N/A,,IOR,N/A,
+,,,,,
+,,,,,
+,,,,,
+,,Test Date:,25-Mar-25,,

@@ -7,11 +7,7 @@ import base.BaseClass;
 
 public class TestSettings extends BaseClass {
 
-	public static WebElement testSettingsButton() {
-		return driver.findElementByXPath("//Text[@Name='Test Settings']");
-	}
-
-	public static boolean isDisplayRealTimeToogleDisplayed() {
+	public static boolean isDisplayRealTimePlotToogleDisplayed() {
 		return isElementDisplayed(By.xpath("//Text[@Name='Display Realtime Plot']"), 3);
 	}
 

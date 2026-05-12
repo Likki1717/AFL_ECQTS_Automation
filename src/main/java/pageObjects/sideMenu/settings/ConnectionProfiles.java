@@ -29,7 +29,7 @@ public class ConnectionProfiles extends BaseClass{
 		return isElementDisplayed(ByName.name("No existing profiles found."), 5);
 	}
 	
-	public static WebElement createNewProfile() {
+	public static WebElement createNewProfileButton() {
 		return driver.findElementByName("Create New");
 	}
  
@@ -49,11 +49,11 @@ public class ConnectionProfiles extends BaseClass{
 		return driver.findElementByXPath("//Text[@Name='IP Address']/following::Edit[1]");
 	}
  
-	public static WebElement Port() {
+	public static WebElement portTextBox() {
 		return driver.findElementByXPath("//Text[@Name='Port']/following::Edit[1]");
 	}
  
-	public static WebElement Save() {
+	public static WebElement saveProfileButton() {
 		return driver.findElementByXPath("//Button[@Name='Save']");
 	}
  
@@ -61,15 +61,15 @@ public class ConnectionProfiles extends BaseClass{
 		return driver.findElementByXPath("//ComboBox[@Name='Switch Type']");
 	}
  
-	public static WebElement JGR_Switch() {
+	public static WebElement switchType_JGR_Switch() {
 		return driver.findElementByXPath("//Text[@Name='JGR Switch']");
 	}
  
-	public static WebElement find_Address() {
+	public static WebElement findAddressTextBox() {
 		return driver.findElementByXPath("//Button[@Name='Find Address']/following::Edit[1]");
 	}
  
-	public static WebElement testSwitchConnection() {
+	public static WebElement testSwitchConnectionButton() {
 		return driver.findElementByXPath("//Button[@Name='Test Switch Connection']");
 	}
  
@@ -81,15 +81,15 @@ public class ConnectionProfiles extends BaseClass{
 		return isElementDisplayed(By.xpath("//Text[contains(@Name, 'Connection Failed')]"), 15);
 	}
  
-	public static WebElement switchModule() {
+	public static WebElement switchModuleTextBox() {
 		return driver.findElementByXPath("//Text[@Name='Switch Module']/following::Edit[1]");
 	}
  
-	public static WebElement workerNumber() {
+	public static WebElement workerNumberTextBox() {
 		return driver.findElementByXPath("//Text[@Name='Worker Number']/following::Edit[1]");
 	}
  
-	public static WebElement spoon() {
+	public static WebElement spoonTextBox() {
 		return driver.findElementByXPath("//Text[@Name='Spoon']/following::Edit[1]");
 	}
  

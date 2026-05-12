@@ -2,9 +2,9 @@ package base;
 
 public class TestData {
 	public static String testEnvironment = "QA"; // Dev /QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
-	public static String expectedAppVersion = "7.6.6.1";
+	public static String expectedAppVersion = "7.6.10.0";
 	public static String org = "CAB";
-	public static boolean useOfficeOtdr = true;
+	public static boolean useOfficeOtdr = false;
 	public static String vpnAppPassword = "kumar@123";
 
 	// All local paths to be updated from system
@@ -12,10 +12,24 @@ public class TestData {
 	public static String SOR_Files_Path = "C:\\Users\\sumeeth\\Downloads\\SOR_Files_Downloaded_From_Automation";
 	public static String winAppDriverPath = "c:\\Program Files\\Windows Application Driver\\winappdriver.exe";
 	public static String OCR_Report_Path = "C:\\Users\\sumeeth\\AppData\\Local\\Packages\\"+appId().split("!")[0]+"\\LocalState\\Downloads\\"+org+"";
+	public static String prysmianAttenuationFilePath = "src/test/Resources/ImportFiles/PrysmianFiles/attenuation.csv";
+	public static String prysmianJacketOdFilePath = "src/test/Resources/ImportFiles/PrysmianFiles/jacketOD.csv";	
 	public static String secureStorageFolderPath = "C:\\Users\\sumeeth\\AppData\\Local\\Packages\\"
 			+ appId().split("!")[0] + "\\LocalState\\SecureStorage"; // Deleting this SecureStorage folder will delete
 																		// the login cache and app by default will be in
 																		// logged out state
+	
+	public static String prysmianOrg = "CAB";
+	public static String prysmianCutNumber = "11";
+	public static String prysmianItemOrgCode = "SPC";
+	public static String prysmiancutNumberInfo = "ZTEST01";
+	public static String prysmianImportType = "Fiber";
+	public static String prysmianExpectedIncompleteTests = "296";
+	public static String prysmianExpectedPassedTests = "589";
+	public static String prysmianExpectedFailedTests = "2";
+	public static String prysmianExpectedHelixFactor = "1.0363";
+	public static String bufferTube = "10-BLUE";
+	
 	
 	public static String ecqtsAppUsername() {
 		String username = null;

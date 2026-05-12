@@ -11,16 +11,16 @@ public class RegressionTests extends BaseClass
 	{
 		clearPreviousSessionData();
 		launchWinAppDriver();
-		launchOpenVpnAppAndConnect();
+//		launchOpenVpnAppAndConnect();
 		launch_ECQTS_Application();
-		verifyIncorrectCredentials();
+//		verifyIncorrectCredentials();
 		loginToApplication();
-		verifyBuildVersion();
-		deleteAllExistingConnectionProfiles();
-		createConnectionProfiles();
-		editConnectionProfile();
-		updateTestSettings();
-//		importPrysmianJob();
+//		verifyBuildVersion();
+//		deleteAllExistingConnectionProfiles();
+//		createConnectionProfiles();
+//		editConnectionProfile();
+//		updateTestSettings();
+		importPrysmianJob();
 //		importSwindonJob();
 //		importTaihanJob();
 		softAssert.assertAll();

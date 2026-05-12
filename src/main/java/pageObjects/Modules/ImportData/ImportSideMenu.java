@@ -1,5 +1,6 @@
 package pageObjects.Modules.ImportData;
 
+import org.openqa.selenium.By.ByName;
 import org.openqa.selenium.WebElement;
 
 import base.BaseClass;
@@ -14,6 +15,11 @@ public class ImportSideMenu extends BaseClass{
 	public static WebElement prysmianType()
 	{
 		return driver.findElementByName("Prysmian");
+	}
+	
+	public static boolean isPrysmianTypeDisplayed()
+	{
+		return isElementDisplayed(ByName.name("Prysmian"), 5);
 	}
 	
 	public static WebElement swindonType()

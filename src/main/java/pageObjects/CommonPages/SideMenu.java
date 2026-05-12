@@ -8,11 +8,11 @@ import base.BaseClass;
 public class SideMenu extends BaseClass {
 
 	public static WebElement logOutButton() {
-		return driver.findElementByAccessibilityId("LogoutButton");
+		return driver.findElementByName("Sign out");
 	}
 
 	public static WebElement dashboardButton() {
-		return driver.findElement(By.xpath("//Text[@Name='Dashboard']"));
+		return driver.findElement(By.xpath("//Group[@AutomationId='MenuItemsHost']/ListItem[@Name='Dashboard']"));
 	}
 
 	public static WebElement aboutButton() {
