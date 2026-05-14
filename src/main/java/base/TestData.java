@@ -1,7 +1,7 @@
 package base;
 
 public class TestData {
-	public static String testEnvironment = "QA"; // Dev /QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
+	public static String testEnvironment = "Dev"; // Dev /QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
 	public static String expectedAppVersion = "7.6.10.0";
 	public static String org = "CAB";
 	public static boolean useOfficeOtdr = false;
@@ -11,26 +11,49 @@ public class TestData {
 	public static String openVpnAppPath = "C:\\Program Files\\OpenVPN Connect\\OpenVPNConnect.exe";
 	public static String SOR_Files_Path = "C:\\Users\\sumeeth\\Downloads\\SOR_Files_Downloaded_From_Automation";
 	public static String winAppDriverPath = "c:\\Program Files\\Windows Application Driver\\winappdriver.exe";
-	public static String OCR_Report_Path = "C:\\Users\\sumeeth\\AppData\\Local\\Packages\\"+appId().split("!")[0]+"\\LocalState\\Downloads\\"+org+"";
+	public static String OCR_Report_Path = "C:\\Users\\sumeeth\\AppData\\Local\\Packages\\" + appId().split("!")[0]
+			+ "\\LocalState\\Downloads\\" + org + "";
 	public static String prysmianAttenuationFilePath = "src/test/Resources/ImportFiles/PrysmianFiles/attenuation.csv";
-	public static String prysmianJacketOdFilePath = "src/test/Resources/ImportFiles/PrysmianFiles/jacketOD.csv";	
+	public static String prysmianJacketOdFilePath = "src/test/Resources/ImportFiles/PrysmianFiles/jacketOD.csv";
 	public static String secureStorageFolderPath = "C:\\Users\\sumeeth\\AppData\\Local\\Packages\\"
 			+ appId().split("!")[0] + "\\LocalState\\SecureStorage"; // Deleting this SecureStorage folder will delete
 																		// the login cache and app by default will be in
 																		// logged out state
-	
+
 	public static String prysmianOrg = "CAB";
 	public static String prysmianCutNumber = "11";
 	public static String prysmianItemOrgCode = "SPC";
 	public static String prysmiancutNumberInfo = "ZTEST01";
 	public static String prysmianImportType = "Fiber";
-	public static String prysmianExpectedIncompleteTests = "296";
-	public static String prysmianExpectedPassedTests = "589";
+	public static String prysmianExpectedIncompleteTests = "56";
+	public static String prysmianExpectedPassedTests = "103";
 	public static String prysmianExpectedFailedTests = "2";
-	public static String prysmianExpectedHelixFactor = "1.0363";
+	public static String prysmianExpectedHelixFactor = "1.0233";
 	public static String bufferTube = "10-BLUE";
-	
-	
+	public static String prysmianExpectedOtdrLength = "7879 m";
+
+	public static String swindonOrg = "CAB";
+	public static String swindonCutNumber = "12";
+	public static String swindonItemOrgCode = "SPC";
+	public static String swindoncutNumberInfo = "ZTEST02";
+	public static String swindonImportType = "Fiber";
+	public static String swindonExpectedIncompleteTests = "159";
+	public static String swindonExpectedPassedTests = "295";
+	public static String swindonExpectedFailedTests = "1";
+	public static String swindonExpectedHelixFactor = "1.02";
+	public static String swindonExpectedOtdrLength = "6253 m";
+
+	public static String taihanOrg = "CAB";
+	public static String taihanCutNumber = "12";
+	public static String taihanItemOrgCode = "SPC";
+	public static String taihancutNumberInfo = "ZTEST02";
+	public static String taihanImportType = "Fiber";
+	public static String taihanExpectedIncompleteTests = "291";
+	public static String taihanExpectedPassedTests = "576";
+	public static String taihanExpectedFailedTests = "2";
+	public static String taihanExpectedHelixFactor = "1.017";
+	public static String taihanExpectedOtdrLength = "6205 m";
+
 	public static String ecqtsAppUsername() {
 		String username = null;
 		switch (testEnvironment) {
@@ -80,14 +103,14 @@ public class TestData {
 		}
 		return password;
 	}
-	
+
 	public static String prodWebUrl = "https://www.ecqts.aflglobal.com";
 	public static String simulatorIP_Address = "54.219.138.1";
 	public static String simulatorPort = "65431";
 	public static String officeOTDR_IP_Address = "10.9.10.200";
 	public static String officeOTDR_Port = "2288";
-	public static String anritsu_9085_Ip_Address="192.168.10.10";
-	
+	public static String anritsu_9085_Ip_Address = "192.168.10.10";
+
 	public static String appId() {
 		String appId = null;
 		switch (testEnvironment) {

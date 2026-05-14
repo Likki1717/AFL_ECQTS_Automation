@@ -1,11 +1,12 @@
 package pageObjects.Modules.ImportData;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.By.ByName;
 import org.openqa.selenium.WebElement;
 
 import base.BaseClass;
 
-public class ImportSideMenu extends BaseClass{
+public class Import extends BaseClass{
 
 	public static WebElement standardType()
 	{
@@ -35,5 +36,15 @@ public class ImportSideMenu extends BaseClass{
 	public static WebElement qtsType()
 	{
 		return driver.findElementByName("QTS");
+	}
+	
+	public static boolean isImportLoaderGone()
+	{
+		return isElementNotDisplayed(By.xpath("//Text[contains(@Name,'Submitting') and contains(@Name,'import...')]"), 610);
+	}
+	
+	public static boolean isWarningsErrorsPopupDisplayed()
+	{
+		return isElementDisplayed(ByName.name("Warnings/Errors"), 5);
 	}
 }

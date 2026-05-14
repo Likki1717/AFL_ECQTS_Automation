@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.net.URI;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -19,8 +20,9 @@ import io.appium.java_client.windows.WindowsDriver;
 import pageObjects.CommonPages.Dashboard;
 import pageObjects.CommonPages.SideMenu;
 import pageObjects.CommonPages.SignIn;
-import pageObjects.Modules.FiberTest.JobDetails.JobDetailsHeader;
-import pageObjects.Modules.ImportData.ImportSideMenu;
+import pageObjects.Modules.FiberTest.JobSearch;
+import pageObjects.Modules.FiberTest.JobDetails.JobDetails;
+import pageObjects.Modules.ImportData.Import;
 import pageObjects.Modules.ImportData.Prysmian;
 import pageObjects.sideMenu.About;
 import pageObjects.sideMenu.Settings;
@@ -168,7 +170,7 @@ public class BaseClass {
 			capabilities.setCapability("platformName", "Windows");
 			capabilities.setCapability("deviceName", "WindowsPC");
 			capabilities.setCapability("automationName", "Windows");
-			capabilities.setCapability("ms:waitForAppLaunch", "3");
+			Thread.sleep(3000);
 			driver = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities);
 			actions = new Actions(driver);
 		} catch (Exception e) {
@@ -390,6 +392,10 @@ public class BaseClass {
 		}
 	}
 
+	public static void importJob() {
+
+	}
+
 	public static void importPrysmianJob() {
 		try {
 			while (!Dashboard.isImportDataModuleDisplayed()) {
@@ -398,10 +404,10 @@ public class BaseClass {
 				Thread.sleep(1000);
 			}
 			Dashboard.importDataModule().click();
-			softAssert.assertTrue(ImportSideMenu.isPrysmianTypeDisplayed(),
+			softAssert.assertTrue(Import.isPrysmianTypeDisplayed(),
 					"Waited for 5 seconds, Prysmian option on the Import side menu is not displayed");
 			Thread.sleep(500);
-			ImportSideMenu.prysmianType().click();
+			Import.prysmianType().click();
 			softAssert.assertTrue(Prysmian.isScreenLoadingMessageDisplayed(),
 					"Waited for 5 seconds, Screen loader did not display");
 			softAssert.assertTrue(Prysmian.isScreenLoadingMessageGone(),
@@ -443,61 +449,61 @@ public class BaseClass {
 			robot.keyPress(KeyEvent.VK_ENTER);
 			robot.keyRelease(KeyEvent.VK_ENTER);
 			Prysmian.submitButton().click();
-			boolean clickedOnOkButton = false;
-			int attemptsCount = 0;
-			while (clickedOnOkButton == false && attemptsCount < 660) {
-				try {
+			Thread.sleep(2000);
+			while (Import.isImportLoaderGone()) {
+				if (Prysmian.isImportSuccessfulPopupDisplayed()) {
+					String jobNumber = Prysmian.getJobNumberFromImportSuccessFulPopup();
 					Prysmian.okButton().click();
-					clickedOnOkButton = true;
-				} catch (Exception e) {
-					if(true) // isJobSuccessFullPopupDisplayed()
-					{
-//					code to fetch Job number and go to fiber test page
-					// click on OK on the missing fiber id popup
-//						break;
-					}
-				else
+					Dashboard.openNavigationButton().click();
+					SideMenu.dashboardButton().click();
+					Dashboard.fiberTestModule().click();
+					JobSearch.jobNumber().sendKeys(jobNumber + Keys.ENTER);
+					JobSearch.isJobWarningsPopupDisplayed();
+					JobSearch.okButton().click();
+					JobSearch.searchCutNumber().sendKeys(TestData.prysmianCutNumber + Keys.ENTER);
+					JobSearch.searchCutNumberInfo().sendKeys(TestData.prysmiancutNumberInfo + Keys.ENTER);
+					JobSearch.goButton().click();
+				}
+				else if(Import.isPrysmianTypeDisplayed())
 				{
-					Thread.sleep(1000);
-					attemptsCount++;
-					if (attemptsCount == 660) {
-						System.out.println("****Waited for 11 mins for missing fiber id popup****");
-					
+					System.out.println("****Import Failed****");
+					System.exit(0);
+				}
+				else if(Import.isWarningsErrorsPopupDisplayed())
+				{
+					System.out.println("****Import Failed****");
+					System.exit(0);
 				}
 					}
-				}
-			}
-//			isProtectionLayerTabDisplayed
-			System.out.println("Job Number: " + JobDetailsHeader.job_Number().getText().trim());
-			if (!JobDetailsHeader.test_Results()
-					.equalsIgnoreCase("Incomplete: " + TestData.prysmianExpectedIncompleteTests + ", Passed: "
-							+ TestData.prysmianExpectedPassedTests + ", Failed: "
-							+ TestData.prysmianExpectedFailedTests)) {
-				System.out.println("****Prysmian Import Job Status Count is not as expected****");
-				System.out.println(
-						"Expected Test Status was: " + "Incomplete: " + TestData.prysmianExpectedIncompleteTests
-								+ ", Passed: " + TestData.prysmianExpectedPassedTests + ", Failed: "
-								+ TestData.prysmianExpectedFailedTests);
-				System.out.println("Current  Status found is: " + JobDetailsHeader.test_Results());
-			}
-
-			if (!JobDetailsHeader.helix_Factor().getText().trim()
-					.equalsIgnoreCase(TestData.prysmianExpectedHelixFactor)) {
-				System.out.println("\n****Prysmian Import Job Helix Factor is not as expected****");
-				System.out.println("Expected Helix Factor was: " + TestData.prysmianExpectedHelixFactor);
-				System.out
-						.println("Current  Helix Factor found is: " + JobDetailsHeader.helix_Factor().getText().trim());
-			}
 			
-			if(true) // fetch OTDR length and compare if it matches with expected OTDR length 
+			if(JobDetails.isMissingFiberIdWarningPopupDisplayed())
 			{
-				
+				JobDetails.okButton().click();
 			}
 
-		} catch (Exception e) {
+	// Waiting for protection layer tab to confirm data is loaded
+
+	softAssert.assertTrue(JobDetails.isProtectionLayerTabDisplayed(),"Tried for 5 seconds, Protection Layer tab is not displayed");
+
+	System.out.println("Prysmian Import Job Number: "+JobDetails.jobNumber().getText().trim());
+
+	// Validating OTDR length is not 0 and its as expected
+
+	softAssert.assertEquals(JobDetails.OTDR_Length().getText(),TestData.prysmianExpectedOtdrLength,"OTDR Length mismatch. Expected: "+TestData.prysmianExpectedOtdrLength+" but found: "+JobDetails.OTDR_Length().getText());
+
+	String expectedTestResultsCounts = "Incomplete: " + TestData.prysmianExpectedIncompleteTests + ", Passed: "
+			+ TestData.prysmianExpectedPassedTests + ", Failed: " + TestData.prysmianExpectedFailedTests;
+
+	// Validating if Test Results counts are as per the file we imported
+	softAssert.assertEquals(JobDetails.getActualTestResultsCounts(),expectedTestResultsCounts,"Prysmian Import Job results count is not as expected, \n Expected: "+expectedTestResultsCounts+" But found: "+JobDetails.getActualTestResultsCounts());
+
+	// Validating Helix Factor
+	softAssert.assertEquals(JobDetails.helixFactor().getText().trim(),TestData.prysmianExpectedHelixFactor,"Prysmian Import Job Helix Factor is not as expected, \n Expected Helix Factor was: "+TestData.prysmianExpectedHelixFactor+" But found: "+JobDetails.helixFactor().getText().trim());}catch(
+	Exception e)
+	{
 			System.out.println("****Exception in importPrysmianJob()****");
 		}
-	}
+}
 
 //	public static void importSwindonJob() {
 //		try {

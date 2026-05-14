@@ -68,8 +68,21 @@ public class Prysmian extends BaseClass {
 	public static WebElement fileNameTextBox() {
 		return driver.findElement(By.xpath("//ComboBox[@Name='File name:']/Edit"));
 	}
-	
+
 	public static boolean isFileNameTextBoxDisplayed() {
 		return isElementDisplayed(ByName.name("File name:"), 10);
+	}
+
+	public static String getJobNumberFromImportSuccessFulPopup() {
+		// Name Job imported successfully, but we couldn't load the job details right
+		// now.
+		// Please go to FIBER Test and search for Job Number: 90043053-159 to view the
+		// job details.
+		return driver.findElement(By.xpath("//Text[contains(@Name,'Job imported successfully')]")).getText()
+				.split("Job Number: ")[1].split(" ")[0];
+	}
+
+	public static boolean isImportSuccessfulPopupDisplayed() {
+		return isElementDisplayed(By.xpath("//Text[contains(@Name,'Job imported successfully')]"), 1);
 	}
 }
