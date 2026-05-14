@@ -20,12 +20,15 @@ import io.appium.java_client.windows.WindowsDriver;
 import pageObjects.CommonPages.Dashboard;
 import pageObjects.CommonPages.SideMenu;
 import pageObjects.CommonPages.SignIn;
+import pageObjects.Modules.FiberTest.JobDetailsPage;
 import pageObjects.Modules.FiberTest.JobSearch;
-import pageObjects.Modules.FiberTest.JobDetails.JobDetails;
+import pageObjects.Modules.FiberTest.JobDetails.FiberResults;
+import pageObjects.Modules.FiberTest.JobDetails.OTDR_Settings;
 import pageObjects.Modules.ImportData.Import;
 import pageObjects.Modules.ImportData.Prysmian;
 import pageObjects.sideMenu.About;
 import pageObjects.sideMenu.Settings;
+import pageObjects.sideMenu.settings.ApplicationSettings;
 import pageObjects.sideMenu.settings.ConnectionProfiles;
 import pageObjects.sideMenu.settings.TestSettings;
 
@@ -55,7 +58,8 @@ public class BaseClass {
 				System.exit(0);
 			}
 		}
-
+		
+		deleteAttempts = 0;
 		File OcrReportFolder = new File(TestData.OCR_Report_Path);
 
 		// Delete the OCR Report folder if it exists, to verify if the newly downloaded
@@ -66,7 +70,7 @@ public class BaseClass {
 				deleteDirectory(OcrReportFolder);
 			} else {
 				// If deletion failed, likely due to files being in use
-				System.out.println("****Close any open app / file and run the script again****");
+				System.out.println("*****Close any open app / file and run the script again*****");
 				System.exit(0);
 			}
 		}
@@ -96,7 +100,7 @@ public class BaseClass {
 	public static void launchOpenVpnAppAndConnect() throws Exception {
 		if (TestData.useOfficeOtdr) {
 			launchDependentApplication(TestData.openVpnAppPath);
-			robot.delay(2000);
+			robot.delay(3000);
 			for (int i = 0; i < 4; i++) {
 				robot.keyPress(KeyEvent.VK_TAB);
 				robot.keyRelease(KeyEvent.VK_TAB);
@@ -125,6 +129,18 @@ public class BaseClass {
 	}
 
 	public static void copyPasteAndClickEnter(String textToCopy) {
+		robot.keyPress(KeyEvent.VK_CONTROL);
+		robot.keyPress(KeyEvent.VK_A);
+
+		robot.keyRelease(KeyEvent.VK_A);
+		robot.keyRelease(KeyEvent.VK_CONTROL);
+
+		robot.delay(200);
+
+		robot.keyPress(KeyEvent.VK_DELETE);
+		robot.keyRelease(KeyEvent.VK_DELETE);
+
+		robot.delay(200);
 		// Copy path to clipboard
 		StringSelection selection = new StringSelection(textToCopy);
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
@@ -170,7 +186,7 @@ public class BaseClass {
 			capabilities.setCapability("platformName", "Windows");
 			capabilities.setCapability("deviceName", "WindowsPC");
 			capabilities.setCapability("automationName", "Windows");
-			Thread.sleep(3000);
+			Thread.sleep(5000);
 			driver = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities);
 			actions = new Actions(driver);
 		} catch (Exception e) {
@@ -310,10 +326,10 @@ public class BaseClass {
 	}
 
 	public static void createConnectionProfiles() {
-		createProfile("JGR-1", TestData.simulatorIP_Address, TestData.simulatorPort);
-		createProfile("JGR-2", TestData.simulatorIP_Address, TestData.simulatorPort);
-		createProfile("Office OTDR", TestData.officeOTDR_IP_Address, TestData.officeOTDR_Port);
-		createProfile("Simulator", TestData.simulatorIP_Address, TestData.simulatorPort);
+		createProfile(TestData.jgrOneProfileName, TestData.simulatorIP_Address, TestData.simulatorPort);
+		createProfile(TestData.jgrTwoProfileName, TestData.simulatorIP_Address, TestData.simulatorPort);
+		createProfile(TestData.officeOtdrProfileName, TestData.officeOTDR_IP_Address, TestData.officeOTDR_Port);
+		createProfile(TestData.simulatorProfileName, TestData.simulatorIP_Address, TestData.simulatorPort);
 	}
 
 	public static void validateSuccessfulConnectionPopup() {
@@ -380,8 +396,8 @@ public class BaseClass {
 			Settings.isTestSettingsButtonDisplayed();
 			Settings.testSettingsButton().click();
 			softAssert.assertTrue(TestSettings.isDisplayRealTimePlotToogleDisplayed(),
-					"Tried for 3 secs, Display real time plot settings toggle is not displayed ");
-			if (TestSettings.displayRealTimetoggle().isSelected()) {
+					"Waited for 3 secs, Display real time plot settings toggle is not displayed ");
+			if (TestData.useOfficeOtdr != TestSettings.displayRealTimetoggle().isSelected()) {
 				TestSettings.displayRealTimetoggle().click();
 			}
 			if (TestSettings.enableOfflineReportsToggle().isSelected()) {
@@ -389,6 +405,40 @@ public class BaseClass {
 			}
 		} catch (Exception e) {
 			System.out.println("****Exception in updateTestSettings()****");
+		}
+	}
+
+	public static void updateApplicationSettings() {
+		try {
+			if (!Settings.isTestSettingsButtonDisplayed()) {
+				Dashboard.openNavigationButton().click();
+				SideMenu.settingsButton().click();
+			}
+			Settings.isTestSettingsButtonDisplayed();
+			Settings.applicationSettingsButton().click();
+			softAssert.assertTrue(ApplicationSettings.isCameraSourceDropDownDisplayed(),
+					"Waited for 3 secs, Camera source drop down is not displayed ");
+			if (TestData.useExternalCamera == ApplicationSettings.cameraSourceDropDown().getText()
+					.contains("Integrated Camera")) {
+				ApplicationSettings.cameraSourceDropDown().click();
+				if(TestData.useExternalCamera)
+				{
+					if(ApplicationSettings.isExternalCameraDisplayed())
+					{
+						ApplicationSettings.externalCamera().click();
+					}
+					else
+					{
+						System.out.println("****External camera is not available to select****");
+					}
+				}
+				else
+				{
+					ApplicationSettings.integratedCamera().click();
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("****Exception in updateApplicationSettings()****");
 		}
 	}
 
@@ -423,11 +473,12 @@ public class BaseClass {
 			Prysmian.itemOrgCode().sendKeys(TestData.prysmianItemOrgCode);
 			robot.keyPress(KeyEvent.VK_TAB);
 			robot.keyRelease(KeyEvent.VK_TAB);
-			Thread.sleep(500);
+			Thread.sleep(1000);
 			Prysmian.cutNumberInfo().sendKeys(TestData.prysmiancutNumberInfo);
+			Thread.sleep(500);
 			robot.keyPress(KeyEvent.VK_TAB);
 			robot.keyRelease(KeyEvent.VK_TAB);
-			Thread.sleep(500);
+			Thread.sleep(1000);
 			Prysmian.importType().sendKeys(TestData.prysmianImportType);
 			robot.keyPress(KeyEvent.VK_TAB);
 			robot.keyRelease(KeyEvent.VK_TAB);
@@ -448,62 +499,64 @@ public class BaseClass {
 			Thread.sleep(500);
 			robot.keyPress(KeyEvent.VK_ENTER);
 			robot.keyRelease(KeyEvent.VK_ENTER);
+
+			if (!Prysmian.cutNumberInfo().getText().equals(TestData.prysmiancutNumberInfo)) {
+				System.out.println(
+						"****Cut number info did not get selected as given in test data, hence stopping execution****");
+				System.exit(0);
+			}
+
 			Prysmian.submitButton().click();
 			Thread.sleep(2000);
 			while (Import.isImportLoaderGone()) {
 				if (Prysmian.isImportSuccessfulPopupDisplayed()) {
-					String jobNumber = Prysmian.getJobNumberFromImportSuccessFulPopup();
+					String prysmianJobNumber = Prysmian.getJobNumberFromImportSuccessFulPopup();
 					Prysmian.okButton().click();
-					Dashboard.openNavigationButton().click();
-					SideMenu.dashboardButton().click();
-					Dashboard.fiberTestModule().click();
-					JobSearch.jobNumber().sendKeys(jobNumber + Keys.ENTER);
-					JobSearch.isJobWarningsPopupDisplayed();
-					JobSearch.okButton().click();
-					JobSearch.searchCutNumber().sendKeys(TestData.prysmianCutNumber + Keys.ENTER);
-					JobSearch.searchCutNumberInfo().sendKeys(TestData.prysmiancutNumberInfo + Keys.ENTER);
-					JobSearch.goButton().click();
-				}
-				else if(Import.isPrysmianTypeDisplayed())
-				{
+					searchJobAndNavigationToJobDetailsPage(prysmianJobNumber, TestData.prysmianCutNumber,
+							TestData.prysmiancutNumberInfo);
+				} else if (Import.isPrysmianTypeDisplayed()) {
+					System.out.println("****Import Failed****");
+					System.exit(0);
+				} else if (Import.isWarningsErrorsPopupDisplayed()) {
 					System.out.println("****Import Failed****");
 					System.exit(0);
 				}
-				else if(Import.isWarningsErrorsPopupDisplayed())
-				{
-					System.out.println("****Import Failed****");
-					System.exit(0);
-				}
-					}
-			
-			if(JobDetails.isMissingFiberIdWarningPopupDisplayed())
-			{
-				JobDetails.okButton().click();
 			}
 
-	// Waiting for protection layer tab to confirm data is loaded
+			if (JobDetailsPage.isMissingFiberIdWarningPopupDisplayed()) {
+				JobDetailsPage.okButton().click();
+			}
 
-	softAssert.assertTrue(JobDetails.isProtectionLayerTabDisplayed(),"Tried for 5 seconds, Protection Layer tab is not displayed");
+			// Waiting for protection layer tab to confirm data is loaded
 
-	System.out.println("Prysmian Import Job Number: "+JobDetails.jobNumber().getText().trim());
+			softAssert.assertTrue(JobDetailsPage.isProtectionLayerTabDisplayed(),
+					"Tried for 5 seconds, Protection Layer tab is not displayed");
 
-	// Validating OTDR length is not 0 and its as expected
+			System.out.println("Prysmian Import Job Number: " + JobDetailsPage.jobNumber().getText().trim());
 
-	softAssert.assertEquals(JobDetails.OTDR_Length().getText(),TestData.prysmianExpectedOtdrLength,"OTDR Length mismatch. Expected: "+TestData.prysmianExpectedOtdrLength+" but found: "+JobDetails.OTDR_Length().getText());
+			// Validating OTDR length is not 0 and its as expected
 
-	String expectedTestResultsCounts = "Incomplete: " + TestData.prysmianExpectedIncompleteTests + ", Passed: "
-			+ TestData.prysmianExpectedPassedTests + ", Failed: " + TestData.prysmianExpectedFailedTests;
+			softAssert.assertEquals(JobDetailsPage.OTDR_Length().getText(), TestData.prysmianExpectedOtdrLength,
+					"OTDR Length mismatch. Expected: " + TestData.prysmianExpectedOtdrLength + " but found: "
+							+ JobDetailsPage.OTDR_Length().getText());
 
-	// Validating if Test Results counts are as per the file we imported
-	softAssert.assertEquals(JobDetails.getActualTestResultsCounts(),expectedTestResultsCounts,"Prysmian Import Job results count is not as expected, \n Expected: "+expectedTestResultsCounts+" But found: "+JobDetails.getActualTestResultsCounts());
+			String expectedTestResultsCounts = "Incomplete: " + TestData.prysmianExpectedIncompleteTests + ", Passed: "
+					+ TestData.prysmianExpectedPassedTests + ", Failed: " + TestData.prysmianExpectedFailedTests;
 
-	// Validating Helix Factor
-	softAssert.assertEquals(JobDetails.helixFactor().getText().trim(),TestData.prysmianExpectedHelixFactor,"Prysmian Import Job Helix Factor is not as expected, \n Expected Helix Factor was: "+TestData.prysmianExpectedHelixFactor+" But found: "+JobDetails.helixFactor().getText().trim());}catch(
-	Exception e)
-	{
+			// Validating if Test Results counts are as per the file we imported
+			softAssert.assertEquals(JobDetailsPage.getActualTestResultsCounts(), expectedTestResultsCounts,
+					"Prysmian Import Job results count is not as expected, \n Expected: " + expectedTestResultsCounts
+							+ " But found: " + JobDetailsPage.getActualTestResultsCounts());
+
+			// Validating Helix Factor
+			softAssert.assertEquals(JobDetailsPage.helixFactor().getText().trim(), TestData.prysmianExpectedHelixFactor,
+					"Prysmian Import Job Helix Factor is not as expected, \n Expected Helix Factor was: "
+							+ TestData.prysmianExpectedHelixFactor + " But found: "
+							+ JobDetailsPage.helixFactor().getText().trim());
+		} catch (Exception e) {
 			System.out.println("****Exception in importPrysmianJob()****");
 		}
-}
+	}
 
 //	public static void importSwindonJob() {
 //		try {
@@ -676,4 +729,76 @@ public class BaseClass {
 //			System.out.println("****Exception in importTaihanJob()****");
 //		}
 //	}
+
+	public static void searchJobAndNavigationToJobDetailsPage(String jobNumber, String cutNumber, String cutNumberInfo)
+			throws InterruptedException {
+		while (!Dashboard.isImportDataModuleDisplayed()) {
+			Dashboard.openNavigationButton().click();
+			SideMenu.dashboardButton().click();
+			Thread.sleep(1000);
+		}
+		Dashboard.fiberTestModule().click();
+		JobSearch.isJobNumberLabelDisplayed();
+		JobSearch.jobNumber().sendKeys(jobNumber);
+		Thread.sleep(500);
+		actions.sendKeys(Keys.ENTER).perform();
+		JobSearch.isJobWarningsPopupDisplayed();
+		JobSearch.okButton().click();
+		wait = new WebDriverWait(driver, 20);
+		wait.until(ExpectedConditions.elementToBeClickable(JobSearch.searchCutNumber()));
+		JobSearch.searchCutNumber().sendKeys(cutNumber);
+		actions.sendKeys(Keys.ENTER).perform();
+		JobSearch.searchCutNumberInfo().clear();
+		JobSearch.searchCutNumberInfo().sendKeys(cutNumberInfo);
+		actions.sendKeys(Keys.ENTER).perform();
+		JobSearch.goButton().click();
+		softAssert.assertTrue(JobDetailsPage.isProtectionLayerTabDisplayed(),
+				"Tried for 50 seconds, Protection Layer tab is not displayed");
+	}
+
+	public static void runGetLengthTest() {
+		JobDetailsPage.OTDR_Settings().click();
+		softAssert.assertTrue(OTDR_Settings.isConnectionProfileDropDownDisplayed(),
+				"Waited for 50 seconds, connection profiles drop down on OTDR settings page is not displayed");
+		OTDR_Settings.connectionProfile().sendKeys(TestData.OTDR_Settings_ConnectionProfile);
+		OTDR_Settings.launchLength().clear();
+		OTDR_Settings.launchLength().sendKeys(TestData.OTDR_Settings_LaunchLength);
+		OTDR_Settings.cutLength().clear();
+		OTDR_Settings.cutLength().sendKeys(TestData.OTDR_Settings_CutLength);
+		OTDR_Settings.horizontal().clear();
+		OTDR_Settings.horizontal().sendKeys(TestData.OTDR_Settings_Horizontal);
+		OTDR_Settings.vertical().clear();
+		OTDR_Settings.vertical().sendKeys(TestData.OTDR_Settings_Vertical);
+		OTDR_Settings.getLengthButton().click();
+		softAssert.assertTrue(OTDR_Settings.isOkButtonDisplayed(),
+				"Waited for 50 seconds, Ok button on get length popup is not displayed");
+		wait = new WebDriverWait(driver, 20);
+		wait.until(ExpectedConditions.elementToBeClickable(OTDR_Settings.okButton()));
+		OTDR_Settings.okButton().click();
+	}
+	
+	public static void runTestInLoop() throws InterruptedException
+	{
+		JobDetailsPage.isProtectionLayerTabDisplayed();
+		wait = new WebDriverWait(driver, 30);
+		wait.until(ExpectedConditions.elementToBeClickable(JobDetailsPage.bufferTube()));
+		JobDetailsPage.bufferTube().click();
+		FiberResults.isRunTestsButtonDisplayed();
+		FiberResults.showTracesButton().click();
+		Thread.sleep(3000);
+		FiberResults.showMoreInfoButton().click();
+		Thread.sleep(3000);
+		FiberResults.isRunTestsButtonDisplayed();
+		wait.until(ExpectedConditions.elementToBeClickable(FiberResults.run_Tests_Button()));
+		FiberResults.run_Tests_Button().click();
+		while(true)
+		{
+			FiberResults.isOkButtonDisplayed();
+			wait.until(ExpectedConditions.elementToBeClickable(FiberResults.ok_Button()));
+			FiberResults.ok_Button().click();
+			FiberResults.isGoToFiberButtonVisible();
+			FiberResults.isReTestsButtonDisplayed();
+			FiberResults.reTestButton().click();	
+		}
+	}
 }

@@ -1,24 +1,23 @@
-package pageObjects.Modules.FiberTest.JobDetails;
+package pageObjects.Modules.FiberTest;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.By.ByName;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import base.BaseClass;
 import base.TestData;
 
-public class JobDetails extends BaseClass {
+public class JobDetailsPage extends BaseClass {
 
 	public static WebElement jobNumber() {
 		return driver.findElement(By.xpath("//Text[@AutomationId='JobNumberValueLabel']"));
 	}
 
-	public static WebElement cut_Number() {
+	public static WebElement cutNumber() {
 		return driver.findElement(By.xpath("//Text[@AutomationId='CutNumberValueLabel']"));
 	}
 
-	public static WebElement cut_Number_info() {
+	public static WebElement cutNumberinfo() {
 		return driver.findElement(By.xpath("//Text[@AutomationId='CutNumberInfoValueLabel']"));
 	}
 
@@ -26,14 +25,7 @@ public class JobDetails extends BaseClass {
 		return driver.findElement(By.xpath("//Text[@Name='OTDR Length:']/following-sibling::Text"));
 	}
 
-	public static WebElement protection_Layer() {
-		By completionTab = By.xpath("//ListItem[@Name='ECS.Entities.Qts.FiberTab']//Text[@Name='Completion']");
-		wait.until(ExpectedConditions.presenceOfElementLocated(completionTab));
-		try {
-//			JobDetails_Page.ok_Button().click();
-		} catch (Exception e) {
-
-		}
+	public static WebElement protectionLayer() {
 		return driver.findElementByName("Protection Layer");
 	}
 
@@ -45,14 +37,13 @@ public class JobDetails extends BaseClass {
 		return driver.findElementByName("Optics");
 	}
 
-	public static WebElement buffer_Tube() {
-		return driver.findElement(By.xpath("//ListItem[@Name='ECS.Entities.Qts.BufferTube']//Custom[@AutomationId='"
-				+ TestData.bufferTube + "Button']"));
+	public static WebElement bufferTube() {
+		return driver.findElement(By.xpath(
+				"//ListItem[@AutomationId='OpticsButton']//Text[@Name='"+TestData.bufferTube+"']"));
 	}
 
 	public static WebElement completion() throws Exception {
-		By element = By.xpath("//ListItem[@Name='ECS.Entities.Qts.FiberTab']//Text[@Name='Completion']");
-		return driver.findElement(element);
+		return driver.findElement(By.xpath("//ListItem[@Name='ECS.Entities.Qts.FiberTab']//Text[@Name='Completion']"));
 	}
 
 	public static WebElement reports() {
@@ -110,9 +101,9 @@ public class JobDetails extends BaseClass {
 	}
 
 	public static boolean isProtectionLayerTabDisplayed() {
-		return isElementDisplayed(ByName.name("Protection Layer"), 5);
+		return isElementDisplayed(ByName.name("Protection Layer"), 50);
 	}
-	
+
 	public static boolean isMissingFiberIdWarningPopupDisplayed() {
 		return isElementDisplayed(ByName.name("Missing Fiber Id; Please create a NCMIR;"), 50);
 	}

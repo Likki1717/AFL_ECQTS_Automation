@@ -3,8 +3,9 @@ package base;
 public class TestData {
 	public static String testEnvironment = "Dev"; // Dev /QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
 	public static String expectedAppVersion = "7.6.10.0";
-	public static String org = "CAB";
-	public static boolean useOfficeOtdr = false;
+	public static String jobSearchOrg = "CAB";
+	public static boolean useOfficeOtdr = true;
+	public static boolean useExternalCamera = true;
 	public static String vpnAppPassword = "kumar@123";
 
 	// All local paths to be updated from system
@@ -12,7 +13,7 @@ public class TestData {
 	public static String SOR_Files_Path = "C:\\Users\\sumeeth\\Downloads\\SOR_Files_Downloaded_From_Automation";
 	public static String winAppDriverPath = "c:\\Program Files\\Windows Application Driver\\winappdriver.exe";
 	public static String OCR_Report_Path = "C:\\Users\\sumeeth\\AppData\\Local\\Packages\\" + appId().split("!")[0]
-			+ "\\LocalState\\Downloads\\" + org + "";
+			+ "\\LocalState\\Downloads\\" + jobSearchOrg + "";
 	public static String prysmianAttenuationFilePath = "src/test/Resources/ImportFiles/PrysmianFiles/attenuation.csv";
 	public static String prysmianJacketOdFilePath = "src/test/Resources/ImportFiles/PrysmianFiles/jacketOD.csv";
 	public static String secureStorageFolderPath = "C:\\Users\\sumeeth\\AppData\\Local\\Packages\\"
@@ -53,6 +54,10 @@ public class TestData {
 	public static String taihanExpectedFailedTests = "2";
 	public static String taihanExpectedHelixFactor = "1.017";
 	public static String taihanExpectedOtdrLength = "6205 m";
+
+	public static String jobSearchJobNumber = "25305754";
+	public static String jobSearchCutNumber = new java.text.SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
+	public static String jobSearchCutNumberInfo = "ZTEST01";
 
 	public static String ecqtsAppUsername() {
 		String username = null;
@@ -105,11 +110,22 @@ public class TestData {
 	}
 
 	public static String prodWebUrl = "https://www.ecqts.aflglobal.com";
+
+	public static String simulatorProfileName = "Simulator";
+	public static String jgrOneProfileName = "JGR-1";
+	public static String jgrTwoProfileName = "JGR-2";
+	public static String officeOtdrProfileName = "Office OTDR";
 	public static String simulatorIP_Address = "54.219.138.1";
 	public static String simulatorPort = "65431";
 	public static String officeOTDR_IP_Address = "10.9.10.200";
 	public static String officeOTDR_Port = "2288";
 	public static String anritsu_9085_Ip_Address = "192.168.10.10";
+
+	public static String OTDR_Settings_ConnectionProfile = useOfficeOtdr ? officeOtdrProfileName : simulatorProfileName;
+	public static String OTDR_Settings_LaunchLength = useOfficeOtdr ? "55" : "1000";
+	public static String OTDR_Settings_CutLength = useOfficeOtdr ? "10000" : "1000";
+	public static String OTDR_Settings_Horizontal = "10";
+	public static String OTDR_Settings_Vertical = "-10";
 
 	public static String appId() {
 		String appId = null;

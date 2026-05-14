@@ -3,15 +3,14 @@ package DesktopApplicationTests;
 import org.testng.annotations.Test;
 
 import base.BaseClass;
+import base.TestData;
 
-public class RegressionTests extends BaseClass
-{
+public class RegressionTests extends BaseClass {
 	@Test
-	public static void runRegressionTestSuite() throws Exception
-	{
+	public static void runRegressionTestSuite() throws Exception {
 		clearPreviousSessionData();
 		launchWinAppDriver();
-//		launchOpenVpnAppAndConnect();
+		launchOpenVpnAppAndConnect();
 		launch_ECQTS_Application();
 //		verifyIncorrectCredentials();
 		loginToApplication();
@@ -19,10 +18,15 @@ public class RegressionTests extends BaseClass
 //		deleteAllExistingConnectionProfiles();
 //		createConnectionProfiles();
 //		editConnectionProfile();
-//		updateTestSettings();
-		importPrysmianJob();
+		updateTestSettings();
+		updateApplicationSettings();
+//		importPrysmianJob();
 //		importSwindonJob();
 //		importTaihanJob();
+		searchJobAndNavigationToJobDetailsPage(TestData.jobSearchJobNumber, TestData.jobSearchCutNumber,
+				TestData.jobSearchCutNumberInfo);
+		runGetLengthTest();
+		runTestInLoop();
 		softAssert.assertAll();
 	}
 }
