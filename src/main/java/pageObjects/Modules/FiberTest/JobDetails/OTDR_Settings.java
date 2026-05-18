@@ -56,5 +56,8 @@ public class OTDR_Settings extends BaseClass {
 	public static WebElement getLengthHistory() {
 		return driver.findElement(By.xpath("//Custom[@AutomationId='SalesOrderPicker']/Custom/Text"));
 	}
-
+	
+	public static boolean isGetLengthHistoryDropDownFieldDisplayed() {
+		return isElementDisplayed(ByAccessibilityId.AccessibilityId("OtdrSettingsHistoryPicker"), 50);
+	}
 }

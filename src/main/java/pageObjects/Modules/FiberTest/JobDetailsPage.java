@@ -9,18 +9,6 @@ import base.TestData;
 
 public class JobDetailsPage extends BaseClass {
 
-	public static WebElement jobNumber() {
-		return driver.findElement(By.xpath("//Text[@AutomationId='JobNumberValueLabel']"));
-	}
-
-	public static WebElement cutNumber() {
-		return driver.findElement(By.xpath("//Text[@AutomationId='CutNumberValueLabel']"));
-	}
-
-	public static WebElement cutNumberinfo() {
-		return driver.findElement(By.xpath("//Text[@AutomationId='CutNumberInfoValueLabel']"));
-	}
-
 	public static WebElement OTDR_Length() {
 		return driver.findElement(By.xpath("//Text[@Name='OTDR Length:']/following-sibling::Text"));
 	}
@@ -38,8 +26,9 @@ public class JobDetailsPage extends BaseClass {
 	}
 
 	public static WebElement bufferTube() {
-		return driver.findElement(By.xpath(
-				"//ListItem[@AutomationId='OpticsButton']//Text[@Name='"+TestData.bufferTube+"']"));
+		return driver
+				.findElement(By.xpath("//Text[@AutomationId='OpticsButton']/../following-sibling::ListItem/Text[@Name='"
+						+ TestData.bufferTube + "']"));
 	}
 
 	public static WebElement completion() throws Exception {
@@ -108,4 +97,19 @@ public class JobDetailsPage extends BaseClass {
 		return isElementDisplayed(ByName.name("Missing Fiber Id; Please create a NCMIR;"), 50);
 	}
 
+	public static WebElement org() {
+		return driver.findElement(By.xpath("//Text[@Name='Org Code:']/following-sibling::Text"));
+	}
+
+	public static WebElement jobNumber() {
+		return driver.findElement(By.xpath("//Text[@Name='Job Number:']/following-sibling::Text"));
+	}
+
+	public static WebElement cutNumber() {
+		return driver.findElement(By.xpath("//Text[@Name='Cut Number:']/following-sibling::Text"));
+	}
+
+	public static WebElement cutNumberInfo() {
+		return driver.findElement(By.xpath("//Text[@Name='Cut Info:']/following-sibling::Text"));
+	}
 }

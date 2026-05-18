@@ -37,15 +37,19 @@ public class FiberResults extends BaseClass {
 	}
 	
 	public static boolean isRunTestsButtonDisplayed() {
-		return isElementDisplayed(By.xpath("(//Button[@Name='Run Tests'])[1]"), 10);
+		return isElementDisplayed(By.xpath("(//Button[@Name='Run Tests'])[1]"), 3);
 	}
 	
 	public static boolean isReTestsButtonDisplayed() {
 		return isElementDisplayed(ByAccessibilityId.AccessibilityId("RetestButton"), 120);
 	}
 	
-	public static WebElement reTestButton() {
-		return driver.findElementByAccessibilityId("RetestButton");
+	public static WebElement stopButton() {
+		return driver.findElementByAccessibilityId("StopButton");
+	}
+	
+	public static WebElement cancelButton() {
+		return driver.findElementByAccessibilityId("CancelButton");
 	}
 	
 	public static boolean isOkButtonDisplayed() {
@@ -69,7 +73,11 @@ public class FiberResults extends BaseClass {
 	}
 
 	public static boolean isGoToFiberButtonVisible() {
-		return isElementDisplayed(By.xpath("//Button[@Name='Go to Fiber']"), 10);
+		return isElementDisplayed(ByAccessibilityId.AccessibilityId("GoToFiberButton"), 10);
+	}
+	
+	public static boolean isGoToFiberButtonNotVisible() {
+		return isElementNotDisplayed(ByAccessibilityId.AccessibilityId("GoToFiberButton"), 10);
 	}
 
 	public static WebElement showTracesButton()

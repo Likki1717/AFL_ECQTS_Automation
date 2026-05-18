@@ -31,4 +31,8 @@ public class Dashboard extends BaseClass {
 	public static boolean isImportDataModuleDisplayed() {
 		return isElementDisplayed(ByAccessibilityId.AccessibilityId("Import DataButton"), 2);
 	}
+	
+	public static WebElement backArrow() {
+		return driver.findElementByAccessibilityId("NavigationViewBackButton");
+	}
 }

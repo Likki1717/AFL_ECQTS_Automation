@@ -38,7 +38,7 @@ public class Import extends BaseClass{
 		return driver.findElementByName("QTS");
 	}
 	
-	public static boolean isImportLoaderGone()
+	public static boolean isImportLoaderNotDisplayed()
 	{
 		return isElementNotDisplayed(By.xpath("//Text[contains(@Name,'Submitting') and contains(@Name,'import...')]"), 610);
 	}

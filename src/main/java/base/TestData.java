@@ -32,6 +32,7 @@ public class TestData {
 	public static String prysmianExpectedHelixFactor = "1.0233";
 	public static String bufferTube = "10-BLUE";
 	public static String prysmianExpectedOtdrLength = "7879 m";
+	public static String prysmianJobNumberStartsWith = "90043053";
 
 	public static String swindonOrg = "CAB";
 	public static String swindonCutNumber = "12";

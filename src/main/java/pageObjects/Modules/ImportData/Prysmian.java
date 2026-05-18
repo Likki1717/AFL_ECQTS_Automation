@@ -12,7 +12,7 @@ public class Prysmian extends BaseClass {
 		return isElementDisplayed(ByName.name("Loading..."), 5);
 	}
 
-	public static boolean isScreenLoadingMessageGone() {
+	public static boolean isScreenLoadingMessageNotDisplayed() {
 		return isElementNotDisplayed(ByName.name("Loading..."), 10);
 	}
 

@@ -8,25 +8,29 @@ import base.TestData;
 public class RegressionTests extends BaseClass {
 	@Test
 	public static void runRegressionTestSuite() throws Exception {
+		launchOpenVpnAppAndConnect();
 		clearPreviousSessionData();
 		launchWinAppDriver();
-		launchOpenVpnAppAndConnect();
 		launch_ECQTS_Application();
-//		verifyIncorrectCredentials();
+		verifyIncorrectCredentials();
 		loginToApplication();
-//		verifyBuildVersion();
-//		deleteAllExistingConnectionProfiles();
-//		createConnectionProfiles();
-//		editConnectionProfile();
+		verifyBuildVersion();
+		deleteAllExistingConnectionProfiles();
+		createConnectionProfiles();
+		editConnectionProfile();
 		updateTestSettings();
 		updateApplicationSettings();
-//		importPrysmianJob();
+		importPrysmianJob();
 //		importSwindonJob();
 //		importTaihanJob();
-		searchJobAndNavigationToJobDetailsPage(TestData.jobSearchJobNumber, TestData.jobSearchCutNumber,
+		searchJobAndNavigationToJobDetailsPage(TestData.jobSearchOrg, TestData.jobSearchJobNumber, TestData.jobSearchCutNumber,
 				TestData.jobSearchCutNumberInfo);
+		verifyJobDetailsHeader(TestData.jobSearchOrg, TestData.jobSearchJobNumber, TestData.jobSearchCutNumber, TestData.jobSearchCutNumberInfo);
+		enterProtectionLayerValues();
 		runGetLengthTest();
-		runTestInLoop();
+		runTestAndSwitchToSettingsAndRepeatInLoop();
+//		verifyTestsCount(String expectedIncompleteTestsCount, String expectedPassedTestsCount,
+//				String expectedFailedTestsCount);
 		softAssert.assertAll();
 	}
 }

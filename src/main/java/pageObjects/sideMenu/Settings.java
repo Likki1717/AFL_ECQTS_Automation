@@ -19,6 +19,6 @@ public class Settings extends BaseClass {
 	}
 
 	public static boolean isTestSettingsButtonDisplayed() {
-		return isElementDisplayed(By.xpath("//Text[@Name='Test Settings']"), 2);
+		return isElementDisplayed(By.xpath("//Text[@Name='Test Settings']"), 3);
 	}
 }
