@@ -19,10 +19,6 @@ public class ProtectionLayer extends BaseClass {
 		return driver.findElement(By.xpath("//*[@Name='J1 1st Ripcord']/following::ComboBox[1]"));
 	}
 
-	public static WebElement selectRIP00106() {
-		return driver.findElement(By.xpath("//*[@Name='RIP00106 (RIPCORD,3000 DEN,ORANGE,FL-P3000T/216)']"));
-	}
-
 	public static WebElement j1MinSpotWall() {
 		return driver.findElement(By.xpath("//*[@Name='J1 Min Spot Wall']/following::Edit[1]"));
 	}

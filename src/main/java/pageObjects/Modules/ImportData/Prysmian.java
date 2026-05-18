@@ -83,6 +83,6 @@ public class Prysmian extends BaseClass {
 	}
 
 	public static boolean isImportSuccessfulPopupDisplayed() {
-		return isElementDisplayed(By.xpath("//Text[contains(@Name,'Job imported successfully')]"), 1);
+		return isElementDisplayed(By.xpath("//Text[contains(@Name,'Job imported successfully')]"), 3);
 	}
 }

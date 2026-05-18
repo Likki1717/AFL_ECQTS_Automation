@@ -1,25 +1,31 @@
 package base;
 
+import java.io.File;
+
 public class TestData {
-	public static String testEnvironment = "Dev"; // Dev /QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
+	public static String testEnvironment = "QA"; // Dev /QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
 	public static String expectedAppVersion = "7.6.10.0";
 	public static String jobSearchOrg = "CAB";
 	public static boolean useOfficeOtdr = true;
 	public static boolean useExternalCamera = true;
 	public static String vpnAppPassword = "kumar@123";
 
-	// All local paths to be updated from system
-	public static String openVpnAppPath = "C:\\Program Files\\OpenVPN Connect\\OpenVPNConnect.exe";
-	public static String SOR_Files_Path = "C:\\Users\\sumeeth\\Downloads\\SOR_Files_Downloaded_From_Automation";
-	public static String winAppDriverPath = "c:\\Program Files\\Windows Application Driver\\winappdriver.exe";
+	// All below local paths to be updated from system
 	public static String OCR_Report_Path = "C:\\Users\\sumeeth\\AppData\\Local\\Packages\\" + appId().split("!")[0]
 			+ "\\LocalState\\Downloads\\" + jobSearchOrg + "";
-	public static String prysmianAttenuationFilePath = "src/test/Resources/ImportFiles/PrysmianFiles/attenuation.csv";
-	public static String prysmianJacketOdFilePath = "src/test/Resources/ImportFiles/PrysmianFiles/jacketOD.csv";
 	public static String secureStorageFolderPath = "C:\\Users\\sumeeth\\AppData\\Local\\Packages\\"
 			+ appId().split("!")[0] + "\\LocalState\\SecureStorage"; // Deleting this SecureStorage folder will delete
 																		// the login cache and app by default will be in
 																		// logged out state
+	
+	public static String openVpnAppPath = "C:\\Program Files\\OpenVPN Connect\\OpenVPNConnect.exe";
+	public static String SOR_Files_Path = new File("src/test/Resources/SOR_Files_Downloaded_From_Automation").getAbsolutePath();
+	public static String winAppDriverPath = new File("src/test/Resources/WinAppDriver/WinAppDriver.exe").getAbsolutePath();
+	public static String prysmianAttenuationFilePath = new File("src/test/Resources/ImportFiles/PrysmianFiles/attenuation.csv").getAbsolutePath();
+	public static String prysmianJacketOdFilePath = new File("src/test/Resources/ImportFiles/PrysmianFiles/jacketOD.csv").getAbsolutePath();
+	public static String swindonAttenuationFilePath = new File("src/test/Resources/ImportFiles/SwindonFiles/attenuation.csv").getAbsolutePath();
+	public static String swindonJacketOdFilePath = new File("src/test/Resources/ImportFiles/SwindonFiles/jacketOD.csv").getAbsolutePath();
+	public static String taihanAttenuationFilePath = new File("src/test/Resources/ImportFiles/TaihanFiles/attenuation.csv").getAbsolutePath();
 
 	public static String prysmianOrg = "CAB";
 	public static String prysmianCutNumber = "11";

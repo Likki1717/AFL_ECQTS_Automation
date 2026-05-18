@@ -20,9 +20,18 @@ public class JobDetailsPage extends BaseClass {
 	public static WebElement OTDR_Settings() {
 		return driver.findElementByName("OTDR Settings");
 	}
+	
+	public static boolean isOtdrSettingsTabDisplayed() {
+		return isElementDisplayed(ByName.name("OTDR Settings"), 5);
+	}
 
 	public static WebElement optics() {
 		return driver.findElementByName("Optics");
+	}
+	
+	public static boolean isBufferTubeDisplayed() {
+		return isElementDisplayed(By.xpath("//Text[@AutomationId='OpticsButton']/../following-sibling::ListItem/Text[@Name='"
+				+ TestData.bufferTube + "']"), 3);
 	}
 
 	public static WebElement bufferTube() {

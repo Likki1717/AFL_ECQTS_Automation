@@ -28,7 +28,7 @@ public class RegressionTests extends BaseClass {
 		verifyJobDetailsHeader(TestData.jobSearchOrg, TestData.jobSearchJobNumber, TestData.jobSearchCutNumber, TestData.jobSearchCutNumberInfo);
 		enterProtectionLayerValues();
 		runGetLengthTest();
-		runTestAndSwitchToSettingsAndRepeatInLoop();
+		runTestInLoop();
 //		verifyTestsCount(String expectedIncompleteTestsCount, String expectedPassedTestsCount,
 //				String expectedFailedTestsCount);
 		softAssert.assertAll();

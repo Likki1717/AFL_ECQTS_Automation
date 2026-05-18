@@ -486,12 +486,9 @@ public class BaseClass {
 			softAssert.assertTrue(Prysmian.isFileNameTextBoxDisplayed(),
 					"Waited for 10 seconds, file name text box was not visible");
 
-			File attenuationFile = new File(TestData.prysmianAttenuationFilePath);
-			File jacketOdFile = new File(TestData.prysmianJacketOdFilePath);
-
 			// Multi-file string
-			String filesToUpload = "\"" + attenuationFile.getAbsolutePath() + "\" \"" + jacketOdFile.getAbsolutePath()
-					+ "\"";
+			String filesToUpload = "\"" + TestData.prysmianAttenuationFilePath + "\" \""
+					+ TestData.prysmianJacketOdFilePath + "\"";
 
 			// Send file paths
 			Prysmian.fileNameTextBox().click();
@@ -508,22 +505,27 @@ public class BaseClass {
 
 			Prysmian.submitButton().click();
 			Thread.sleep(2000);
-			while (Import.isImportLoaderNotDisplayed()) {
+			if (Import.isImportLoaderNotDisplayed()) {
+				Thread.sleep(2000);
 				if (Prysmian.isImportSuccessfulPopupDisplayed()) {
 					String prysmianJobNumber = Prysmian.getJobNumberFromImportSuccessFulPopup();
 					Prysmian.okButton().click();
 					searchJobAndNavigationToJobDetailsPage(TestData.prysmianOrg, prysmianJobNumber,
 							TestData.prysmianCutNumber, TestData.prysmiancutNumberInfo);
 				} else if (Import.isPrysmianTypeDisplayed()) {
-					System.out.println("****Import Failed****");
+					System.out
+							.println("****Import Failed - loader is not displayed but still on the Prysmian page****");
 					System.exit(0);
-				}
-				else if (JobDetailsPage.isMissingFiberIdWarningPopupDisplayed()) {
+				} else if (Import.isWarningsErrorsPopupDisplayedOtherThanMissingFiberId()) {
+					System.out
+							.println("****Import Failed - found warning/errors popup, other than missing fiber id****");
+					System.exit(0);
+				} else if (JobDetailsPage.isMissingFiberIdWarningPopupDisplayed()) {
 					JobDetailsPage.okButton().click();
-				} else if (Import.isWarningsErrorsPopupDisplayed()) {
-					System.out.println("****Import Failed****");
-					System.exit(0);
 				}
+			} else {
+				System.out.println("****Waited more than 10 mins but loader is still displayed while importing****");
+				System.exit(0);
 			}
 
 			// Waiting for protection layer tab to confirm data is loaded
@@ -751,7 +753,10 @@ public class BaseClass {
 		JobSearch.okButton().click();
 		wait = new WebDriverWait(driver, 20);
 		wait.until(ExpectedConditions.elementToBeClickable(JobSearch.searchCutNumber()));
-		JobSearch.searchCutNumber().click();
+		while (!JobSearch.searchCutNumber().equals(driver.switchTo().activeElement())) {
+			JobSearch.searchCutNumber().click();
+			Thread.sleep(1000);
+		}
 		softAssert.assertTrue(JobSearch.cutNumberHeaderDisplayed(),
 				"Tried for 5 seconds, Cut Number Header in cut number table is not displayed ");
 		softAssert.assertTrue(JobSearch.userHeaderDisplayed(),
@@ -764,7 +769,6 @@ public class BaseClass {
 		JobSearch.searchCutNumber().sendKeys(cutNumber);
 		actions.sendKeys(Keys.ENTER).perform();
 		JobSearch.searchCutNumberInfo().clear();
-		JobSearch.searchCutNumberInfo().click();
 		softAssert.assertTrue(JobSearch.cutNumberInfoHeader(),
 				"Tried for 5 seconds, Cut Number Info header  in cut number info table is not displayed ");
 		softAssert.assertTrue(JobSearch.dateHeaderDisplayed(),
@@ -811,7 +815,6 @@ public class BaseClass {
 		ProtectionLayer.j1NomialODHorizontal().sendKeys("1500");
 		ProtectionLayer.j1_1stRipcord().click();
 		ProtectionLayer.j1_1stRipcord().sendKeys("RIP00106");
-//		ProtectionLayer.selectRIP00106().click();
 		ProtectionLayer.j1MinSpotWall().sendKeys("1600");
 		ProtectionLayer.j190DegWall().sendKeys("1000");
 		ProtectionLayer.j1180DegWall().sendKeys("1000");
@@ -821,6 +824,9 @@ public class BaseClass {
 	}
 
 	public static void runGetLengthTest() {
+		wait = new WebDriverWait(driver, 20);
+		JobDetailsPage.isOtdrSettingsTabDisplayed();
+		wait.until(ExpectedConditions.elementToBeClickable(JobDetailsPage.OTDR_Settings()));
 		JobDetailsPage.OTDR_Settings().click();
 		softAssert.assertTrue(OTDR_Settings.isConnectionProfileDropDownDisplayed(),
 				"Waited for 50 seconds, connection profiles drop down on OTDR settings page is not displayed");
@@ -836,49 +842,57 @@ public class BaseClass {
 		OTDR_Settings.getLengthButton().click();
 		softAssert.assertTrue(OTDR_Settings.isOkButtonDisplayed(),
 				"Waited for 50 seconds, Ok button on get length popup is not displayed");
-		wait = new WebDriverWait(driver, 20);
 		wait.until(ExpectedConditions.elementToBeClickable(OTDR_Settings.okButton()));
 		OTDR_Settings.okButton().click();
 		softAssert.assertTrue(OTDR_Settings.isGetLengthHistoryDropDownFieldDisplayed(),
 				"Waited for 50 seconds, Get Length history drop down field is not displayed");
 	}
 
-	public static void runTestAndSwitchToSettingsAndRepeatInLoop() throws InterruptedException {
+	public static void runTestInLoop() throws InterruptedException {
 		JobDetailsPage.isProtectionLayerTabDisplayed();
 		wait = new WebDriverWait(driver, 30);
 		wait.until(ExpectedConditions.elementToBeClickable(JobDetailsPage.bufferTube()));
 		while (!FiberResults.isRunTestsButtonDisplayed()) {
 			JobDetailsPage.bufferTube().click();
 		}
-		FiberResults.showTracesButton().click();
-		Thread.sleep(3000);
 		FiberResults.showMoreInfoButton().click();
-		Thread.sleep(3000);
+		wait.until(ExpectedConditions.elementToBeClickable(FiberResults.runTestsButtonOfFirstFiber()));
+		FiberResults.runTestsButtonOfFirstFiber().click();
 		while (true) {
-			FiberResults.isRunTestsButtonDisplayed();
-			wait.until(ExpectedConditions.elementToBeClickable(FiberResults.run_Tests_Button()));
-			FiberResults.run_Tests_Button().click();
 			FiberResults.isOkButtonDisplayed();
-			wait.until(ExpectedConditions.elementToBeClickable(FiberResults.ok_Button()));
-			Thread.sleep(20000);
-			FiberResults.ok_Button().click();
+			wait.until(ExpectedConditions.elementToBeClickable(FiberResults.okButton()));
+//			Thread.sleep(20000);
+			FiberResults.okButton().click();
 			FiberResults.isGoToFiberButtonVisible();
-			FiberResults.isReTestsButtonDisplayed();
-			FiberResults.stopButton().click();
-			FiberResults.isGoToFiberButtonNotVisible();
-			Thread.sleep(1000);
-			Dashboard.openNavigationButton().click();
-			SideMenu.settingsButton().click();
-			Settings.isTestSettingsButtonDisplayed();
-			Thread.sleep(1000);
-			try {
-				Settings.testSettingsButton().click();
-				softAssert.assertTrue(TestSettings.isDisplayRealTimePlotToogleDisplayed(),
-						"Waited for 3 secs, Display real time plot settings toggle is not displayed ");
-			} catch (Exception e) {
-
+			wait.until(ExpectedConditions.elementToBeClickable(FiberResults.goToFiberButton()));
+			FiberResults.goToFiberButton().click();
+			FiberResults.isContinueTestsButtonDisplayed();
+			FiberResults.continueButton().click();
+			if (FiberResults.isTestsCompleteDisplayed()) {
+				FiberResults.okButton().click();
+				if (!FiberResults.isRunTestsButtonDisplayed()) {
+					actions.moveToElement(JobDetailsPage.bufferTube()).build().perform();
+					JobDetailsPage.bufferTube().click();
+				}
+				FiberResults.isRunTestsButtonDisplayed();
+				FiberResults.showMoreInfoButton().click();
+				wait.until(ExpectedConditions.elementToBeClickable(FiberResults.runTestsButtonOfFirstFiber()));
+				FiberResults.runTestsButtonOfFirstFiber().click();
 			}
-			Dashboard.backArrow().click();
+//			FiberResults.isGoToFiberButtonNotVisible();
+//			Thread.sleep(1000);
+//			Dashboard.openNavigationButton().click();
+//			SideMenu.settingsButton().click();
+//			Settings.isTestSettingsButtonDisplayed();
+//			Thread.sleep(1000);
+//			try {
+//				Settings.testSettingsButton().click();
+//				softAssert.assertTrue(TestSettings.isDisplayRealTimePlotToogleDisplayed(),
+//						"Waited for 3 secs, Display real time plot settings toggle is not displayed ");
+//			} catch (Exception e) {
+//
+//			}
+//			Dashboard.backArrow().click();
 			break;
 		}
 	}
