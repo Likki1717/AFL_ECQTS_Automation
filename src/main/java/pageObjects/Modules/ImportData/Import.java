@@ -5,7 +5,6 @@ import org.openqa.selenium.By.ByName;
 import org.openqa.selenium.WebElement;
 
 import base.BaseClass;
-import io.appium.java_client.MobileBy.ByAccessibilityId;
 
 public class Import extends BaseClass {
 
@@ -31,10 +30,6 @@ public class Import extends BaseClass {
 
 	public static WebElement qtsType() {
 		return driver.findElementByName("QTS");
-	}
-
-	public static boolean isImportLoaderNotDisplayed() {
-		return isElementNotDisplayed(ByAccessibilityId.AccessibilityId("LottiePlayer"), 610);
 	}
 
 	public static boolean isWarningsErrorsPopupDisplayedOtherThanMissingFiberId() {

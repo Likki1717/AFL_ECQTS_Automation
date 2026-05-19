@@ -23,12 +23,14 @@ public class RegressionTests extends BaseClass {
 		importPrysmianJob();
 //		importSwindonJob();
 //		importTaihanJob();
-		searchJobAndNavigationToJobDetailsPage(TestData.jobSearchOrg, TestData.jobSearchJobNumber, TestData.jobSearchCutNumber,
-				TestData.jobSearchCutNumberInfo);
-		verifyJobDetailsHeader(TestData.jobSearchOrg, TestData.jobSearchJobNumber, TestData.jobSearchCutNumber, TestData.jobSearchCutNumberInfo);
+		searchJobAndNavigationToJobDetailsPage(TestData.jobSearchOrg, TestData.fiberTestJobSearchJobNumber,
+				TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo);
+		verifyJobDetailsHeader(TestData.jobSearchOrg, TestData.fiberTestJobSearchJobNumber,
+				TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo);
 		enterProtectionLayerValues();
 		runGetLengthTest();
-		runTestInLoop();
+		enterCompletionLayerValues();
+		download_OCR_Report();
 //		verifyTestsCount(String expectedIncompleteTestsCount, String expectedPassedTestsCount,
 //				String expectedFailedTestsCount);
 		softAssert.assertAll();

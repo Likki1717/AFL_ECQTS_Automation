@@ -20,32 +20,42 @@ public class JobDetailsPage extends BaseClass {
 	public static WebElement OTDR_Settings() {
 		return driver.findElementByName("OTDR Settings");
 	}
-	
+
 	public static boolean isOtdrSettingsTabDisplayed() {
 		return isElementDisplayed(ByName.name("OTDR Settings"), 5);
 	}
 
-	public static WebElement optics() {
+	public static WebElement opticsTab() {
 		return driver.findElementByName("Optics");
 	}
-	
+
 	public static boolean isBufferTubeDisplayed() {
-		return isElementDisplayed(By.xpath("//Text[@AutomationId='OpticsButton']/../following-sibling::ListItem/Text[@Name='"
-				+ TestData.bufferTube + "']"), 3);
+		return isElementDisplayed(
+				By.xpath("//Text[@AutomationId='OpticsButton']/../following-sibling::ListItem/Text[@Name='"
+						+ TestData.bufferTube + "']"),
+				3);
 	}
 
-	public static WebElement bufferTube() {
+	public static WebElement bufferTubeTab() {
 		return driver
 				.findElement(By.xpath("//Text[@AutomationId='OpticsButton']/../following-sibling::ListItem/Text[@Name='"
 						+ TestData.bufferTube + "']"));
 	}
 
-	public static WebElement completion() throws Exception {
-		return driver.findElement(By.xpath("//ListItem[@Name='ECS.Entities.Qts.FiberTab']//Text[@Name='Completion']"));
+	public static WebElement reportsTab() {
+		return driver.findElement(By.xpath("//Text[@Name='Reports']"));
 	}
+	
+	public static boolean completionTabDisplayed() {
 
-	public static WebElement reports() {
-		return driver.findElement(By.xpath("//ListItem[@Name='ECS.Entities.Qts.FiberTab']//Text[@Name='Reports']"));
+		return isElementDisplayed(ByName.name("Completion"), 5);
+
+	}
+ 
+	public static WebElement completionTab() {
+
+		return driver.findElement(By.xpath("//Text[@Name='Completion']"));
+
 	}
 
 //	public static String get_Test_Status() {

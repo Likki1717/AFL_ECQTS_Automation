@@ -62,9 +62,13 @@ public class TestData {
 	public static String taihanExpectedHelixFactor = "1.017";
 	public static String taihanExpectedOtdrLength = "6205 m";
 
-	public static String jobSearchJobNumber = "25305754";
-	public static String jobSearchCutNumber = new java.text.SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
-	public static String jobSearchCutNumberInfo = "ZTEST01";
+	public static String fiberTestJobSearchJobNumber = "25305754"; // Large Job - 15811448
+	public static String fiberTestJobSearchCutNumber = new java.text.SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
+	public static String fiberTestJobSearchCutNumberInfo = "ZTEST01";
+	
+	public static String fiberTestExpectedIncompleteTestsCount = "0";
+	public static String fiberTestExpectedPassedTestsCount = "88";
+	public static String fiberTestExpectedFailedTestsCount = "3";
 
 	public static String ecqtsAppUsername() {
 		String username = null;

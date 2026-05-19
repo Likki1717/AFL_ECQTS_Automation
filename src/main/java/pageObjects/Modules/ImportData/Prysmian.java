@@ -8,14 +8,6 @@ import base.BaseClass;
 
 public class Prysmian extends BaseClass {
 
-	public static boolean isScreenLoadingMessageDisplayed() {
-		return isElementDisplayed(ByName.name("Loading..."), 5);
-	}
-
-	public static boolean isScreenLoadingMessageNotDisplayed() {
-		return isElementNotDisplayed(ByName.name("Loading..."), 10);
-	}
-
 	public static WebElement orgDropDownField() {
 		return driver.findElementByAccessibilityId("OrgDropdown");
 	}

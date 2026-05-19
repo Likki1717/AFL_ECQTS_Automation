@@ -16,8 +16,8 @@ public class RunFiberTestsInLoop extends BaseClass{
 		loginToApplication();
 		updateTestSettings();
 		updateApplicationSettings();
-		searchJobAndNavigationToJobDetailsPage(TestData.jobSearchOrg, TestData.jobSearchJobNumber, TestData.jobSearchCutNumber,
-				TestData.jobSearchCutNumberInfo);
+		searchJobAndNavigationToJobDetailsPage(TestData.jobSearchOrg, TestData.fiberTestJobSearchJobNumber, TestData.fiberTestJobSearchCutNumber,
+				TestData.fiberTestJobSearchCutNumberInfo);
 		runGetLengthTest();
 		runTestInLoop();
 		softAssert.assertAll();

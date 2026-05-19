@@ -2,23 +2,64 @@
 <testng-results ignored="0" total="1" passed="0" failed="1" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2026-05-19T02:03:47 IST" name="Default suite" finished-at="2026-05-19T02:10:32 IST" duration-ms="404820">
+  <suite started-at="2026-05-19T16:34:21 IST" name="Default suite" finished-at="2026-05-19T16:45:08 IST" duration-ms="647054">
     <groups>
     </groups>
-    <test started-at="2026-05-19T02:03:47 IST" name="Default test" finished-at="2026-05-19T02:10:32 IST" duration-ms="404820">
+    <test started-at="2026-05-19T16:34:21 IST" name="Default test" finished-at="2026-05-19T16:45:08 IST" duration-ms="647054">
       <class name="DesktopApplicationTests.RegressionTests">
-        <test-method signature="runRegressionTestSuite()[pri:0, instance:DesktopApplicationTests.RegressionTests@a1153bc]" started-at="2026-05-19T02:03:47 IST" name="runRegressionTestSuite" finished-at="2026-05-19T02:10:32 IST" duration-ms="404789" status="FAIL">
-          <exception class="java.lang.AssertionError">
+        <test-method signature="runRegressionTestSuite()[pri:0, instance:DesktopApplicationTests.RegressionTests@55141def]" started-at="2026-05-19T16:34:21 IST" name="runRegressionTestSuite" finished-at="2026-05-19T16:45:08 IST" duration-ms="647015" status="FAIL">
+          <exception class="org.openqa.selenium.NoSuchElementException">
             <message>
-              <![CDATA[The following asserts failed:
-Ip address did not change when we changed instrument from Simulator to Anritsu 9085 expected [true] but found [false]]]>
+              <![CDATA[An element could not be located on the page using the given search parameters. (WARNING: The server did not provide any stacktrace information)
+Command duration or timeout: 0 milliseconds
+For documentation on this error, please visit: https://www.seleniumhq.org/exceptions/no_such_element.html
+Build info: version: '3.141.59', revision: 'e82be7d358', time: '2018-11-14T08:17:03'
+System info: host: 'VELTRISMS785', ip: '192.168.29.113', os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '21.0.4'
+Driver info: io.appium.java_client.windows.WindowsDriver
+Capabilities {app: com.ecsite.afl.qa_aqd9xyv20..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
+Session ID: CC295236-1F5E-4119-AC55-0301C5155AC9
+*** Element info: {Using=xpath, value=//Text[@Name='OSE PRINT SPACING']/following::ComboBox[1]}]]>
             </message>
             <full-stacktrace>
-              <![CDATA[java.lang.AssertionError: The following asserts failed:
-Ip address did not change when we changed instrument from Simulator to Anritsu 9085 expected [true] but found [false]
-at org.testng.asserts.SoftAssert.assertAll(SoftAssert.java:46)
-at org.testng.asserts.SoftAssert.assertAll(SoftAssert.java:30)
-at DesktopApplicationTests.RegressionTests.runRegressionTestSuite(RegressionTests.java:34)
+              <![CDATA[org.openqa.selenium.NoSuchElementException: An element could not be located on the page using the given search parameters. (WARNING: The server did not provide any stacktrace information)
+Command duration or timeout: 0 milliseconds
+For documentation on this error, please visit: https://www.seleniumhq.org/exceptions/no_such_element.html
+Build info: version: '3.141.59', revision: 'e82be7d358', time: '2018-11-14T08:17:03'
+System info: host: 'VELTRISMS785', ip: '192.168.29.113', os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '21.0.4'
+Driver info: io.appium.java_client.windows.WindowsDriver
+Capabilities {app: com.ecsite.afl.qa_aqd9xyv20..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
+Session ID: CC295236-1F5E-4119-AC55-0301C5155AC9
+*** Element info: {Using=xpath, value=//Text[@Name='OSE PRINT SPACING']/following::ComboBox[1]}
+at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
+at org.openqa.selenium.remote.ErrorHandler.createThrowable(ErrorHandler.java:214)
+at org.openqa.selenium.remote.ErrorHandler.throwIfResponseFailed(ErrorHandler.java:166)
+at org.openqa.selenium.remote.http.JsonHttpResponseCodec.reconstructValue(JsonHttpResponseCodec.java:40)
+at org.openqa.selenium.remote.http.AbstractHttpResponseCodec.decode(AbstractHttpResponseCodec.java:80)
+at org.openqa.selenium.remote.http.AbstractHttpResponseCodec.decode(AbstractHttpResponseCodec.java:44)
+at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:158)
+at io.appium.java_client.remote.AppiumCommandExecutor.execute(AppiumCommandExecutor.java:250)
+at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:552)
+at io.appium.java_client.DefaultGenericMobileDriver.execute(DefaultGenericMobileDriver.java:41)
+at io.appium.java_client.AppiumDriver.execute(AppiumDriver.java:1)
+at io.appium.java_client.windows.WindowsDriver.execute(WindowsDriver.java:1)
+at org.openqa.selenium.remote.RemoteWebDriver.findElement(RemoteWebDriver.java:323)
+at io.appium.java_client.DefaultGenericMobileDriver.findElement(DefaultGenericMobileDriver.java:61)
+at io.appium.java_client.AppiumDriver.findElement(AppiumDriver.java:1)
+at io.appium.java_client.windows.WindowsDriver.findElement(WindowsDriver.java:1)
+at org.openqa.selenium.remote.RemoteWebDriver.findElementByXPath(RemoteWebDriver.java:428)
+at io.appium.java_client.DefaultGenericMobileDriver.findElementByXPath(DefaultGenericMobileDriver.java:151)
+at io.appium.java_client.AppiumDriver.findElementByXPath(AppiumDriver.java:1)
+at io.appium.java_client.windows.WindowsDriver.findElementByXPath(WindowsDriver.java:1)
+at org.openqa.selenium.By$ByXPath.findElement(By.java:353)
+at org.openqa.selenium.remote.RemoteWebDriver.findElement(RemoteWebDriver.java:315)
+at io.appium.java_client.DefaultGenericMobileDriver.findElement(DefaultGenericMobileDriver.java:57)
+at io.appium.java_client.AppiumDriver.findElement(AppiumDriver.java:1)
+at io.appium.java_client.windows.WindowsDriver.findElement(WindowsDriver.java:1)
+at pageObjects.Modules.FiberTest.JobDetails.Completion.OSE_Print_Spacing(Completion.java:48)
+at base.BaseClass.enterCompletionLayerValues(BaseClass.java:926)
+at DesktopApplicationTests.RegressionTests.runRegressionTestSuite(RegressionTests.java:33)
 at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 at org.testng.internal.invokers.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:141)
@@ -47,7 +88,7 @@ at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:293)
 at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:91)
 ]]>
             </full-stacktrace>
-          </exception> <!-- java.lang.AssertionError -->
+          </exception> <!-- org.openqa.selenium.NoSuchElementException -->
           <reporter-output>
           </reporter-output>
         </test-method> <!-- runRegressionTestSuite -->
