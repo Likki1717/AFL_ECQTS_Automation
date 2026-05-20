@@ -3,7 +3,7 @@ package base;
 import java.io.File;
 
 public class TestData {
-	public static String testEnvironment = "QA"; // Dev /QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
+	public static String testEnvironment = "Dev"; // Dev /QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
 	public static String expectedAppVersion = "Version: 7.6.11.0";
 	public static boolean useOfficeOtdr = true;
 	public static boolean useExternalCamera = true;
@@ -62,7 +62,7 @@ public class TestData {
 	public static String taihanExpectedFailedTests = "2";
 	public static String taihanExpectedHelixFactor = "1.017";
 	public static String taihanExpectedOtdrLength = "6205 m";
-	public static String taihanJobNumberStartsWith = "455-";
+	public static String taihanJobNumberStartsWith = "7877-";
 
 	public static String fiberTestJobSearchJobNumber = "25305754"; // Large Job - 15811448
 	public static String fiberTestJobSearchCutNumber = new java.text.SimpleDateFormat("yyyyMMddHHmmss")

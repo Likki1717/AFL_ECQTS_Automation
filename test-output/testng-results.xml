@@ -2,33 +2,31 @@
 <testng-results ignored="0" total="1" passed="0" failed="1" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2026-05-20T20:15:18 IST" name="Default suite" finished-at="2026-05-20T20:17:44 IST" duration-ms="145520">
+  <suite started-at="2026-05-20T23:40:19 IST" name="Default suite" finished-at="2026-05-20T23:43:05 IST" duration-ms="165736">
     <groups>
     </groups>
-    <test started-at="2026-05-20T20:15:18 IST" name="Default test" finished-at="2026-05-20T20:17:44 IST" duration-ms="145520">
+    <test started-at="2026-05-20T23:40:19 IST" name="Default test" finished-at="2026-05-20T23:43:05 IST" duration-ms="165736">
       <class name="DesktopApplicationTests.RegressionTests">
-        <test-method signature="runRegressionTestSuite()[pri:0, instance:DesktopApplicationTests.RegressionTests@235834f2]" started-at="2026-05-20T20:15:19 IST" name="runRegressionTestSuite" finished-at="2026-05-20T20:17:44 IST" duration-ms="145467" status="FAIL">
-          <exception class="org.openqa.selenium.NoSuchElementException">
+        <test-method signature="runRegressionTestSuite()[pri:0, instance:DesktopApplicationTests.RegressionTests@235834f2]" started-at="2026-05-20T23:40:19 IST" name="runRegressionTestSuite" finished-at="2026-05-20T23:43:05 IST" duration-ms="165705" status="FAIL">
+          <exception class="org.openqa.selenium.NoSuchWindowException">
             <message>
-              <![CDATA[An element could not be located on the page using the given search parameters. (WARNING: The server did not provide any stacktrace information)
+              <![CDATA[Currently selected window has been closed (WARNING: The server did not provide any stacktrace information)
 Command duration or timeout: 0 milliseconds
-For documentation on this error, please visit: https://www.seleniumhq.org/exceptions/no_such_element.html
 Build info: version: '3.141.59', revision: 'e82be7d358', time: '2018-11-14T08:17:03'
 System info: host: 'VELTRISMS785', ip: '192.168.29.113', os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '21.0.4'
 Driver info: io.appium.java_client.windows.WindowsDriver
-Capabilities {app: com.ecsite.afl.qa_aqd9xyv20..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
-Session ID: E9FAA7A9-01D2-44E6-B7BB-0D96432022E2
+Capabilities {app: com.ecsite.afl.dev_aqd9xyv2..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
+Session ID: 239231A1-8066-44D8-A60E-D2734193ACE0
 *** Element info: {Using=xpath, value=//Button[@Name='Open Navigation']}]]>
             </message>
             <full-stacktrace>
-              <![CDATA[org.openqa.selenium.NoSuchElementException: An element could not be located on the page using the given search parameters. (WARNING: The server did not provide any stacktrace information)
+              <![CDATA[org.openqa.selenium.NoSuchWindowException: Currently selected window has been closed (WARNING: The server did not provide any stacktrace information)
 Command duration or timeout: 0 milliseconds
-For documentation on this error, please visit: https://www.seleniumhq.org/exceptions/no_such_element.html
 Build info: version: '3.141.59', revision: 'e82be7d358', time: '2018-11-14T08:17:03'
 System info: host: 'VELTRISMS785', ip: '192.168.29.113', os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '21.0.4'
 Driver info: io.appium.java_client.windows.WindowsDriver
-Capabilities {app: com.ecsite.afl.qa_aqd9xyv20..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
-Session ID: E9FAA7A9-01D2-44E6-B7BB-0D96432022E2
+Capabilities {app: com.ecsite.afl.dev_aqd9xyv2..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
+Session ID: 239231A1-8066-44D8-A60E-D2734193ACE0
 *** Element info: {Using=xpath, value=//Button[@Name='Open Navigation']}
 at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
 at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
@@ -53,7 +51,7 @@ at io.appium.java_client.DefaultGenericMobileDriver.findElementByXPath(DefaultGe
 at io.appium.java_client.AppiumDriver.findElementByXPath(AppiumDriver.java:1)
 at io.appium.java_client.windows.WindowsDriver.findElementByXPath(WindowsDriver.java:1)
 at pageObjects.CommonPages.Dashboard.openNavigationButton(Dashboard.java:12)
-at base.BaseClass.searchJobAndNavigationToJobDetailsPage(BaseClass.java:611)
+at base.BaseClass.searchJobAndNavigationToJobDetailsPage(BaseClass.java:615)
 at DesktopApplicationTests.RegressionTests.runRegressionTestSuite(RegressionTests.java:42)
 at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 at java.base/java.lang.reflect.Method.invoke(Method.java:580)
@@ -83,7 +81,7 @@ at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:293)
 at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:91)
 ]]>
             </full-stacktrace>
-          </exception> <!-- org.openqa.selenium.NoSuchElementException -->
+          </exception> <!-- org.openqa.selenium.NoSuchWindowException -->
           <reporter-output>
           </reporter-output>
         </test-method> <!-- runRegressionTestSuite -->

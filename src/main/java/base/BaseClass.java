@@ -453,19 +453,19 @@ public class BaseClass {
 
 		Thread.sleep(500);
 
-		if (importType.equalsIgnoreCase("prysmian")) {
+		if (importType.equalsIgnoreCase("Prysmian")) {
 			Import.prysmianType().click();
 
-		} else if (importType.equalsIgnoreCase("swindon")) {
+		} else if (importType.equalsIgnoreCase("Swindon")) {
 			Import.swindonType().click();
 
-		} else if (importType.equalsIgnoreCase("taihan")) {
+		} else if (importType.equalsIgnoreCase("Taihan")) {
 			Import.taihanType().click();
 		}
 
-		softAssert.assertTrue(Dashboard.isLoaderDisplayed(), "Waited for 5 seconds, Screen loader did not display");
+		softAssert.assertTrue(Dashboard.isLoaderDisplayed(), importType + " Import - Waited for 5 seconds, Screen loader did not display");
 		softAssert.assertTrue(Dashboard.isLoaderNotDisplayed(),
-				"Waited for 10 seconds but still the screen loader is displayed");
+				importType + " Import - Waited for 10 seconds but still the screen loader is displayed");
 		Thread.sleep(500);
 		Import.orgDropDownField().sendKeys(TestData.importOrg);
 		robot.keyPress(KeyEvent.VK_TAB);
@@ -488,7 +488,7 @@ public class BaseClass {
 		robot.keyRelease(KeyEvent.VK_TAB);
 		Import.uploadFileButton().click();
 		softAssert.assertTrue(Import.isFileNameTextBoxDisplayed(),
-				"Waited for 10 seconds, file name text box was not visible");
+				importType + " Import - Waited for 10 seconds, to enter file name, the file name text box was not visible");
 
 		// Send file paths
 		Import.fileNameTextBox().click();
@@ -499,55 +499,56 @@ public class BaseClass {
 
 		if (!Import.cutNumberInfo().getText().equals(TestData.importcutNumberInfo)) {
 			System.out.println(
-					"****Cut number info did not get selected as given in test data, hence stopping execution****");
+					"****" + importType + " Import - Cut number info did not get selected as given in test data, hence stopping execution****");
 			stopExecution();
 		}
 
 		Import.submitButton().click();
 		Dashboard.isLoaderDisplayed();
 
-		boolean proceedWithImport = false;
+		boolean eitherImportCompletedOrGotError = false;
 
-		while (!proceedWithImport) {
+		while (!eitherImportCompletedOrGotError) {
+
 			if (Dashboard.isLoaderNotDisplayed() || Import.isImportSuccessfulPopupDisplayed()
 					|| Import.isWarningsErrorsPopupDisplayedOtherThanMissingFiberId()) {
-				proceedWithImport = true;
+				eitherImportCompletedOrGotError = true;
 				Thread.sleep(2000);
 				if (Import.isImportSuccessfulPopupDisplayed()) {
-					String ImportJobNumber = Import.getJobNumberFromImportSuccessFulPopup();
-					System.out.println(ImportJobNumber);
+					String importJobNumber = Import.getJobNumberFromImportSuccessFulPopup();
+					System.out.println(importType + " Import Job number fetched from Import Complete popup : " + importJobNumber);
 					Import.okButton().click();
-					searchJobAndNavigationToJobDetailsPage(TestData.importOrg, ImportJobNumber,
+					searchJobAndNavigationToJobDetailsPage(TestData.importOrg, importJobNumber,
 							TestData.importCutNumber, TestData.importcutNumberInfo);
-				} else if (Import.isPrysmianTypeDisplayed()) {
-					System.out.println("****Import Failed - loader is not displayed but still on the import page****");
-					stopExecution();
 				} else if (Import.isWarningsErrorsPopupDisplayedOtherThanMissingFiberId()) {
 					System.out
-							.println("****Import Failed - found warning/errors popup, other than missing fiber id****");
+							.println("****" + importType + " Import Failed - found warning/errors popup, other than missing fiber id****");
 					stopExecution();
-				} else if (JobDetailsPage.isMissingFiberIdWarningPopupDisplayed()) {
-					JobDetailsPage.okButton().click();
+				} else if (Import.isPrysmianTypeDisplayed()) {
+					System.out.println("****" + importType + " Import Failed - loader is not displayed but still on the import page****");
+					stopExecution();
 				}
 			}
+		}
+
+		if (JobDetailsPage.isMissingFiberIdWarningPopupDisplayed()) {
+			JobDetailsPage.okButton().click();
 		}
 
 		// Waiting for protection layer tab to confirm data is loaded
 
 		softAssert.assertTrue(JobDetailsPage.isProtectionLayerTabDisplayed(),
-				"Tried for 5 seconds, Protection Layer tab is not displayed");
+				importType + " Import completed - Waited for 5 seconds, Protection Layer tab is not displayed");
 
-		System.out.println("Import Job Number: " + JobDetailsPage.jobNumber().getText().trim());
+		System.out.println(importType + " Import Job Number : " + JobDetailsPage.jobNumber().getText().trim());
 
 		// Validating OTDR length is not 0 and its as expected
 
-		softAssert.assertEquals(JobDetailsPage.OTDR_Length().getText(), OTDR_Length, "OTDR Length mismatch. Expected: "
-				+ OTDR_Length + " but found: " + JobDetailsPage.OTDR_Length().getText());
+		softAssert.assertEquals(JobDetailsPage.OTDR_Length().getText(), OTDR_Length, importType + " Import completed - OTDR Length mismatch.");
 
 		// Validating Helix Factor
 		softAssert.assertEquals(JobDetailsPage.helixFactor().getText().trim(), helixFactor,
-				"Prysmian Import Job Helix Factor is not as expected, \n Expected Helix Factor was: " + helixFactor
-						+ " But found: " + JobDetailsPage.helixFactor().getText().trim());
+				importType + " Import completed - Helix Factor mismatch.");
 
 		verifyJobDetailsHeader(TestData.importOrg, JobNumberStartsWith, TestData.importCutNumber,
 				TestData.importcutNumberInfo, importType);

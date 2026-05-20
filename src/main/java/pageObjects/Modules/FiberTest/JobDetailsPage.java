@@ -109,7 +109,7 @@ public class JobDetailsPage extends BaseClass {
 	}
 
 	public static boolean isProtectionLayerTabDisplayed() {
-		return isElementDisplayed(ByName.name("Protection Layer"), 50);
+		return isElementDisplayed(ByName.name("Protection Layer"), 5);
 	}
 
 	public static boolean isMissingFiberIdWarningPopupDisplayed() {

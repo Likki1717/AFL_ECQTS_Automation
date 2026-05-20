@@ -90,7 +90,7 @@ public class Import extends BaseClass {
 	}
 
 	public static boolean isImportSuccessfulPopupDisplayed() {
-		return isElementDisplayed(By.xpath("//Text[contains(@Name,'Job imported successfully')]"), 10);
+		return isElementDisplayed(By.xpath("//Text[contains(@Name,'Job imported successfully')]"), 1);
 	}
 	
 	public static WebElement okButton() {
