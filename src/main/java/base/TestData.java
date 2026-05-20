@@ -4,68 +4,72 @@ import java.io.File;
 
 public class TestData {
 	public static String testEnvironment = "QA"; // Dev /QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
-	public static String expectedAppVersion = "7.6.10.0";
-	public static String jobSearchOrg = "CAB";
+	public static String expectedAppVersion = "Version: 7.6.11.0";
 	public static boolean useOfficeOtdr = true;
 	public static boolean useExternalCamera = true;
+	public static int numberOfFibersToTest = 2;
+	public static int delayInSecondsBeforeClickingOnOkButtonOnRunTestGraphs = 0;
 	public static String vpnAppPassword = "kumar@123";
+
+	public static String fiberTestJobSearchOrg = "CAB";
 
 	// All below local paths to be updated from system
 	public static String OCR_Report_Path = "C:\\Users\\sumeeth\\AppData\\Local\\Packages\\" + appId().split("!")[0]
-			+ "\\LocalState\\Downloads\\" + jobSearchOrg + "";
+			+ "\\LocalState\\Downloads\\" + fiberTestJobSearchOrg + "";
 	public static String secureStorageFolderPath = "C:\\Users\\sumeeth\\AppData\\Local\\Packages\\"
 			+ appId().split("!")[0] + "\\LocalState\\SecureStorage"; // Deleting this SecureStorage folder will delete
 																		// the login cache and app by default will be in
 																		// logged out state
-	
-	public static String openVpnAppPath = "C:\\Program Files\\OpenVPN Connect\\OpenVPNConnect.exe";
-	public static String SOR_Files_Path = new File("src/test/Resources/SOR_Files_Downloaded_From_Automation").getAbsolutePath();
-	public static String winAppDriverPath = new File("src/test/Resources/WinAppDriver/WinAppDriver.exe").getAbsolutePath();
-	public static String prysmianAttenuationFilePath = new File("src/test/Resources/ImportFiles/PrysmianFiles/attenuation.csv").getAbsolutePath();
-	public static String prysmianJacketOdFilePath = new File("src/test/Resources/ImportFiles/PrysmianFiles/jacketOD.csv").getAbsolutePath();
-	public static String swindonAttenuationFilePath = new File("src/test/Resources/ImportFiles/SwindonFiles/attenuation.csv").getAbsolutePath();
-	public static String swindonJacketOdFilePath = new File("src/test/Resources/ImportFiles/SwindonFiles/jacketOD.csv").getAbsolutePath();
-	public static String taihanAttenuationFilePath = new File("src/test/Resources/ImportFiles/TaihanFiles/attenuation.csv").getAbsolutePath();
 
-	public static String prysmianOrg = "CAB";
-	public static String prysmianCutNumber = "11";
-	public static String prysmianItemOrgCode = "SPC";
-	public static String prysmiancutNumberInfo = "ZTEST01";
-	public static String prysmianImportType = "Fiber";
+	public static String openVpnAppPath = "C:\\Program Files\\OpenVPN Connect\\OpenVPNConnect.exe";
+	public static String SOR_Files_Path = new File("src/test/Resources/SOR_Files_Downloaded_From_Automation")
+			.getAbsolutePath();
+	public static String winAppDriverPath = new File("src/test/Resources/WinAppDriver/WinAppDriver.exe")
+			.getAbsolutePath();
+	public static String prysmianAttenuationFilePath = new File(
+			"src/test/Resources/ImportFiles/PrysmianFiles/attenuation.csv").getAbsolutePath();
+	public static String prysmianJacketOdFilePath = new File(
+			"src/test/Resources/ImportFiles/PrysmianFiles/jacketOD.csv").getAbsolutePath();
+	public static String swindonAttenuationFilePath = new File(
+			"src/test/Resources/ImportFiles/SwindonFiles/attenuation.csv").getAbsolutePath();
+	public static String swindonJacketOdFilePath = new File("src/test/Resources/ImportFiles/SwindonFiles/jacketOD.csv")
+			.getAbsolutePath();
+	public static String taihanAttenuationFilePath = new File(
+			"src/test/Resources/ImportFiles/TaihanFiles/attenuation.csv").getAbsolutePath();
+
+	public static String importOrg = "CAB";
+	public static String importCutNumber = "11";
+	public static String importItemOrgCode = "SPC";
+	public static String importcutNumberInfo = "ZTEST01";
+	public static String importType = "Fiber";
+	
 	public static String prysmianExpectedIncompleteTests = "56";
 	public static String prysmianExpectedPassedTests = "103";
 	public static String prysmianExpectedFailedTests = "2";
 	public static String prysmianExpectedHelixFactor = "1.0233";
-	public static String bufferTube = "10-BLUE";
 	public static String prysmianExpectedOtdrLength = "7879 m";
-	public static String prysmianJobNumberStartsWith = "90043053";
+	public static String prysmianJobNumberStartsWith = "90043053-";
 
-	public static String swindonOrg = "CAB";
-	public static String swindonCutNumber = "12";
-	public static String swindonItemOrgCode = "SPC";
-	public static String swindoncutNumberInfo = "ZTEST02";
-	public static String swindonImportType = "Fiber";
 	public static String swindonExpectedIncompleteTests = "159";
 	public static String swindonExpectedPassedTests = "295";
 	public static String swindonExpectedFailedTests = "1";
 	public static String swindonExpectedHelixFactor = "1.02";
 	public static String swindonExpectedOtdrLength = "6253 m";
+	public static String swindonJobNumberStartsWith = "250592-";
 
-	public static String taihanOrg = "CAB";
-	public static String taihanCutNumber = "12";
-	public static String taihanItemOrgCode = "SPC";
-	public static String taihancutNumberInfo = "ZTEST02";
-	public static String taihanImportType = "Fiber";
 	public static String taihanExpectedIncompleteTests = "291";
 	public static String taihanExpectedPassedTests = "576";
 	public static String taihanExpectedFailedTests = "2";
 	public static String taihanExpectedHelixFactor = "1.017";
 	public static String taihanExpectedOtdrLength = "6205 m";
+	public static String taihanJobNumberStartsWith = "455-";
 
 	public static String fiberTestJobSearchJobNumber = "25305754"; // Large Job - 15811448
-	public static String fiberTestJobSearchCutNumber = new java.text.SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
+	public static String fiberTestJobSearchCutNumber = new java.text.SimpleDateFormat("yyyyMMddHHmmss")
+			.format(new java.util.Date());
 	public static String fiberTestJobSearchCutNumberInfo = "ZTEST01";
-	
+	public static String fiberTestBufferTube = "10-BLUE";
+
 	public static String fiberTestExpectedIncompleteTestsCount = "0";
 	public static String fiberTestExpectedPassedTestsCount = "88";
 	public static String fiberTestExpectedFailedTestsCount = "3";

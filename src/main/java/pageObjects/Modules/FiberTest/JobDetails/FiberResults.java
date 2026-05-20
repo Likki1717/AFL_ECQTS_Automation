@@ -45,7 +45,7 @@ public class FiberResults extends BaseClass {
 		return isElementDisplayed(ByAccessibilityId.AccessibilityId("ContinueButton"), 120);
 	}
 	
-	public static boolean isTestsCompleteDisplayed() {
+	public static boolean isTestsCompletedTextDisplayed() {
 		return isElementDisplayed(ByName.name("Tests Complete"), 5);
 	}
 	

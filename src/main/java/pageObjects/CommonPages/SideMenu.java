@@ -14,6 +14,10 @@ public class SideMenu extends BaseClass {
 	public static WebElement dashboardButton() {
 		return driver.findElement(By.xpath("//Group[@AutomationId='MenuItemsHost']/ListItem[@Name='Dashboard']"));
 	}
+	
+	public static boolean  isDashboardButtonDisplayed() {
+		return isElementDisplayed(By.xpath("//Group[@AutomationId='MenuItemsHost']/ListItem[@Name='Dashboard']"),5);
+	}
 
 	public static WebElement aboutButton() {
 		return driver.findElementByName("About");

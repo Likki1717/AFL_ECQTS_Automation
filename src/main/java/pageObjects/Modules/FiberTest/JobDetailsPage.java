@@ -32,14 +32,14 @@ public class JobDetailsPage extends BaseClass {
 	public static boolean isBufferTubeDisplayed() {
 		return isElementDisplayed(
 				By.xpath("//Text[@AutomationId='OpticsButton']/../following-sibling::ListItem/Text[@Name='"
-						+ TestData.bufferTube + "']"),
+						+ TestData.fiberTestBufferTube + "']"),
 				3);
 	}
 
 	public static WebElement bufferTubeTab() {
 		return driver
 				.findElement(By.xpath("//Text[@AutomationId='OpticsButton']/../following-sibling::ListItem/Text[@Name='"
-						+ TestData.bufferTube + "']"));
+						+ TestData.fiberTestBufferTube + "']"));
 	}
 
 	public static WebElement reportsTab() {

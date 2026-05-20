@@ -39,4 +39,61 @@ public class Import extends BaseClass {
 			return isElementDisplayed(By.xpath("//Text[contains(@Name,'Warnings/Errors')]"), 1);
 		}
 	}
+
+	public static boolean isSelectImportTextDisplayed() {
+		return isElementDisplayed(ByName.name("Select an import type from the left panel"), 5);
+	}
+
+	public static WebElement orgDropDownField() {
+		return driver.findElementByAccessibilityId("OrgDropdown");
+	}
+
+	public static WebElement cutNumber() {
+		return driver.findElementByAccessibilityId("CutNumberId");
+	}
+
+	public static WebElement itemOrgCode() {
+		return driver.findElement(By.xpath("//Text[@Name='Item Org Code *']/following-sibling::ComboBox"));
+	}
+
+	public static WebElement cutNumberInfo() {
+		return driver.findElement(By.xpath("//Text[@Name='Cut Number Info']/following-sibling::ComboBox"));
+	}
+
+	public static WebElement importType() {
+		return driver.findElement(By.xpath("//Text[@Name='Import Type *']/following-sibling::ComboBox"));
+	}
+
+	public static WebElement uploadFileButton() {
+		return driver.findElementByName("Upload CSV");
+	}
+	
+	public static WebElement submitButton() {
+		return driver.findElement(By.xpath("//Button[@Name='Submit']"));
+	}
+	
+	public static WebElement fileNameTextBox() {
+		return driver.findElement(By.xpath("//ComboBox[@Name='File name:']/Edit"));
+	}
+
+	public static boolean isFileNameTextBoxDisplayed() {
+		return isElementDisplayed(ByName.name("File name:"), 10);
+	}
+	
+	public static String getJobNumberFromImportSuccessFulPopup() {
+		// Name Job imported successfully, but we couldn't load the job details right
+		// now.
+		// Please go to FIBER Test and search for Job Number: 90043053-159 to view the
+		// job details.
+		return driver.findElement(By.xpath("//Text[contains(@Name,'Job imported successfully')]")).getText()
+				.split("Job Number: ")[1].split(" ")[0];
+	}
+
+	public static boolean isImportSuccessfulPopupDisplayed() {
+		return isElementDisplayed(By.xpath("//Text[contains(@Name,'Job imported successfully')]"), 10);
+	}
+	
+	public static WebElement okButton() {
+		return driver.findElement(By.xpath("//Button[@Name='OK']"));
+	}
 }

@@ -37,7 +37,7 @@ public class Dashboard extends BaseClass {
 	}
 
 	public static boolean isLoaderNotDisplayed() {
-		return isElementNotDisplayed(ByAccessibilityId.AccessibilityId("LottiePlayer"), 610);
+		return isElementNotDisplayed(ByAccessibilityId.AccessibilityId("LottiePlayer"), 10);
 	}
 
 	public static boolean isLoaderDisplayed() {

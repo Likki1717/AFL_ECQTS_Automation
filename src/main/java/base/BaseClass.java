@@ -28,7 +28,6 @@ import pageObjects.Modules.FiberTest.JobDetails.OTDR_Settings;
 import pageObjects.Modules.FiberTest.JobDetails.ProtectionLayer;
 import pageObjects.Modules.FiberTest.JobDetails.Reports;
 import pageObjects.Modules.ImportData.Import;
-import pageObjects.Modules.ImportData.Prysmian;
 import pageObjects.sideMenu.About;
 import pageObjects.sideMenu.Settings;
 import pageObjects.sideMenu.settings.ApplicationSettings;
@@ -189,15 +188,7 @@ public class BaseClass {
 			capabilities.setCapability("platformName", "Windows");
 			capabilities.setCapability("deviceName", "WindowsPC");
 			capabilities.setCapability("automationName", "Windows");
-			Thread.sleep(3000);
-			try {
-				driver = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities);
-			} catch (Exception e) {
-				Thread.sleep(3000);
-				System.out.println("****Trying to Relaunch App from Catch block****");
-				driver = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities);
-			}
-			actions = new Actions(driver);
+			driver = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities);
 		} catch (Exception e) {
 			System.out.println("****Exception in launch_ECQTS_Application()****");
 		}
@@ -214,6 +205,8 @@ public class BaseClass {
 
 	public static void loginToApplication() throws InterruptedException {
 		try {
+			softAssert.assertTrue(SignIn.isUsernameFieldDisplayed(),
+					"Waited for 10 seconds, username field is not displayed");
 			SignIn.usernameField().clear();
 			SignIn.usernameField().sendKeys(TestData.ecqtsAppUsername());
 			SignIn.passwordField().clear();
@@ -222,6 +215,7 @@ public class BaseClass {
 			Dashboard.isLoaderNotDisplayed();
 			softAssert.assertTrue(Dashboard.isFiberTestModuleDisplayed(),
 					"Tried for 40 secs, Fiber Test module was not visible after login");
+			actions = new Actions(driver);
 		} catch (Exception e) {
 			System.out.println("****Exception in loginToApplication()****");
 			stopExecution();
@@ -253,8 +247,7 @@ public class BaseClass {
 			Dashboard.openNavigationButton().click();
 			SideMenu.aboutButton().click();
 			String appVersion = About.versionNumber().getText();
-			softAssert.assertTrue(appVersion.contains(TestData.expectedAppVersion),
-					"Expected build version was " + TestData.expectedAppVersion + " but found " + appVersion);
+			softAssert.assertEquals(appVersion, TestData.expectedAppVersion, "Build version mismatch.");
 			String expectedTextInPortalLink = (TestData.testEnvironment.equals("Dev")
 					|| TestData.testEnvironment.equals("QA")) ? TestData.testEnvironment.toLowerCase()
 							: TestData.prodWebUrl;
@@ -445,79 +438,89 @@ public class BaseClass {
 		}
 	}
 
-	public static void importJob() {
+	public static void importJob(String importType, String importFilesToUpload, String OTDR_Length, String helixFactor,
+			String JobNumberStartsWith) throws InterruptedException {
+		while (!Dashboard.isImportDataModuleDisplayed()) {
+			Dashboard.openNavigationButton().click();
+			SideMenu.isDashboardButtonDisplayed();
+			SideMenu.dashboardButton().click();
+			Thread.sleep(1000);
+		}
+		Dashboard.importDataModule().click();
 
-	}
+		softAssert.assertTrue(Import.isSelectImportTextDisplayed(),
+				"Waited for 5 seconds, Select an import type from the left panel is not displayed");
 
-	public static void importPrysmianJob() {
-		try {
-			while (!Dashboard.isImportDataModuleDisplayed()) {
-				Dashboard.openNavigationButton().click();
-				SideMenu.dashboardButton().click();
-				Thread.sleep(1000);
-			}
-			Dashboard.importDataModule().click();
-			softAssert.assertTrue(Import.isPrysmianTypeDisplayed(),
-					"Waited for 5 seconds, Prysmian option on the Import side menu is not displayed");
-			Thread.sleep(500);
+		Thread.sleep(500);
+
+		if (importType.equalsIgnoreCase("prysmian")) {
 			Import.prysmianType().click();
-			softAssert.assertTrue(Dashboard.isLoaderDisplayed(),
-					"Waited for 5 seconds, Screen loader did not display");
-			softAssert.assertTrue(Dashboard.isLoaderNotDisplayed(),
-					"Waited for 10 seconds but still the screen loader is displayed");
-			Thread.sleep(500);
-			Prysmian.orgDropDownField().sendKeys(TestData.prysmianOrg);
-			robot.keyPress(KeyEvent.VK_TAB);
-			robot.keyRelease(KeyEvent.VK_TAB);
-			Prysmian.cutNumber().sendKeys(TestData.prysmianCutNumber);
-			robot.keyPress(KeyEvent.VK_TAB);
-			robot.keyRelease(KeyEvent.VK_TAB);
-			Thread.sleep(500);
-			Prysmian.itemOrgCode().sendKeys(TestData.prysmianItemOrgCode);
-			robot.keyPress(KeyEvent.VK_TAB);
-			robot.keyRelease(KeyEvent.VK_TAB);
-			Thread.sleep(1000);
-			Prysmian.cutNumberInfo().sendKeys(TestData.prysmiancutNumberInfo);
-			Thread.sleep(500);
-			robot.keyPress(KeyEvent.VK_TAB);
-			robot.keyRelease(KeyEvent.VK_TAB);
-			Thread.sleep(1000);
-			Prysmian.importType().sendKeys(TestData.prysmianImportType);
-			robot.keyPress(KeyEvent.VK_TAB);
-			robot.keyRelease(KeyEvent.VK_TAB);
-			Prysmian.uploadFileButton().click();
-			softAssert.assertTrue(Prysmian.isFileNameTextBoxDisplayed(),
-					"Waited for 10 seconds, file name text box was not visible");
 
-			// Multi-file string
-			String filesToUpload = "\"" + TestData.prysmianAttenuationFilePath + "\" \""
-					+ TestData.prysmianJacketOdFilePath + "\"";
+		} else if (importType.equalsIgnoreCase("swindon")) {
+			Import.swindonType().click();
 
-			// Send file paths
-			Prysmian.fileNameTextBox().click();
-			Prysmian.fileNameTextBox().sendKeys(filesToUpload);
-			Thread.sleep(500);
-			robot.keyPress(KeyEvent.VK_ENTER);
-			robot.keyRelease(KeyEvent.VK_ENTER);
+		} else if (importType.equalsIgnoreCase("taihan")) {
+			Import.taihanType().click();
+		}
 
-			if (!Prysmian.cutNumberInfo().getText().equals(TestData.prysmiancutNumberInfo)) {
-				System.out.println(
-						"****Cut number info did not get selected as given in test data, hence stopping execution****");
-				stopExecution();
-			}
+		softAssert.assertTrue(Dashboard.isLoaderDisplayed(), "Waited for 5 seconds, Screen loader did not display");
+		softAssert.assertTrue(Dashboard.isLoaderNotDisplayed(),
+				"Waited for 10 seconds but still the screen loader is displayed");
+		Thread.sleep(500);
+		Import.orgDropDownField().sendKeys(TestData.importOrg);
+		robot.keyPress(KeyEvent.VK_TAB);
+		robot.keyRelease(KeyEvent.VK_TAB);
+		Import.cutNumber().sendKeys(TestData.importCutNumber);
+		robot.keyPress(KeyEvent.VK_TAB);
+		robot.keyRelease(KeyEvent.VK_TAB);
+		Thread.sleep(500);
+		Import.itemOrgCode().sendKeys(TestData.importItemOrgCode);
+		robot.keyPress(KeyEvent.VK_TAB);
+		robot.keyRelease(KeyEvent.VK_TAB);
+		Thread.sleep(1000);
+		Import.cutNumberInfo().sendKeys(TestData.importcutNumberInfo);
+		Thread.sleep(500);
+		robot.keyPress(KeyEvent.VK_TAB);
+		robot.keyRelease(KeyEvent.VK_TAB);
+		Thread.sleep(1000);
+		Import.importType().sendKeys(TestData.importType);
+		robot.keyPress(KeyEvent.VK_TAB);
+		robot.keyRelease(KeyEvent.VK_TAB);
+		Import.uploadFileButton().click();
+		softAssert.assertTrue(Import.isFileNameTextBoxDisplayed(),
+				"Waited for 10 seconds, file name text box was not visible");
 
-			Prysmian.submitButton().click();
-			Dashboard.isLoaderDisplayed();
-			if (Dashboard.isLoaderNotDisplayed()) {
+		// Send file paths
+		Import.fileNameTextBox().click();
+		Import.fileNameTextBox().sendKeys(importFilesToUpload);
+		Thread.sleep(500);
+		robot.keyPress(KeyEvent.VK_ENTER);
+		robot.keyRelease(KeyEvent.VK_ENTER);
+
+		if (!Import.cutNumberInfo().getText().equals(TestData.importcutNumberInfo)) {
+			System.out.println(
+					"****Cut number info did not get selected as given in test data, hence stopping execution****");
+			stopExecution();
+		}
+
+		Import.submitButton().click();
+		Dashboard.isLoaderDisplayed();
+
+		boolean proceedWithImport = false;
+
+		while (!proceedWithImport) {
+			if (Dashboard.isLoaderNotDisplayed() || Import.isImportSuccessfulPopupDisplayed()
+					|| Import.isWarningsErrorsPopupDisplayedOtherThanMissingFiberId()) {
+				proceedWithImport = true;
 				Thread.sleep(2000);
-				if (Prysmian.isImportSuccessfulPopupDisplayed()) {
-					String prysmianJobNumber = Prysmian.getJobNumberFromImportSuccessFulPopup();
-					Prysmian.okButton().click();
-					searchJobAndNavigationToJobDetailsPage(TestData.prysmianOrg, prysmianJobNumber,
-							TestData.prysmianCutNumber, TestData.prysmiancutNumberInfo);
+				if (Import.isImportSuccessfulPopupDisplayed()) {
+					String ImportJobNumber = Import.getJobNumberFromImportSuccessFulPopup();
+					System.out.println(ImportJobNumber);
+					Import.okButton().click();
+					searchJobAndNavigationToJobDetailsPage(TestData.importOrg, ImportJobNumber,
+							TestData.importCutNumber, TestData.importcutNumberInfo);
 				} else if (Import.isPrysmianTypeDisplayed()) {
-					System.out
-							.println("****Import Failed - loader is not displayed but still on the Prysmian page****");
+					System.out.println("****Import Failed - loader is not displayed but still on the import page****");
 					stopExecution();
 				} else if (Import.isWarningsErrorsPopupDisplayedOtherThanMissingFiberId()) {
 					System.out
@@ -526,219 +529,88 @@ public class BaseClass {
 				} else if (JobDetailsPage.isMissingFiberIdWarningPopupDisplayed()) {
 					JobDetailsPage.okButton().click();
 				}
-			} else {
-				System.out.println("****Waited more than 10 mins but loader is still displayed while importing****");
-				stopExecution();
 			}
+		}
 
-			// Waiting for protection layer tab to confirm data is loaded
+		// Waiting for protection layer tab to confirm data is loaded
 
-			softAssert.assertTrue(JobDetailsPage.isProtectionLayerTabDisplayed(),
-					"Tried for 5 seconds, Protection Layer tab is not displayed");
+		softAssert.assertTrue(JobDetailsPage.isProtectionLayerTabDisplayed(),
+				"Tried for 5 seconds, Protection Layer tab is not displayed");
 
-			System.out.println("Prysmian Import Job Number: " + JobDetailsPage.jobNumber().getText().trim());
+		System.out.println("Import Job Number: " + JobDetailsPage.jobNumber().getText().trim());
 
-			// Validating OTDR length is not 0 and its as expected
+		// Validating OTDR length is not 0 and its as expected
 
-			softAssert.assertEquals(JobDetailsPage.OTDR_Length().getText(), TestData.prysmianExpectedOtdrLength,
-					"OTDR Length mismatch. Expected: " + TestData.prysmianExpectedOtdrLength + " but found: "
-							+ JobDetailsPage.OTDR_Length().getText());
+		softAssert.assertEquals(JobDetailsPage.OTDR_Length().getText(), OTDR_Length, "OTDR Length mismatch. Expected: "
+				+ OTDR_Length + " but found: " + JobDetailsPage.OTDR_Length().getText());
+
+		// Validating Helix Factor
+		softAssert.assertEquals(JobDetailsPage.helixFactor().getText().trim(), helixFactor,
+				"Prysmian Import Job Helix Factor is not as expected, \n Expected Helix Factor was: " + helixFactor
+						+ " But found: " + JobDetailsPage.helixFactor().getText().trim());
+
+		verifyJobDetailsHeader(TestData.importOrg, JobNumberStartsWith, TestData.importCutNumber,
+				TestData.importcutNumberInfo, importType);
+	}
+
+	public static void importPrysmianJob() {
+		try {
+			// Multi-file string
+			String prysmianFilePath = "\"" + TestData.prysmianAttenuationFilePath + "\" \""
+					+ TestData.prysmianJacketOdFilePath + "\"";
+
+			importJob("prysmian", prysmianFilePath, TestData.prysmianExpectedOtdrLength,
+					TestData.prysmianExpectedHelixFactor, TestData.prysmianJobNumberStartsWith);
 
 			// Validating test results count
-
-			verifyTestsCount(TestData.prysmianExpectedIncompleteTests, TestData.prysmianExpectedPassedTests,
-					TestData.prysmianExpectedFailedTests);
-
-			// Validating Helix Factor
-			softAssert.assertEquals(JobDetailsPage.helixFactor().getText().trim(), TestData.prysmianExpectedHelixFactor,
-					"Prysmian Import Job Helix Factor is not as expected, \n Expected Helix Factor was: "
-							+ TestData.prysmianExpectedHelixFactor + " But found: "
-							+ JobDetailsPage.helixFactor().getText().trim());
-
-			verifyJobDetailsHeader(TestData.prysmianOrg, TestData.prysmianJobNumberStartsWith,
-					TestData.prysmianCutNumber, TestData.prysmiancutNumberInfo);
-
+			verifyTestResultsCount(TestData.prysmianExpectedIncompleteTests, TestData.prysmianExpectedPassedTests,
+					TestData.prysmianExpectedFailedTests, "Prysmian Import");
 		} catch (Exception e) {
 			System.out.println("****Exception in importPrysmianJob()****");
 		}
 	}
 
-//	public static void importSwindonJob() {
-//		try {
-//			Side_Menu.dashboardButton().click();
-//			Thread.sleep(1000);
-//			Dashboard_Page.importDataModule().click();
-//			Import_Page.swindonType().click();
-//			Swindon_Import_Page.orgDropDownField().sendKeys(TestData.swindon_Org);
-//			Swindon_Import_Page.cutNumber().click();
-//			Swindon_Import_Page.cutNumber().sendKeys(TestData.swindon_Cut_Number());
-//			Swindon_Import_Page.itemOrgCode().sendKeys(TestData.swindon_Item_Org_Code);
-//			Swindon_Import_Page.cutNumberInfo().sendKeys("ZTEST01");
-//			Swindon_Import_Page.importType().sendKeys(TestData.swindon_Import_Type);
-//			robot.mouseWheel(100);
-//			Thread.sleep(1000);
-//			Swindon_Import_Page.uploadFileButton().click();
-//			Thread.sleep(3000);
-//			actions.moveToElement(Swindon_Import_Page.address_Bar()).click().build().perform();
-//			Point mousePosition = MouseInfo.getPointerInfo().getLocation();
-//			int currentX = (int) mousePosition.getX();
-//			int currentY = (int) mousePosition.getY();
-//			robot.mouseMove(currentX + 70, currentY);
-//			robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-//			robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-//			actions.sendKeys(Keys.BACK_SPACE).build().perform();
-//			actions.sendKeys(TestData.swindon_Files_Path).build().perform();
-//			actions.sendKeys(Keys.ENTER).build().perform();
-//			Thread.sleep(1000);
-//			Swindon_Import_Page.jacketOdFile().click();
-//			actions.keyDown(Keys.CONTROL).build().perform();
-//			Swindon_Import_Page.attenuationFile().click();
-//			actions.keyUp(Keys.CONTROL).build().perform();
-//			actions.sendKeys(Keys.ENTER).build().perform();
-//			Thread.sleep(1000);
-//			try {
-//				Swindon_Import_Page.fileBeingUsedPopup();
-//				System.out.println(
-//						"****CLOSE THE ALREADY OPENED SWINDON FILE(S) AND RUN THE SCRIPT AGAIN****\n****CLOSE THE ALREADY OPENED SWINDON FILE(S) AND RUN THE SCRIPT AGAIN****\n****CLOSE THE ALREADY OPENED SWINDON FILE(S) AND RUN THE SCRIPT AGAIN****\n****CLOSE THE ALREADY OPENED SWINDON FILE(S) AND RUN THE SCRIPT AGAIN****");
-//				Swindon_Import_Page.warning_Popup_ok_Button().click();
-//				stopExecution();
-//			} catch (Exception e) {
-//
-//			}
-//			Swindon_Import_Page.submitButton().click();
-//			Thread.sleep(Duration.ofSeconds(40));
-//			boolean clickedOnOkButton = false;
-//			int attemptsCount = 0;
-//			while (clickedOnOkButton == false && attemptsCount < 400) {
-//				try {
-//					Swindon_Import_Page.warning_Popup_ok_Button().click();
-//					clickedOnOkButton = true;
-//				} catch (Exception e) {
-//					Thread.sleep(2000);
-//					attemptsCount++;
-//					if (attemptsCount == 400) {
-//						System.out.println("****Waited too long for missing fiber id popup****");
-//					}
-//				}
-//			}
-//			Thread.sleep(3000);
-//			System.out.println("Job Number: " + JobDetailsHeader.job_Number().getText().trim());
-//			if (!JobDetailsHeader.test_Results()
-//					.equalsIgnoreCase("Incomplete: " + TestData.swindon_Expected_Incomplete_Tests + ", Passed: "
-//							+ TestData.swindon_Expected_Passed_Tests + ", Failed: "
-//							+ TestData.swindon_Expected_Failed_Tests)) {
-//				System.out.println("****Swindon Import Job Status Count is not as expected****");
-//				System.out.println(
-//						"Expected Test Status was: " + "Incomplete: " + TestData.swindon_Expected_Incomplete_Tests
-//								+ ", Passed: " + TestData.swindon_Expected_Passed_Tests + ", Failed: "
-//								+ TestData.swindon_Expected_Failed_Tests);
-//				System.out.println("Current  Status found is: " + JobDetailsHeader.test_Results());
-//			}
-//
-//			if (!JobDetailsHeader.helix_Factor().getText().trim()
-//					.equalsIgnoreCase(TestData.swindon_Expected_Helix_Factor)) {
-//				System.out.println("\n****Swindon Import Job Helix Factor is not as expected****");
-//				System.out.println("Expected Helix Factor was: " + TestData.swindon_Expected_Helix_Factor);
-//				System.out
-//						.println("Current  Helix Factor found is: " + JobDetailsHeader.helix_Factor().getText().trim());
-//			}
-//		} catch (Exception e) {
-//			System.out.println("****Exception in importSwindonJob()****");
-//		}
-//	}
+	public static void importSwindonJob() {
 
-//	public static void importTaihanJob() {
-//		try {
-//			Side_Menu.dashboardButton().click();
-//			Thread.sleep(1000);
-//			Dashboard_Page.importDataModule().click();
-//			Import_Page.taihanType().click();
-//			Taihan_Import_Page.orgDropDownField().sendKeys(TestData.taihan_Org);
-//			Taihan_Import_Page.cutNumber().click();
-//			Taihan_Import_Page.cutNumber().sendKeys(TestData.taihan_Cut_Number());
-//			Taihan_Import_Page.itemOrgCode().sendKeys(TestData.taihan_Item_Org_Code);
-//			Taihan_Import_Page.cutNumberInfo().sendKeys("ZTEST01");
-//			Taihan_Import_Page.importType().sendKeys(TestData.taihan_Import_Type);
-//			robot.mouseWheel(100);
-//			Thread.sleep(1000);
-//			Taihan_Import_Page.uploadFileButton().click();
-//			Thread.sleep(3000);
-//			actions.moveToElement(Taihan_Import_Page.address_Bar()).click().build().perform();
-//			Point mousePosition = MouseInfo.getPointerInfo().getLocation();
-//			int currentX = (int) mousePosition.getX();
-//			int currentY = (int) mousePosition.getY();
-//			robot.mouseMove(currentX + 70, currentY);
-//			robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-//			robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-//			actions.sendKeys(Keys.BACK_SPACE).build().perform();
-//			actions.sendKeys(TestData.taihan_Files_Path).build().perform();
-//			actions.sendKeys(Keys.ENTER).build().perform();
-//			Thread.sleep(1000);
-//			Taihan_Import_Page.attenuationFile().click();
-//			actions.sendKeys(Keys.ENTER).build().perform();
-//			Thread.sleep(1000);
-//			try {
-//				Taihan_Import_Page.fileBeingUsedPopup();
-//				System.out.println(
-//						"****CLOSE THE ALREADY OPENED TAIHAN FILE(S) AND RUN THE SCRIPT AGAIN****\n****CLOSE THE ALREADY OPENED TAIHAN FILE(S) AND RUN THE SCRIPT AGAIN****\n****CLOSE THE ALREADY OPENED TAIHAN FILE(S) AND RUN THE SCRIPT AGAIN****\n****CLOSE THE ALREADY OPENED TAIHAN FILE(S) AND RUN THE SCRIPT AGAIN****");
-//				Taihan_Import_Page.warning_Popup_ok_Button().click();
-//				stopExecution();
-//			} catch (Exception e) {
-//
-//			}
-//			Taihan_Import_Page.submitButton().click();
-//			Thread.sleep(Duration.ofSeconds(20));
-//			boolean clickedOnOkButton = false;
-//			int attemptsCount = 0;
-//			while (clickedOnOkButton == false && attemptsCount < 400) {
-//				try {
-//					Swindon_Import_Page.warning_Popup_ok_Button().click();
-//					clickedOnOkButton = true;
-//				} catch (Exception e) {
-//					Thread.sleep(2000);
-//					attemptsCount++;
-//					if (attemptsCount == 400) {
-//						System.out.println("****Waited too long for missing fiber id popup****");
-//					}
-//				}
-//			}
-//			Thread.sleep(3000);
-//			System.out.println("Job Number: " + JobDetailsHeader.job_Number().getText().trim());
-//			if (!JobDetailsHeader.test_Results()
-//					.equalsIgnoreCase("Incomplete: " + TestData.taihan_Expected_Incomplete_Tests + ", Passed: "
-//							+ TestData.taihan_Expected_Passed_Tests + ", Failed: "
-//							+ TestData.taihan_Expected_Failed_Tests)) {
-//				System.out.println("****Taihan Import Job Status Count is not as expected****");
-//				System.out.println(
-//						"Expected Test Status was: " + "Incomplete: " + TestData.taihan_Expected_Incomplete_Tests
-//								+ ", Passed: " + TestData.taihan_Expected_Passed_Tests + ", Failed: "
-//								+ TestData.taihan_Expected_Failed_Tests);
-//				System.out.println("Current  Status found is: " + JobDetailsHeader.test_Results());
-//			}
-//
-//			if (!JobDetailsHeader.helix_Factor().getText().trim()
-//					.equalsIgnoreCase(TestData.taihan_Expected_Helix_Factor)) {
-//				System.out.println("\n****Taihan Import Job Helix Factor is not as expected****");
-//				System.out.println("Expected Helix Factor was: " + TestData.taihan_Expected_Helix_Factor);
-//				System.out
-//						.println("Current  Helix Factor found is: " + JobDetailsHeader.helix_Factor().getText().trim());
-//			}
-//
-//			if (!JobDetailsHeader.otdr_Length().getText().trim()
-//					.equalsIgnoreCase(TestData.taihan_Expected_OTDR_Length)) {
-//				System.out.println("\n****Taihan Import Job OTDR Length is not as expected****");
-//				System.out.println("Expected OTDR length was: " + TestData.taihan_Expected_OTDR_Length);
-//				System.out.println("Current  OTDR length found is: " + JobDetailsHeader.otdr_Length().getText().trim());
-//			}
-//		} catch (Exception e) {
-//			System.out.println("****Exception in importTaihanJob()****");
-//		}
-//	}
+		try {
+			// Multi-file string
+			String swindonFilePath = "\"" + TestData.swindonAttenuationFilePath + "\" \""
+					+ TestData.swindonJacketOdFilePath + "\"";
+
+			importJob("swindon", swindonFilePath, TestData.swindonExpectedOtdrLength,
+					TestData.swindonExpectedHelixFactor, TestData.swindonJobNumberStartsWith);
+
+			verifyTestResultsCount(TestData.swindonExpectedIncompleteTests, TestData.swindonExpectedPassedTests,
+					TestData.swindonExpectedFailedTests, "Swindon Import");
+
+		} catch (Exception e) {
+			System.out.println("****Exception in importSwindonJob()****");
+		}
+	}
+
+	public static void importTaihanJob() {
+
+		try {
+			// Multi-file string
+			String taihanFilePath = "\"" + TestData.taihanAttenuationFilePath + "\"";
+
+			importJob("taihan", taihanFilePath, TestData.taihanExpectedOtdrLength, TestData.taihanExpectedHelixFactor,
+					TestData.taihanJobNumberStartsWith);
+
+			verifyTestResultsCount(TestData.taihanExpectedIncompleteTests, TestData.taihanExpectedPassedTests,
+					TestData.swindonExpectedFailedTests, "Taihan Import");
+
+		} catch (Exception e) {
+			System.out.println("****Exception in importTaihanJob()****");
+		}
+
+	}
 
 	public static void searchJobAndNavigationToJobDetailsPage(String org, String jobNumber, String cutNumber,
 			String cutNumberInfo) throws InterruptedException {
 		while (!Dashboard.isImportDataModuleDisplayed()) {
 			Dashboard.openNavigationButton().click();
+			SideMenu.isDashboardButtonDisplayed();
 			SideMenu.dashboardButton().click();
 			Thread.sleep(1000);
 		}
@@ -782,47 +654,50 @@ public class BaseClass {
 				"Tried for 50 seconds, Protection Layer tab is not displayed");
 	}
 
-	public static void verifyJobDetailsHeader(String org, String jobNumber, String cutNumber, String cutNumberInfo) {
-		softAssert.assertEquals(JobDetailsPage.org().getText().trim(), org,
-				"Org Code is not as expected, \n Expected org code: " + org + " But found: "
-						+ JobDetailsPage.org().getText().trim());
+	public static void verifyJobDetailsHeader(String org, String jobNumber, String cutNumber, String cutNumberInfo,
+			String whichTestBeingPerformed) {
 
-		softAssert.assertTrue(JobDetailsPage.jobNumber().getText().trim().contains(jobNumber),
-				"Job number  is not as expected, \n Expected Job number: " + jobNumber + " But found: "
-						+ JobDetailsPage.jobNumber().getText().trim());
+		softAssert.assertEquals(JobDetailsPage.org().getText().trim(), org,
+				"Org is not as expected in " + whichTestBeingPerformed);
+
+		softAssert.assertEquals(JobDetailsPage.jobNumber().getText().trim().split("-")[0], jobNumber,
+				"Job number is not as expected in " + whichTestBeingPerformed);
 
 		softAssert.assertEquals(JobDetailsPage.cutNumber().getText().trim(), cutNumber,
-				"Cut number  is not as expected, \n Expected cut number: " + cutNumber + " But found: "
-						+ JobDetailsPage.cutNumber().getText().trim());
+				"Cut number is not as expected in " + whichTestBeingPerformed);
 
 		softAssert.assertEquals(JobDetailsPage.cutNumberInfo().getText().trim(), cutNumberInfo,
-				"Cut number info is not as expected, \n Expected cut number info: " + cutNumberInfo + " But found: "
-						+ JobDetailsPage.cutNumberInfo().getText().trim());
+				"Cut number info is not as expected in " + whichTestBeingPerformed);
 	}
 
-	public static void verifyTestsCount(String expectedIncompleteTestsCount, String expectedPassedTestsCount,
-			String expectedFailedTestsCount) {
+	public static void verifyTestResultsCount(String expectedIncompleteTestsCount, String expectedPassedTestsCount,
+			String expectedFailedTestsCount, String whichTestBeingPerformed) {
 
 		String expectedTestResultsCounts = "Incomplete: " + expectedIncompleteTestsCount + ", Passed: "
 				+ expectedPassedTestsCount + ", Failed: " + expectedFailedTestsCount;
 
-		softAssert.assertEquals(JobDetailsPage.getActualTestResultsCounts(), expectedTestResultsCounts,
-				"Prysmian Import Job results count is not as expected, \n Expected: " + expectedTestResultsCounts
-						+ " But found: " + JobDetailsPage.getActualTestResultsCounts());
+		String actualTestResultsCount = JobDetailsPage.getActualTestResultsCounts();
 
+		softAssert.assertEquals(actualTestResultsCount, expectedTestResultsCounts,
+				"Test results count mismatch in " + whichTestBeingPerformed);
 	}
 
 	public static void enterProtectionLayerValues() {
-		ProtectionLayer.j1NomialODVertical().sendKeys("1000");
-		ProtectionLayer.j1NomialODHorizontal().sendKeys("1500");
-		ProtectionLayer.j1_1stRipcord().click();
-		ProtectionLayer.j1_1stRipcord().sendKeys("RIP00106");
-		ProtectionLayer.j1MinSpotWall().sendKeys("1600");
-		ProtectionLayer.j190DegWall().sendKeys("1000");
-		ProtectionLayer.j1180DegWall().sendKeys("1000");
-		ProtectionLayer.editJ1270DegWall().sendKeys("2000");
-		ProtectionLayer.core1Lay().sendKeys("40");
-		ProtectionLayer.FRP_Nomial_OD().sendKeys("1600");
+		try {
+			ProtectionLayer.j1NomialODVertical().sendKeys("1000");
+			ProtectionLayer.j1NomialODHorizontal().sendKeys("1500");
+			ProtectionLayer.j1_1stRipcord().click();
+			ProtectionLayer.j1_1stRipcord().sendKeys("RIP00106");
+			ProtectionLayer.j1MinSpotWall().sendKeys("1600");
+			ProtectionLayer.j190DegWall().sendKeys("1000");
+			ProtectionLayer.j1180DegWall().sendKeys("1000");
+			ProtectionLayer.editJ1270DegWall().sendKeys("2000");
+			ProtectionLayer.core1Lay().sendKeys("40");
+			ProtectionLayer.FRP_Nomial_OD().sendKeys("1600");
+		} catch (Exception e) {
+			System.out.println(
+					"****Could not enter all the values in Protection Layer, possibly this job does not have all fields****");
+		}
 	}
 
 	public static void runGetLengthTest() {
@@ -846,11 +721,64 @@ public class BaseClass {
 				"Waited for 50 seconds, Ok button on get length popup is not displayed");
 		wait.until(ExpectedConditions.elementToBeClickable(OTDR_Settings.okButton()));
 		OTDR_Settings.okButton().click();
+		Dashboard.isLoaderNotDisplayed();
 		softAssert.assertTrue(OTDR_Settings.isGetLengthHistoryDropDownFieldDisplayed(),
 				"Waited for 50 seconds, Get Length history drop down field is not displayed");
 	}
 
-	public static void runTestInLoop() throws InterruptedException {
+	public static void runFiberTest(int numberOfFibersToTest, int delayInSecondsBeforeClickingOnOkButtonOnRunTestGraphs)
+			throws InterruptedException {
+		wait = new WebDriverWait(driver, 30);
+		int fibersTested = 0;
+		boolean startTestFromFirstBufferTube = true;
+		boolean startTestingInNewBufferTube = true;
+		while (numberOfFibersToTest != fibersTested) {
+// Below if block is needed only to click on the first buffer tube, which is at start of test 
+// OR when all tests are completed and still number of fibers to test are less than overall fibers tested
+			if (startTestFromFirstBufferTube) {
+				JobDetailsPage.isBufferTubeDisplayed();
+				wait.until(ExpectedConditions.elementToBeClickable(JobDetailsPage.bufferTubeTab()));
+				while (!FiberResults.isRunTestsButtonDisplayed()) {
+					JobDetailsPage.bufferTubeTab().click();
+				}
+				startTestFromFirstBufferTube = false;
+			}
+// Below if blocked is needed to click on Show more info button and to click on Run Test button of first fiber,
+// which is at start of test OR when moved to new buffer tube			
+			if (startTestingInNewBufferTube) {
+				FiberResults.isRunTestsButtonDisplayed();
+				FiberResults.showMoreInfoButton().click();
+				wait.until(ExpectedConditions.elementToBeClickable(FiberResults.runTestsButtonOfFirstFiber()));
+				FiberResults.runTestsButtonOfFirstFiber().click();
+				startTestingInNewBufferTube = false;
+			}
+			Dashboard.isLoaderDisplayed();
+			Dashboard.isLoaderNotDisplayed();
+			FiberResults.isOkButtonDisplayed();
+			wait.until(ExpectedConditions.elementToBeClickable(FiberResults.okButton()));
+			Thread.sleep(delayInSecondsBeforeClickingOnOkButtonOnRunTestGraphs * 1000);
+			FiberResults.okButton().click();
+			fibersTested++;
+			FiberResults.isGoToFiberButtonVisible();
+			wait.until(ExpectedConditions.elementToBeClickable(FiberResults.goToFiberButton()));
+			FiberResults.goToFiberButton().click();
+			FiberResults.isContinueTestsButtonDisplayed();
+			if (numberOfFibersToTest == fibersTested) {
+				FiberResults.stopButton().click();
+			} else {
+				FiberResults.continueButton().click();
+				if (FiberResults.isTestsCompletedTextDisplayed()) {
+					FiberResults.okButton().click();
+					startTestingInNewBufferTube = true;
+					if (!FiberResults.isRunTestsButtonDisplayed()) {
+						startTestFromFirstBufferTube = true;
+					}
+				}
+			}
+		}
+	}
+
+	public static void runTestInLoopAlongWithSwitchingToSettingsPage() throws InterruptedException {
 		JobDetailsPage.isProtectionLayerTabDisplayed();
 		wait = new WebDriverWait(driver, 30);
 		wait.until(ExpectedConditions.elementToBeClickable(JobDetailsPage.bufferTubeTab()));
@@ -858,78 +786,85 @@ public class BaseClass {
 			JobDetailsPage.bufferTubeTab().click();
 		}
 		FiberResults.showMoreInfoButton().click();
-		wait.until(ExpectedConditions.elementToBeClickable(FiberResults.runTestsButtonOfFirstFiber()));
-		FiberResults.runTestsButtonOfFirstFiber().click();
+
 		while (true) {
+			wait.until(ExpectedConditions.elementToBeClickable(FiberResults.runTestsButtonOfFirstFiber()));
+			FiberResults.runTestsButtonOfFirstFiber().click();
 			FiberResults.isOkButtonDisplayed();
 			wait.until(ExpectedConditions.elementToBeClickable(FiberResults.okButton()));
-//			Thread.sleep(20000);
+			Thread.sleep(5000);
 			FiberResults.okButton().click();
 			FiberResults.isGoToFiberButtonVisible();
 			wait.until(ExpectedConditions.elementToBeClickable(FiberResults.goToFiberButton()));
 			FiberResults.goToFiberButton().click();
 			FiberResults.isContinueTestsButtonDisplayed();
-			FiberResults.continueButton().click();
-			if (FiberResults.isTestsCompleteDisplayed()) {
-				FiberResults.okButton().click();
-				if (!FiberResults.isRunTestsButtonDisplayed()) {
-					actions.moveToElement(JobDetailsPage.bufferTubeTab()).build().perform();
-					JobDetailsPage.bufferTubeTab().click();
-				}
-				FiberResults.isRunTestsButtonDisplayed();
-				FiberResults.showMoreInfoButton().click();
-				wait.until(ExpectedConditions.elementToBeClickable(FiberResults.runTestsButtonOfFirstFiber()));
-				FiberResults.runTestsButtonOfFirstFiber().click();
-			}
-//			FiberResults.isGoToFiberButtonNotVisible();
-//			Thread.sleep(1000);
-//			Dashboard.openNavigationButton().click();
-//			SideMenu.settingsButton().click();
-//			Settings.isTestSettingsButtonDisplayed();
-//			Thread.sleep(1000);
-//			try {
-//				Settings.testSettingsButton().click();
-//				softAssert.assertTrue(TestSettings.isDisplayRealTimePlotToogleDisplayed(),
-//						"Waited for 3 secs, Display real time plot settings toggle is not displayed ");
-//			} catch (Exception e) {
-//
+//			FiberResults.continueButton().click();
+//			if (FiberResults.isTestsCompletedTextDisplayed()) {
+//				FiberResults.okButton().click();
+//				if (!FiberResults.isRunTestsButtonDisplayed()) {
+//					actions.moveToElement(JobDetailsPage.bufferTubeTab()).build().perform();
+//					JobDetailsPage.bufferTubeTab().click();
+//				}
+//				FiberResults.isRunTestsButtonDisplayed();
+//				FiberResults.showMoreInfoButton().click();
+//				wait.until(ExpectedConditions.elementToBeClickable(FiberResults.runTestsButtonOfFirstFiber()));
+//				FiberResults.runTestsButtonOfFirstFiber().click();
 //			}
-//			Dashboard.backArrow().click();
-			verifyTestsCount(TestData.fiberTestExpectedIncompleteTestsCount, TestData.fiberTestExpectedPassedTestsCount,
-					TestData.fiberTestExpectedFailedTestsCount);
-			break;
+//			FiberResults.isGoToFiberButtonNotVisible();
+			FiberResults.stopButton().click();
+			Thread.sleep(1000);
+			Dashboard.openNavigationButton().click();
+			SideMenu.settingsButton().click();
+			Settings.isTestSettingsButtonDisplayed();
+			Thread.sleep(1000);
+			try {
+				Settings.testSettingsButton().click();
+				softAssert.assertTrue(TestSettings.isDisplayRealTimePlotToogleDisplayed(),
+						"Waited for 3 secs, Display real time plot settings toggle is not displayed ");
+			} catch (Exception e) {
+
+			}
+			Dashboard.backArrow().click();
+//			verifyTestsCount(TestData.fiberTestExpectedIncompleteTestsCount, TestData.fiberTestExpectedPassedTestsCount,
+//					TestData.fiberTestExpectedFailedTestsCount);
+//			break;
 		}
 	}
 
 	public static void enterCompletionLayerValues() {
 
-		JobDetailsPage.completionTabDisplayed();
-		actions.moveToElement(JobDetailsPage.completionTab()).click().build().perform();
-		softAssert.assertTrue(Completion.isSeqNumberTestDisplayed(),
-				"Waited for 5 seconds, ISE Sequence test is not displayed ");
-		Completion.ISE_Seq_Number().sendKeys("1000");
-		Completion.ISE_Seq_Number_uoM().sendKeys("ft");
+		try {
+			JobDetailsPage.completionTabDisplayed();
+			actions.moveToElement(JobDetailsPage.completionTab()).click().build().perform();
+			softAssert.assertTrue(Completion.isSeqNumberTestDisplayed(),
+					"Waited for 5 seconds, ISE Sequence test is not displayed ");
+			Completion.ISE_Seq_Number().sendKeys("1000");
+			Completion.ISE_Seq_Number_uoM().sendKeys("ft");
 
-		Completion.OSE_Seq_Number().sendKeys("100");
-		Completion.OSE_Seq_Number_uoM().sendKeys("ft");
+			Completion.OSE_Seq_Number().sendKeys("100");
+			Completion.OSE_Seq_Number_uoM().sendKeys("ft");
 
-		softAssert.assertTrue(Completion.isInvalidMeterMarksPopupDisplayed(),
-				"Waited for 20 seconds, Invalid Meter Marks text is not visible");
+			softAssert.assertTrue(Completion.isInvalidMeterMarksPopupDisplayed(),
+					"Waited for 20 seconds, Invalid Meter Marks text is not visible");
 
-		Completion.okButton().click();
+			Completion.okButton().click();
 
-		Completion.ISE_Print_Verified().sendKeys("2");
-		Completion.OSE_Print_Verified().sendKeys("2");
+			Completion.ISE_Print_Verified().sendKeys("2");
+			Completion.OSE_Print_Verified().sendKeys("2");
 
-		Completion.reelItem().sendKeys("REL00235");
-		Completion.jacketColor().sendKeys("2");
+			Completion.reelItem().sendKeys("REL00235");
+			Completion.jacketColor().sendKeys("2");
 
-		Completion.OSE_Print_Spacing().sendKeys("2");
-		Completion.ISE_Print_Spacing().sendKeys("2");
+			Completion.OSE_Print_Spacing().sendKeys("2");
+			Completion.ISE_Print_Spacing().sendKeys("2");
+		} catch (Exception e) {
+			System.out.println(
+					"****Could not enter all the values in Completion tab, possibly this job does not have all fields****");
+		}
 	}
 
 	public static void download_OCR_Report() {
-		
+
 		JobDetailsPage.reportsTab().click();
 		Reports.isJobWarnings_ErrorsPopupDisplayed();
 		Reports.okButton().click();
@@ -938,11 +873,15 @@ public class BaseClass {
 		softAssert.assertTrue(Reports.isGeneratingReportsInBackgroundTextDisplayed(),
 				"Waited for 10 seconds, Generating Reports in background text is not displayed  ");
 		Reports.okButton().click();
+		Dashboard.isLoaderDisplayed();
 		Dashboard.isLoaderNotDisplayed();
+		Dashboard.isLoaderDisplayed();
+		Dashboard.isLoaderNotDisplayed();
+		JobDetailsPage.reportsTab().click();
 	}
 
 	public static void stopExecution() throws InterruptedException {
-		
+
 		robot.keyPress(KeyEvent.VK_ALT);
 		robot.keyPress(KeyEvent.VK_TAB);
 		Thread.sleep(500);

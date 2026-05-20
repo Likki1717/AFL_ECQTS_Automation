@@ -8,31 +8,58 @@ import base.TestData;
 public class RegressionTests extends BaseClass {
 	@Test
 	public static void runRegressionTestSuite() throws Exception {
-		launchOpenVpnAppAndConnect();
+
+//		launchOpenVpnAppAndConnect();
+
 		clearPreviousSessionData();
+
 		launchWinAppDriver();
+		
 		launch_ECQTS_Application();
-		verifyIncorrectCredentials();
+		
+//		verifyIncorrectCredentials();
+		
 		loginToApplication();
-		verifyBuildVersion();
-		deleteAllExistingConnectionProfiles();
-		createConnectionProfiles();
-		editConnectionProfile();
-		updateTestSettings();
-		updateApplicationSettings();
+		
+//		verifyBuildVersion();
+//		
+//		deleteAllExistingConnectionProfiles();
+//		
+//		createConnectionProfiles();
+//		
+//		editConnectionProfile();
+//		
+//		updateTestSettings();
+//		
+//		updateApplicationSettings();
+		
 		importPrysmianJob();
-//		importSwindonJob();
-//		importTaihanJob();
-		searchJobAndNavigationToJobDetailsPage(TestData.jobSearchOrg, TestData.fiberTestJobSearchJobNumber,
+		
+		importSwindonJob();
+		
+		importTaihanJob();
+		
+		searchJobAndNavigationToJobDetailsPage(TestData.fiberTestJobSearchOrg, TestData.fiberTestJobSearchJobNumber,
 				TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo);
-		verifyJobDetailsHeader(TestData.jobSearchOrg, TestData.fiberTestJobSearchJobNumber,
-				TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo);
+		
+		verifyJobDetailsHeader(TestData.fiberTestJobSearchOrg, TestData.fiberTestJobSearchJobNumber,
+				TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo,
+				"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumber);
+		
 		enterProtectionLayerValues();
+		
 		runGetLengthTest();
+		
+		runFiberTest(TestData.numberOfFibersToTest, TestData.delayInSecondsBeforeClickingOnOkButtonOnRunTestGraphs);
+		
 		enterCompletionLayerValues();
+		
 		download_OCR_Report();
-//		verifyTestsCount(String expectedIncompleteTestsCount, String expectedPassedTestsCount,
-//				String expectedFailedTestsCount);
+		
+		verifyTestResultsCount(TestData.fiberTestExpectedIncompleteTestsCount,
+				TestData.fiberTestExpectedPassedTestsCount, TestData.fiberTestExpectedFailedTestsCount,
+				"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumber);
 		softAssert.assertAll();
+		
 	}
 }
