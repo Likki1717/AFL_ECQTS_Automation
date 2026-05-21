@@ -8,7 +8,6 @@ public class TestData {
 	public static boolean useOfficeOtdr = true;
 	public static boolean useExternalCamera = true;
 	public static int numberOfFibersToTest = 2;
-	public static int delayInSecondsBeforeClickingOnOkButtonOnRunTestGraphs = 0;
 	public static String vpnAppPassword = "kumar@123";
 
 	public static String fiberTestJobSearchOrg = "CAB";
@@ -166,4 +165,18 @@ public class TestData {
 		}
 		return appId;
 	}
+	
+	/*
+	 To get appId, use below command in windows powershell : 
+	 Get-StartApps | Where-Object {$_.Name -like "*ECQTS*"} 
+
+Name                           AppID
+----                           -----
+ECQTS Dev                        com.ecsite.afl.dev_aqd9xyv20zq6r!App
+ECQTS QA                         com.ecsite.afl.qa_aqd9xyv20zq6r!App
+ECQTS Soft Release               com.ecsite.afl.softreleaseprod_aqd9xyv20zq6r!App
+ECQTS Soft Release Second Prod   com.ecsite.afl.softreleasesecondprod_aqd9xyv20zq6r!App
+ECQTS Prod                       com.ecsite.afl.prod_aqd9xyv20zq6r!App
+ECQTS Second Prod                com.ecsite.afl.secondprod_aqd9xyv20zq6r!App
+	 */
 }

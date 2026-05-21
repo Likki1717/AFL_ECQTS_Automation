@@ -50,7 +50,7 @@ public class RegressionTests extends BaseClass {
 		
 		runGetLengthTest();
 		
-		runFiberTest(TestData.numberOfFibersToTest, TestData.delayInSecondsBeforeClickingOnOkButtonOnRunTestGraphs);
+		runFiberTest(TestData.numberOfFibersToTest);
 		
 		enterCompletionLayerValues();
 		

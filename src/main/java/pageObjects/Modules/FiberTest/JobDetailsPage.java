@@ -45,17 +45,13 @@ public class JobDetailsPage extends BaseClass {
 	public static WebElement reportsTab() {
 		return driver.findElement(By.xpath("//Text[@Name='Reports']"));
 	}
-	
-	public static boolean completionTabDisplayed() {
 
+	public static boolean isCompletionTabDisplayed() {
 		return isElementDisplayed(ByName.name("Completion"), 5);
-
 	}
- 
+
 	public static WebElement completionTab() {
-
 		return driver.findElement(By.xpath("//Text[@Name='Completion']"));
-
 	}
 
 //	public static String get_Test_Status() {

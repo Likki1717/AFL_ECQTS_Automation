@@ -11,7 +11,7 @@ public class SignIn extends BaseClass {
 	public static boolean isUsernameFieldDisplayed() {
 		return isElementDisplayed(ByAccessibilityId.AccessibilityId("LoginIdEntry"), 10);
 	}
-	
+
 	public static WebElement usernameField() {
 		return driver.findElementByAccessibilityId("LoginIdEntry");
 	}
@@ -25,11 +25,15 @@ public class SignIn extends BaseClass {
 	}
 
 	public static boolean isloginFailureDisplayed() {
-		return isElementDisplayed(By.xpath("//Text[@Name='Login Failed']"), 5);
+		return isElementDisplayed(By.xpath("//Text[@Name='Login Failed']"), 10);
 	}
 
 	public static WebElement okButtonOnLoginFailurePopup() {
 		return driver.findElement(By.xpath("//Button[@Name='OK']"));
+	}
+
+	public static WebElement appWindow() {
+		return desktopSession.findElementByName("Non Client Input Sink Window");
 	}
 
 }

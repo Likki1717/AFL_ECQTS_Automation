@@ -17,7 +17,7 @@ public class Dashboard extends BaseClass {
 	}
 
 	public static boolean isFiberTestModuleDisplayed() {
-		return isElementDisplayed(ByAccessibilityId.AccessibilityId("Fiber TestButton"), 40);
+		return isElementDisplayed(ByAccessibilityId.AccessibilityId("Fiber TestButton"), 10);
 	}
 
 	public static WebElement fiberTestModule() {
@@ -37,7 +37,7 @@ public class Dashboard extends BaseClass {
 	}
 
 	public static boolean isLoaderNotDisplayed() {
-		return isElementNotDisplayed(ByAccessibilityId.AccessibilityId("LottiePlayer"), 10);
+		return isElementNotDisplayed(ByAccessibilityId.AccessibilityId("LottiePlayer"), 20);
 	}
 
 	public static boolean isLoaderDisplayed() {

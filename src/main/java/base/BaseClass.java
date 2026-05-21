@@ -36,6 +36,7 @@ import pageObjects.sideMenu.settings.TestSettings;
 
 public class BaseClass {
 	public static WindowsDriver<?> driver;
+	public static WindowsDriver<?> desktopSession;
 	public static Actions actions;
 	public static WebDriverWait wait;
 	public static Robot robot;
@@ -183,18 +184,48 @@ public class BaseClass {
 
 	public static void launch_ECQTS_Application() throws Exception {
 		try {
+			new ProcessBuilder("taskkill", "/F", "/PID", TestData.appId()).start();
+			Thread.sleep(3000);
 			capabilities = new DesiredCapabilities();
 			capabilities.setCapability("app", TestData.appId());
 			capabilities.setCapability("platformName", "Windows");
 			capabilities.setCapability("deviceName", "WindowsPC");
 			capabilities.setCapability("automationName", "Windows");
 			driver = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities);
+			Thread.sleep(5000);
 		} catch (Exception e) {
-			System.out.println("****Exception in launch_ECQTS_Application()****");
+
+			System.out.println("****Normal launch of ECQTS app failed****");
+			System.out.println("****Trying Root attach****");
+
+			DesiredCapabilities capabilities2 = new DesiredCapabilities();
+			capabilities2.setCapability("app", "Root");
+			capabilities2.setCapability("platformName", "Windows");
+			capabilities2.setCapability("deviceName", "WindowsPC");
+			desktopSession = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities2);
+			Thread.sleep(5000);
+
+			String windowHandle = desktopSession.findElementByName("Non Client Input Sink Window")
+					.getAttribute("NativeWindowHandle");
+
+			System.out.println("Window Handle - " + windowHandle);
+
+			int handle = Integer.parseInt(windowHandle);
+
+			String hexHandle = Integer.toHexString(handle);
+
+			DesiredCapabilities capabilities3 = new DesiredCapabilities();
+
+			capabilities3.setCapability("appTopLevelWindow", hexHandle);
+
+			driver = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities3);
+
 		}
 	}
 
 	public static void verifyIncorrectCredentials() {
+		softAssert.assertTrue(SignIn.isUsernameFieldDisplayed(),
+				"Waited for 10 seconds, username field is not displayed");
 		SignIn.usernameField().sendKeys(TestData.ecqtsAppUsername());
 		SignIn.passwordField().sendKeys("Invalid password");
 		SignIn.signInButton().click();
@@ -214,7 +245,7 @@ public class BaseClass {
 			SignIn.signInButton().click();
 			Dashboard.isLoaderNotDisplayed();
 			softAssert.assertTrue(Dashboard.isFiberTestModuleDisplayed(),
-					"Tried for 40 secs, Fiber Test module was not visible after login");
+					"Tried for 10 secs, Fiber Test module was not visible after login");
 			actions = new Actions(driver);
 		} catch (Exception e) {
 			System.out.println("****Exception in loginToApplication()****");
@@ -451,7 +482,7 @@ public class BaseClass {
 		softAssert.assertTrue(Import.isSelectImportTextDisplayed(),
 				"Waited for 5 seconds, Select an import type from the left panel is not displayed");
 
-		Thread.sleep(500);
+		Thread.sleep(1000);
 
 		if (importType.equalsIgnoreCase("Prysmian")) {
 			Import.prysmianType().click();
@@ -463,9 +494,10 @@ public class BaseClass {
 			Import.taihanType().click();
 		}
 
-		softAssert.assertTrue(Dashboard.isLoaderDisplayed(), importType + " Import - Waited for 5 seconds, Screen loader did not display");
+		softAssert.assertTrue(Dashboard.isLoaderDisplayed(),
+				importType + " Import - Waited for 5 seconds, Screen loader did not display");
 		softAssert.assertTrue(Dashboard.isLoaderNotDisplayed(),
-				importType + " Import - Waited for 10 seconds but still the screen loader is displayed");
+				importType + " Import - Waited for 20 seconds but still the screen loader is displayed");
 		Thread.sleep(500);
 		Import.orgDropDownField().sendKeys(TestData.importOrg);
 		robot.keyPress(KeyEvent.VK_TAB);
@@ -487,8 +519,8 @@ public class BaseClass {
 		robot.keyPress(KeyEvent.VK_TAB);
 		robot.keyRelease(KeyEvent.VK_TAB);
 		Import.uploadFileButton().click();
-		softAssert.assertTrue(Import.isFileNameTextBoxDisplayed(),
-				importType + " Import - Waited for 10 seconds, to enter file name, the file name text box was not visible");
+		softAssert.assertTrue(Import.isFileNameTextBoxDisplayed(), importType
+				+ " Import - Waited for 10 seconds, to enter file name, the file name text box was not visible");
 
 		// Send file paths
 		Import.fileNameTextBox().click();
@@ -498,8 +530,8 @@ public class BaseClass {
 		robot.keyRelease(KeyEvent.VK_ENTER);
 
 		if (!Import.cutNumberInfo().getText().equals(TestData.importcutNumberInfo)) {
-			System.out.println(
-					"****" + importType + " Import - Cut number info did not get selected as given in test data, hence stopping execution****");
+			System.out.println("****" + importType
+					+ " Import - Cut number info did not get selected as given in test data, hence stopping execution****");
 			stopExecution();
 		}
 
@@ -516,16 +548,18 @@ public class BaseClass {
 				Thread.sleep(2000);
 				if (Import.isImportSuccessfulPopupDisplayed()) {
 					String importJobNumber = Import.getJobNumberFromImportSuccessFulPopup();
-					System.out.println(importType + " Import Job number fetched from Import Complete popup : " + importJobNumber);
+					System.out.println(
+							importType + " Import Job number fetched from Import Complete popup : " + importJobNumber);
 					Import.okButton().click();
 					searchJobAndNavigationToJobDetailsPage(TestData.importOrg, importJobNumber,
 							TestData.importCutNumber, TestData.importcutNumberInfo);
 				} else if (Import.isWarningsErrorsPopupDisplayedOtherThanMissingFiberId()) {
-					System.out
-							.println("****" + importType + " Import Failed - found warning/errors popup, other than missing fiber id****");
+					System.out.println("****" + importType
+							+ " Import Failed - found warning/errors popup, other than missing fiber id****");
 					stopExecution();
 				} else if (Import.isPrysmianTypeDisplayed()) {
-					System.out.println("****" + importType + " Import Failed - loader is not displayed but still on the import page****");
+					System.out.println("****" + importType
+							+ " Import Failed - loader is not displayed but still on the import page****");
 					stopExecution();
 				}
 			}
@@ -544,7 +578,8 @@ public class BaseClass {
 
 		// Validating OTDR length is not 0 and its as expected
 
-		softAssert.assertEquals(JobDetailsPage.OTDR_Length().getText(), OTDR_Length, importType + " Import completed - OTDR Length mismatch.");
+		softAssert.assertEquals(JobDetailsPage.OTDR_Length().getText(), OTDR_Length,
+				importType + " Import completed - OTDR Length mismatch.");
 
 		// Validating Helix Factor
 		softAssert.assertEquals(JobDetailsPage.helixFactor().getText().trim(), helixFactor,
@@ -651,8 +686,10 @@ public class BaseClass {
 		JobSearch.searchCutNumberInfo().sendKeys(cutNumberInfo);
 		actions.sendKeys(Keys.ENTER).perform();
 		JobSearch.goButton().click();
+		Dashboard.isLoaderDisplayed();
+		Dashboard.isLoaderNotDisplayed();
 		softAssert.assertTrue(JobDetailsPage.isProtectionLayerTabDisplayed(),
-				"Tried for 50 seconds, Protection Layer tab is not displayed");
+				"Tried for 5 seconds, Protection Layer tab is not displayed");
 	}
 
 	public static void verifyJobDetailsHeader(String org, String jobNumber, String cutNumber, String cutNumberInfo,
@@ -727,8 +764,7 @@ public class BaseClass {
 				"Waited for 50 seconds, Get Length history drop down field is not displayed");
 	}
 
-	public static void runFiberTest(int numberOfFibersToTest, int delayInSecondsBeforeClickingOnOkButtonOnRunTestGraphs)
-			throws InterruptedException {
+	public static void runFiberTest(int numberOfFibersToTest) throws InterruptedException {
 		wait = new WebDriverWait(driver, 30);
 		int fibersTested = 0;
 		boolean startTestFromFirstBufferTube = true;
@@ -757,7 +793,7 @@ public class BaseClass {
 			Dashboard.isLoaderNotDisplayed();
 			FiberResults.isOkButtonDisplayed();
 			wait.until(ExpectedConditions.elementToBeClickable(FiberResults.okButton()));
-			Thread.sleep(delayInSecondsBeforeClickingOnOkButtonOnRunTestGraphs * 1000);
+			Thread.sleep(1000);
 			FiberResults.okButton().click();
 			fibersTested++;
 			FiberResults.isGoToFiberButtonVisible();
@@ -835,7 +871,7 @@ public class BaseClass {
 	public static void enterCompletionLayerValues() {
 
 		try {
-			JobDetailsPage.completionTabDisplayed();
+			JobDetailsPage.isCompletionTabDisplayed();
 			actions.moveToElement(JobDetailsPage.completionTab()).click().build().perform();
 			softAssert.assertTrue(Completion.isSeqNumberTestDisplayed(),
 					"Waited for 5 seconds, ISE Sequence test is not displayed ");
