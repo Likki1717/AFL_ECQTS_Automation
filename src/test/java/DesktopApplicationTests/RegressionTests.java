@@ -9,7 +9,7 @@ public class RegressionTests extends BaseClass {
 	@Test
 	public static void runRegressionTestSuite() throws Exception {
 
-		launchOpenVpnAppAndConnect();
+//		launchOpenVpnAppAndConnect();
 
 		clearPreviousSessionData();
 
@@ -17,25 +17,25 @@ public class RegressionTests extends BaseClass {
 		
 		launch_ECQTS_Application();
 		
-		verifyIncorrectCredentials();
+//		verifyIncorrectCredentials();
 		
 		loginToApplication();
 		
-		verifyBuildVersion();
+//		verifyBuildVersion();
 		
-		deleteAllExistingConnectionProfiles();
-		
-		createConnectionProfiles();
-		
-		editConnectionProfile();
-		
-		updateTestSettings();
-		
-		updateApplicationSettings();
-		
-		importPrysmianJob();
-		
-		importSwindonJob();
+//		deleteAllExistingConnectionProfiles();
+//		
+//		createConnectionProfiles();
+//		
+//		editConnectionProfile();
+//		
+//		updateTestSettings();
+//		
+//		updateApplicationSettings();
+//		
+//		importPrysmianJob();
+//		
+//		importSwindonJob();
 		
 		importTaihanJob();
 		

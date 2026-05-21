@@ -22,7 +22,7 @@ public class JobDetailsPage extends BaseClass {
 	}
 
 	public static boolean isOtdrSettingsTabDisplayed() {
-		return isElementDisplayed(ByName.name("OTDR Settings"), 5);
+		return isElementDisplayed(ByName.name("OTDR Settings"), 50);
 	}
 
 	public static WebElement opticsTab() {
@@ -47,7 +47,7 @@ public class JobDetailsPage extends BaseClass {
 	}
 
 	public static boolean isCompletionTabDisplayed() {
-		return isElementDisplayed(ByName.name("Completion"), 5);
+		return isElementDisplayed(ByName.name("Completion"), 10);
 	}
 
 	public static WebElement completionTab() {

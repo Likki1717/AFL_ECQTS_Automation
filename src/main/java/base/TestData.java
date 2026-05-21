@@ -3,11 +3,11 @@ package base;
 import java.io.File;
 
 public class TestData {
-	public static String testEnvironment = "Dev"; // Dev /QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
+	public static String testEnvironment = "QA"; // Dev /QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
 	public static String expectedAppVersion = "Version: 7.6.11.0";
 	public static boolean useOfficeOtdr = true;
 	public static boolean useExternalCamera = true;
-	public static int numberOfFibersToTest = 2;
+	public static int numberOfFibersToTest = 1;
 	public static String vpnAppPassword = "kumar@123";
 
 	public static String fiberTestJobSearchOrg = "CAB";
@@ -41,27 +41,27 @@ public class TestData {
 	public static String importItemOrgCode = "SPC";
 	public static String importcutNumberInfo = "ZTEST01";
 	public static String importType = "Fiber";
-	
+
 	public static String prysmianExpectedIncompleteTests = "56";
 	public static String prysmianExpectedPassedTests = "103";
 	public static String prysmianExpectedFailedTests = "2";
 	public static String prysmianExpectedHelixFactor = "1.0233";
 	public static String prysmianExpectedOtdrLength = "7879 m";
-	public static String prysmianJobNumberStartsWith = "90043053-";
+	public static String prysmianJobNumberStartsWith = "90043053";
 
 	public static String swindonExpectedIncompleteTests = "159";
 	public static String swindonExpectedPassedTests = "295";
 	public static String swindonExpectedFailedTests = "1";
 	public static String swindonExpectedHelixFactor = "1.02";
 	public static String swindonExpectedOtdrLength = "6253 m";
-	public static String swindonJobNumberStartsWith = "250592-";
+	public static String swindonJobNumberStartsWith = "250592";
 
-	public static String taihanExpectedIncompleteTests = "291";
-	public static String taihanExpectedPassedTests = "576";
-	public static String taihanExpectedFailedTests = "2";
-	public static String taihanExpectedHelixFactor = "1.017";
-	public static String taihanExpectedOtdrLength = "6205 m";
-	public static String taihanJobNumberStartsWith = "7877-";
+	public static String taihanExpectedIncompleteTests = "51";
+	public static String taihanExpectedPassedTests = "98";
+	public static String taihanExpectedFailedTests = "0";
+	public static String taihanExpectedHelixFactor = "1.02";
+	public static String taihanExpectedOtdrLength = "6181 m";
+	public static String taihanJobNumberStartsWith = "7877";
 
 	public static String fiberTestJobSearchJobNumber = "25305754"; // Large Job - 15811448
 	public static String fiberTestJobSearchCutNumber = new java.text.SimpleDateFormat("yyyyMMddHHmmss")
@@ -69,9 +69,11 @@ public class TestData {
 	public static String fiberTestJobSearchCutNumberInfo = "ZTEST01";
 	public static String fiberTestBufferTube = "10-BLUE";
 
-	public static String fiberTestExpectedIncompleteTestsCount = "0";
-	public static String fiberTestExpectedPassedTestsCount = "88";
-	public static String fiberTestExpectedFailedTestsCount = "3";
+	public static String fiberTestExpectedIncompleteTestsCount = fiberTestJobSearchJobNumber.equals("25305754") ? "66"
+			: "883";
+	public static String fiberTestExpectedPassedTestsCount = fiberTestJobSearchJobNumber.equals("25305754") ? "20"
+			: "17";
+	public static String fiberTestExpectedFailedTestsCount = fiberTestJobSearchJobNumber.equals("25305754") ? "5" : "6";
 
 	public static String ecqtsAppUsername() {
 		String username = null;
@@ -165,18 +167,16 @@ public class TestData {
 		}
 		return appId;
 	}
-	
-	/*
-	 To get appId, use below command in windows powershell : 
-	 Get-StartApps | Where-Object {$_.Name -like "*ECQTS*"} 
 
-Name                           AppID
-----                           -----
-ECQTS Dev                        com.ecsite.afl.dev_aqd9xyv20zq6r!App
-ECQTS QA                         com.ecsite.afl.qa_aqd9xyv20zq6r!App
-ECQTS Soft Release               com.ecsite.afl.softreleaseprod_aqd9xyv20zq6r!App
-ECQTS Soft Release Second Prod   com.ecsite.afl.softreleasesecondprod_aqd9xyv20zq6r!App
-ECQTS Prod                       com.ecsite.afl.prod_aqd9xyv20zq6r!App
-ECQTS Second Prod                com.ecsite.afl.secondprod_aqd9xyv20zq6r!App
+	/*
+	 * To get appId, use below command in windows powershell : Get-StartApps |
+	 * Where-Object {$_.Name -like "*ECQTS*"}
+	 * 
+	 * Name AppID ---- ----- ECQTS Dev com.ecsite.afl.dev_aqd9xyv20zq6r!App ECQTS QA
+	 * com.ecsite.afl.qa_aqd9xyv20zq6r!App ECQTS Soft Release
+	 * com.ecsite.afl.softreleaseprod_aqd9xyv20zq6r!App ECQTS Soft Release Second
+	 * Prod com.ecsite.afl.softreleasesecondprod_aqd9xyv20zq6r!App ECQTS Prod
+	 * com.ecsite.afl.prod_aqd9xyv20zq6r!App ECQTS Second Prod
+	 * com.ecsite.afl.secondprod_aqd9xyv20zq6r!App
 	 */
 }

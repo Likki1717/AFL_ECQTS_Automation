@@ -9,43 +9,20 @@
 <table>
 <tr><th>Test</th><th># Passed</th><th># Skipped</th><th># Retried</th><th># Failed</th><th>Time (ms)</th><th>Included Groups</th><th>Excluded Groups</th></tr>
 <tr><th colspan="8">Default suite</th></tr>
-<tr><td><a href="#t0">Default test</a></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num attn">1</td><td class="num">177,928</td><td></td><td></td></tr>
+<tr><td><a href="#t0">Default test</a></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num attn">1</td><td class="num">435,251</td><td></td><td></td></tr>
 </table>
-<table id='summary'><thead><tr><th>Class</th><th>Method</th><th>Start</th><th>Time (ms)</th></tr></thead><tbody><tr><th colspan="4">Default suite</th></tr></tbody><tbody id="t0"><tr><th colspan="4">Default test &#8212; failed</th></tr><tr class="failedeven"><td rowspan="1">DesktopApplicationTests.RegressionTests</td><td><a href="#m0">runRegressionTestSuite</a></td><td rowspan="1">1779343166012</td><td rowspan="1">177888</td></tr></tbody>
+<table id='summary'><thead><tr><th>Class</th><th>Method</th><th>Start</th><th>Time (ms)</th></tr></thead><tbody><tr><th colspan="4">Default suite</th></tr></tbody><tbody id="t0"><tr><th colspan="4">Default test &#8212; failed</th></tr><tr class="failedeven"><td rowspan="1">DesktopApplicationTests.RegressionTests</td><td><a href="#m0">runRegressionTestSuite</a></td><td rowspan="1">1779368930082</td><td rowspan="1">435225</td></tr></tbody>
 </table>
-<h2>Default test</h2><h3 id="m0">DesktopApplicationTests.RegressionTests#runRegressionTestSuite</h3><table class="result"><tr><th>Exception</th></tr><tr><td><div class="stacktrace">org.openqa.selenium.NoSuchWindowException: Currently selected window has been closed (WARNING: The server did not provide any stacktrace information)
-Command duration or timeout: 0 milliseconds
-Build info: version: &apos;3.141.59&apos;, revision: &apos;e82be7d358&apos;, time: &apos;2018-11-14T08:17:03&apos;
-System info: host: &apos;VELTRISMS785&apos;, ip: &apos;192.168.29.113&apos;, os.name: &apos;Windows 11&apos;, os.arch: &apos;amd64&apos;, os.version: &apos;10.0&apos;, java.version: &apos;21.0.4&apos;
-Driver info: io.appium.java_client.windows.WindowsDriver
-Capabilities {app: com.ecsite.afl.dev_aqd9xyv2..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
-Session ID: FAD4C3ED-4998-4CDC-B2C2-30AECA6418D1
-*** Element info: {Using=xpath, value=//Button[@Name=&apos;Open Navigation&apos;]}
-	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
-	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
-	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
-	at org.openqa.selenium.remote.ErrorHandler.createThrowable(ErrorHandler.java:214)
-	at org.openqa.selenium.remote.ErrorHandler.throwIfResponseFailed(ErrorHandler.java:166)
-	at org.openqa.selenium.remote.http.JsonHttpResponseCodec.reconstructValue(JsonHttpResponseCodec.java:40)
-	at org.openqa.selenium.remote.http.AbstractHttpResponseCodec.decode(AbstractHttpResponseCodec.java:80)
-	at org.openqa.selenium.remote.http.AbstractHttpResponseCodec.decode(AbstractHttpResponseCodec.java:44)
-	at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:158)
-	at io.appium.java_client.remote.AppiumCommandExecutor.execute(AppiumCommandExecutor.java:250)
-	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:552)
-	at io.appium.java_client.DefaultGenericMobileDriver.execute(DefaultGenericMobileDriver.java:41)
-	at io.appium.java_client.AppiumDriver.execute(AppiumDriver.java:1)
-	at io.appium.java_client.windows.WindowsDriver.execute(WindowsDriver.java:1)
-	at org.openqa.selenium.remote.RemoteWebDriver.findElement(RemoteWebDriver.java:323)
-	at io.appium.java_client.DefaultGenericMobileDriver.findElement(DefaultGenericMobileDriver.java:61)
-	at io.appium.java_client.AppiumDriver.findElement(AppiumDriver.java:1)
-	at io.appium.java_client.windows.WindowsDriver.findElement(WindowsDriver.java:1)
-	at org.openqa.selenium.remote.RemoteWebDriver.findElementByXPath(RemoteWebDriver.java:428)
-	at io.appium.java_client.DefaultGenericMobileDriver.findElementByXPath(DefaultGenericMobileDriver.java:151)
-	at io.appium.java_client.AppiumDriver.findElementByXPath(AppiumDriver.java:1)
-	at io.appium.java_client.windows.WindowsDriver.findElementByXPath(WindowsDriver.java:1)
-	at pageObjects.CommonPages.Dashboard.openNavigationButton(Dashboard.java:12)
-	at base.BaseClass.searchJobAndNavigationToJobDetailsPage(BaseClass.java:648)
-	at DesktopApplicationTests.RegressionTests.runRegressionTestSuite(RegressionTests.java:42)
+<h2>Default test</h2><h3 id="m0">DesktopApplicationTests.RegressionTests#runRegressionTestSuite</h3><table class="result"><tr><th>Exception</th></tr><tr><td><div class="stacktrace">java.lang.AssertionError: The following asserts failed:
+	taihan Import completed - Waited for 5 seconds, Protection Layer tab is not displayed expected [true] but found [false],
+	taihan Import completed - OTDR Length mismatch. expected [6205 m] but found [6181 m],
+	taihan Import completed - Helix Factor mismatch. expected [1.017] but found [1.02],
+	Job number is not as expected in taihan expected [7877-] but found [7887],
+	Test results count mismatch in Taihan Import expected [Incomplete: 291, Passed: 576, Failed: 1] but found [Incomplete: 51, Passed: 98, Failed: 0],
+	Test results count mismatch in Fiber test with Job # 25305754 expected [Incomplete: 0, Passed: 88, Failed: 3] but found [Incomplete: 60, Passed: 24, Failed: 7]
+	at org.testng.asserts.SoftAssert.assertAll(SoftAssert.java:46)
+	at org.testng.asserts.SoftAssert.assertAll(SoftAssert.java:30)
+	at DesktopApplicationTests.RegressionTests.runRegressionTestSuite(RegressionTests.java:63)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at org.testng.internal.invokers.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:141)

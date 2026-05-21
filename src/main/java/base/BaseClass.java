@@ -192,34 +192,27 @@ public class BaseClass {
 			capabilities.setCapability("deviceName", "WindowsPC");
 			capabilities.setCapability("automationName", "Windows");
 			driver = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities);
-			Thread.sleep(5000);
 		} catch (Exception e) {
+			System.out.println("****Normal launch of ECQTS app failed, Trying Root attach****");
+			while (true) {
+				try {
+					DesiredCapabilities capabilities2 = new DesiredCapabilities();
+					capabilities2.setCapability("app", "Root");
+					capabilities2.setCapability("platformName", "Windows");
+					capabilities2.setCapability("deviceName", "WindowsPC");
+					desktopSession = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities2);
+					String windowHandle = desktopSession.findElementByName("Login").getAttribute("NativeWindowHandle");
+					int handle = Integer.parseInt(windowHandle);
+					String hexHandle = Integer.toHexString(handle);
+					DesiredCapabilities capabilities3 = new DesiredCapabilities();
+					capabilities3.setCapability("appTopLevelWindow", hexHandle);
+					driver = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities3);
+					break;
+				} catch (Exception e1) {
 
-			System.out.println("****Normal launch of ECQTS app failed****");
-			System.out.println("****Trying Root attach****");
+				}
 
-			DesiredCapabilities capabilities2 = new DesiredCapabilities();
-			capabilities2.setCapability("app", "Root");
-			capabilities2.setCapability("platformName", "Windows");
-			capabilities2.setCapability("deviceName", "WindowsPC");
-			desktopSession = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities2);
-			Thread.sleep(5000);
-
-			String windowHandle = desktopSession.findElementByName("Non Client Input Sink Window")
-					.getAttribute("NativeWindowHandle");
-
-			System.out.println("Window Handle - " + windowHandle);
-
-			int handle = Integer.parseInt(windowHandle);
-
-			String hexHandle = Integer.toHexString(handle);
-
-			DesiredCapabilities capabilities3 = new DesiredCapabilities();
-
-			capabilities3.setCapability("appTopLevelWindow", hexHandle);
-
-			driver = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities3);
-
+			}
 		}
 	}
 
@@ -535,6 +528,7 @@ public class BaseClass {
 			stopExecution();
 		}
 
+		Thread.sleep(1000);
 		Import.submitButton().click();
 		Dashboard.isLoaderDisplayed();
 
@@ -569,10 +563,10 @@ public class BaseClass {
 			JobDetailsPage.okButton().click();
 		}
 
-		// Waiting for protection layer tab to confirm data is loaded
+		// Waiting for buffer tube to display so that we can confirm data is loaded
 
-		softAssert.assertTrue(JobDetailsPage.isProtectionLayerTabDisplayed(),
-				importType + " Import completed - Waited for 5 seconds, Protection Layer tab is not displayed");
+		softAssert.assertTrue(JobDetailsPage.isBufferTubeDisplayed(),
+				importType + " Import completed - Waited for 3 seconds, buffer tube is not displayed");
 
 		System.out.println(importType + " Import Job Number : " + JobDetailsPage.jobNumber().getText().trim());
 
@@ -688,8 +682,8 @@ public class BaseClass {
 		JobSearch.goButton().click();
 		Dashboard.isLoaderDisplayed();
 		Dashboard.isLoaderNotDisplayed();
-		softAssert.assertTrue(JobDetailsPage.isProtectionLayerTabDisplayed(),
-				"Tried for 5 seconds, Protection Layer tab is not displayed");
+		softAssert.assertTrue(JobDetailsPage.isOtdrSettingsTabDisplayed(),
+				"Tried for 50 seconds, Protection Layer tab is not displayed");
 	}
 
 	public static void verifyJobDetailsHeader(String org, String jobNumber, String cutNumber, String cutNumberInfo,
@@ -871,7 +865,10 @@ public class BaseClass {
 	public static void enterCompletionLayerValues() {
 
 		try {
-			JobDetailsPage.isCompletionTabDisplayed();
+			softAssert.assertTrue(JobDetailsPage.isCompletionTabDisplayed(),
+					"Waited for 10 seconds, completion tab is not displayed");
+			wait = new WebDriverWait(driver, 10);
+			wait.until(ExpectedConditions.elementToBeClickable(JobDetailsPage.completionTab()));
 			actions.moveToElement(JobDetailsPage.completionTab()).click().build().perform();
 			softAssert.assertTrue(Completion.isSeqNumberTestDisplayed(),
 					"Waited for 5 seconds, ISE Sequence test is not displayed ");

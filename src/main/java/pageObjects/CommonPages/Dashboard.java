@@ -29,7 +29,7 @@ public class Dashboard extends BaseClass {
 	}
 
 	public static boolean isImportDataModuleDisplayed() {
-		return isElementDisplayed(ByAccessibilityId.AccessibilityId("Import DataButton"), 2);
+		return isElementDisplayed(ByAccessibilityId.AccessibilityId("Import DataButton"), 1);
 	}
 
 	public static WebElement backArrow() {
