@@ -35,10 +35,6 @@ public class JobSearch extends BaseClass {
 		return driver.findElement(By.xpath("//Button[@Name='GO']"));
 	}
 
-	public static WebElement okButton() {
-		return driver.findElementByXPath("//Button[@Name='OK']");
-	}
-
 	public static boolean isJobNumberLabelDisplayed() {
 		return isElementDisplayed(By.xpath("//Text[@Name='Job Number *']"), 10);
 	}

@@ -11,9 +11,13 @@ public class Dashboard extends BaseClass {
 	public static WebElement openNavigationButton() {
 		return driver.findElementByXPath("//Button[@Name='Open Navigation']");
 	}
+	
+	public static WebElement closeNavigationButton() {
+		return driver.findElementByXPath("//Button[@Name='Close Navigation']");
+	}
 
 	public static boolean isOpenNavigationButtonDisplayed() {
-		return isElementDisplayed(ByName.name("Open Navigation"), 1);
+		return isElementDisplayed(ByName.name("Open Navigation"), 5);
 	}
 
 	public static boolean isFiberTestModuleDisplayed() {
@@ -41,6 +45,26 @@ public class Dashboard extends BaseClass {
 	}
 
 	public static boolean isLoaderDisplayed() {
-		return isElementDisplayed(ByAccessibilityId.AccessibilityId("LottiePlayer"), 10);
+		return isElementDisplayed(ByAccessibilityId.AccessibilityId("LottiePlayer"), 5);
+	}
+	
+	public static void waitUntilLoaderIsNotDisplayed() throws InterruptedException {
+		while (!Dashboard.isLoaderNotDisplayed()) {
+			Thread.sleep(1000);
+		}
+	}
+	
+	public static boolean isOkButtonDisplayed() {
+		return isElementDisplayed(ByName.name("OK"), 5);
+	}
+
+	public static WebElement okButton() {
+		return driver.findElementByName("OK");
+	}
+	
+	public static void waitUntilOkButtonIsDisplayed() throws InterruptedException {
+		while (!isElementDisplayed(ByName.name("OK"), 5)) {
+			Thread.sleep(1000);
+		}
 	}
 }

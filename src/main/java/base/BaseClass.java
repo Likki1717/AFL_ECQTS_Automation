@@ -10,6 +10,7 @@ import java.net.URI;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -169,7 +170,7 @@ public class BaseClass {
 		}
 	}
 
-	public static void waitForWinAppDriver() throws InterruptedException {
+	public static void waitForWinAppDriver() throws Exception {
 		int waited = 0;
 
 		while (waited < 10) {
@@ -185,7 +186,7 @@ public class BaseClass {
 	public static void launch_ECQTS_Application() throws Exception {
 		try {
 			new ProcessBuilder("taskkill", "/F", "/PID", TestData.appId()).start();
-			Thread.sleep(3000);
+			Thread.sleep(2000);
 			capabilities = new DesiredCapabilities();
 			capabilities.setCapability("app", TestData.appId());
 			capabilities.setCapability("platformName", "Windows");
@@ -193,26 +194,37 @@ public class BaseClass {
 			capabilities.setCapability("automationName", "Windows");
 			driver = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities);
 		} catch (Exception e) {
-			System.out.println("****Normal launch of ECQTS app failed, Trying Root attach****");
-			while (true) {
-				try {
-					DesiredCapabilities capabilities2 = new DesiredCapabilities();
-					capabilities2.setCapability("app", "Root");
-					capabilities2.setCapability("platformName", "Windows");
-					capabilities2.setCapability("deviceName", "WindowsPC");
-					desktopSession = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities2);
-					String windowHandle = desktopSession.findElementByName("Login").getAttribute("NativeWindowHandle");
-					int handle = Integer.parseInt(windowHandle);
-					String hexHandle = Integer.toHexString(handle);
-					DesiredCapabilities capabilities3 = new DesiredCapabilities();
-					capabilities3.setCapability("appTopLevelWindow", hexHandle);
-					driver = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities3);
-					break;
-				} catch (Exception e1) {
+			System.out.println("****Normal launch of ECQTS application failed, Trying Root attach****");
+			attachExistingApplication();
+		}
+		actions = new Actions(driver);
+	}
 
-				}
-
+	public static void attachExistingApplication() throws Exception {
+		boolean applicationAttached = false;
+		while (!applicationAttached) {
+			try {
+				DesiredCapabilities capabilities2 = new DesiredCapabilities();
+				capabilities2.setCapability("app", "Root");
+				capabilities2.setCapability("platformName", "Windows");
+				capabilities2.setCapability("deviceName", "WindowsPC");
+				desktopSession = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities2);
+//				String windowHandle = desktopSession.findElementByName("Login").getAttribute("NativeWindowHandle");
+				String windowHandle = desktopSession
+						.findElement(By.xpath("//*[contains(@ClassName,'WinUIDesktopWin32WindowClass')]"))
+						.getAttribute("NativeWindowHandle");
+				int handle = Integer.parseInt(windowHandle);
+				String hexHandle = "0x" + Integer.toHexString(handle);
+				DesiredCapabilities capabilities3 = new DesiredCapabilities();
+				capabilities3.setCapability("appTopLevelWindow", hexHandle);
+				driver = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities3);
+				applicationAttached = true;
+				desktopSession.quit();
+			} catch (Exception e) {
+				System.out.println("****Root attach failed, trying again****");
+				Thread.sleep(2000);
 			}
+
 		}
 	}
 
@@ -227,7 +239,7 @@ public class BaseClass {
 		SignIn.okButtonOnLoginFailurePopup().click();
 	}
 
-	public static void loginToApplication() throws InterruptedException {
+	public static void loginToApplication() throws Exception {
 		try {
 			softAssert.assertTrue(SignIn.isUsernameFieldDisplayed(),
 					"Waited for 10 seconds, username field is not displayed");
@@ -239,7 +251,6 @@ public class BaseClass {
 			Dashboard.isLoaderNotDisplayed();
 			softAssert.assertTrue(Dashboard.isFiberTestModuleDisplayed(),
 					"Tried for 10 secs, Fiber Test module was not visible after login");
-			actions = new Actions(driver);
 		} catch (Exception e) {
 			System.out.println("****Exception in loginToApplication()****");
 			stopExecution();
@@ -463,7 +474,7 @@ public class BaseClass {
 	}
 
 	public static void importJob(String importType, String importFilesToUpload, String OTDR_Length, String helixFactor,
-			String JobNumberStartsWith) throws InterruptedException {
+			String JobNumberStartsWith) throws Exception {
 		while (!Dashboard.isImportDataModuleDisplayed()) {
 			Dashboard.openNavigationButton().click();
 			SideMenu.isDashboardButtonDisplayed();
@@ -560,7 +571,7 @@ public class BaseClass {
 		}
 
 		if (JobDetailsPage.isMissingFiberIdWarningPopupDisplayed()) {
-			JobDetailsPage.okButton().click();
+			Dashboard.okButton().click();
 		}
 
 		// Waiting for buffer tube to display so that we can confirm data is loaded
@@ -637,9 +648,11 @@ public class BaseClass {
 	}
 
 	public static void searchJobAndNavigationToJobDetailsPage(String org, String jobNumber, String cutNumber,
-			String cutNumberInfo) throws InterruptedException {
+			String cutNumberInfo) throws Exception {
 		while (!Dashboard.isImportDataModuleDisplayed()) {
-			Dashboard.openNavigationButton().click();
+			if (Dashboard.isOpenNavigationButtonDisplayed()) {
+				Dashboard.openNavigationButton().click();
+			}
 			SideMenu.isDashboardButtonDisplayed();
 			SideMenu.dashboardButton().click();
 			Thread.sleep(1000);
@@ -652,7 +665,7 @@ public class BaseClass {
 		Thread.sleep(500);
 		actions.sendKeys(Keys.ENTER).perform();
 		JobSearch.isJobWarningsPopupDisplayed();
-		JobSearch.okButton().click();
+		Dashboard.okButton().click();
 		wait = new WebDriverWait(driver, 20);
 		wait.until(ExpectedConditions.elementToBeClickable(JobSearch.searchCutNumber()));
 		while (!JobSearch.searchCutNumber().equals(driver.switchTo().activeElement())) {
@@ -681,9 +694,11 @@ public class BaseClass {
 		actions.sendKeys(Keys.ENTER).perform();
 		JobSearch.goButton().click();
 		Dashboard.isLoaderDisplayed();
-		Dashboard.isLoaderNotDisplayed();
+		Dashboard.waitUntilLoaderIsNotDisplayed();
+		Dashboard.isLoaderDisplayed();
+		Dashboard.waitUntilLoaderIsNotDisplayed();
 		softAssert.assertTrue(JobDetailsPage.isOtdrSettingsTabDisplayed(),
-				"Tried for 50 seconds, Protection Layer tab is not displayed");
+				"Tried for 5 seconds, Protection Layer tab is not displayed");
 	}
 
 	public static void verifyJobDetailsHeader(String org, String jobNumber, String cutNumber, String cutNumberInfo,
@@ -733,8 +748,8 @@ public class BaseClass {
 	}
 
 	public static void runGetLengthTest() {
-		wait = new WebDriverWait(driver, 20);
 		JobDetailsPage.isOtdrSettingsTabDisplayed();
+		wait = new WebDriverWait(driver, 20);
 		wait.until(ExpectedConditions.elementToBeClickable(JobDetailsPage.OTDR_Settings()));
 		JobDetailsPage.OTDR_Settings().click();
 		softAssert.assertTrue(OTDR_Settings.isConnectionProfileDropDownDisplayed(),
@@ -758,7 +773,7 @@ public class BaseClass {
 				"Waited for 50 seconds, Get Length history drop down field is not displayed");
 	}
 
-	public static void runFiberTest(int numberOfFibersToTest) throws InterruptedException {
+	public static void runFiberTest(int numberOfFibersToTest) throws Exception {
 		wait = new WebDriverWait(driver, 30);
 		int fibersTested = 0;
 		boolean startTestFromFirstBufferTube = true;
@@ -785,21 +800,21 @@ public class BaseClass {
 			}
 			Dashboard.isLoaderDisplayed();
 			Dashboard.isLoaderNotDisplayed();
-			FiberResults.isOkButtonDisplayed();
-			wait.until(ExpectedConditions.elementToBeClickable(FiberResults.okButton()));
+			Dashboard.isOkButtonDisplayed();
+			wait.until(ExpectedConditions.elementToBeClickable(Dashboard.okButton()));
 			Thread.sleep(1000);
-			FiberResults.okButton().click();
+			Dashboard.okButton().click();
 			fibersTested++;
 			FiberResults.isGoToFiberButtonVisible();
 			wait.until(ExpectedConditions.elementToBeClickable(FiberResults.goToFiberButton()));
 			FiberResults.goToFiberButton().click();
-			FiberResults.isContinueTestsButtonDisplayed();
+			FiberResults.isStopTestsButtonDisplayed();
 			if (numberOfFibersToTest == fibersTested) {
 				FiberResults.stopButton().click();
 			} else {
 				FiberResults.continueButton().click();
 				if (FiberResults.isTestsCompletedTextDisplayed()) {
-					FiberResults.okButton().click();
+					FiberResults.continueButton().click();
 					startTestingInNewBufferTube = true;
 					if (!FiberResults.isRunTestsButtonDisplayed()) {
 						startTestFromFirstBufferTube = true;
@@ -809,56 +824,106 @@ public class BaseClass {
 		}
 	}
 
-	public static void runTestInLoopAlongWithSwitchingToSettingsPage() throws InterruptedException {
+	public static void runTestInLoopAlongWithSwitchingToSettingsPage() throws Exception {
 		JobDetailsPage.isProtectionLayerTabDisplayed();
-		wait = new WebDriverWait(driver, 30);
-		wait.until(ExpectedConditions.elementToBeClickable(JobDetailsPage.bufferTubeTab()));
+		wait = new WebDriverWait(driver, 40);
+		WebElement bufferTube = driver.findElement(By
+				.xpath("//Text[@AutomationId='OpticsButton']/../following-sibling::ListItem/Text[@Name='10-YELLOW']"));
+		wait.until(ExpectedConditions.elementToBeClickable(bufferTube));
 		while (!FiberResults.isRunTestsButtonDisplayed()) {
-			JobDetailsPage.bufferTubeTab().click();
+			bufferTube.click();
 		}
 		FiberResults.showMoreInfoButton().click();
+		int i = 1;
+		while (i <= 288) {
+			By dynamicRunTestButtonXpath = By.xpath("//Text[@Name='" + i + " / 288']/..//Button[@Name='Run Tests']");
 
-		while (true) {
-			wait.until(ExpectedConditions.elementToBeClickable(FiberResults.runTestsButtonOfFirstFiber()));
-			FiberResults.runTestsButtonOfFirstFiber().click();
-			FiberResults.isOkButtonDisplayed();
-			wait.until(ExpectedConditions.elementToBeClickable(FiberResults.okButton()));
-			Thread.sleep(5000);
-			FiberResults.okButton().click();
-			FiberResults.isGoToFiberButtonVisible();
-			wait.until(ExpectedConditions.elementToBeClickable(FiberResults.goToFiberButton()));
-			FiberResults.goToFiberButton().click();
-			FiberResults.isContinueTestsButtonDisplayed();
-//			FiberResults.continueButton().click();
-//			if (FiberResults.isTestsCompletedTextDisplayed()) {
-//				FiberResults.okButton().click();
-//				if (!FiberResults.isRunTestsButtonDisplayed()) {
-//					actions.moveToElement(JobDetailsPage.bufferTubeTab()).build().perform();
-//					JobDetailsPage.bufferTubeTab().click();
-//				}
-//				FiberResults.isRunTestsButtonDisplayed();
-//				FiberResults.showMoreInfoButton().click();
-//				wait.until(ExpectedConditions.elementToBeClickable(FiberResults.runTestsButtonOfFirstFiber()));
-//				FiberResults.runTestsButtonOfFirstFiber().click();
-//			}
-//			FiberResults.isGoToFiberButtonNotVisible();
-			FiberResults.stopButton().click();
-			Thread.sleep(1000);
-			Dashboard.openNavigationButton().click();
-			SideMenu.settingsButton().click();
-			Settings.isTestSettingsButtonDisplayed();
-			Thread.sleep(1000);
-			try {
-				Settings.testSettingsButton().click();
-				softAssert.assertTrue(TestSettings.isDisplayRealTimePlotToogleDisplayed(),
-						"Waited for 3 secs, Display real time plot settings toggle is not displayed ");
-			} catch (Exception e) {
+			while (true) {
+				try {
+					while (!isElementDisplayed(dynamicRunTestButtonXpath, 5)) {
+						int j = i - 1;
+						By previousFiberNumberXpath = By.xpath("//Text[@Name='" + j + " / 288']");
+						driver.findElement(previousFiberNumberXpath).click();
+						robot.mouseWheel(2);
+					}
+					System.out.println("\nNext test to run - " + i + "/288");
+					wait = new WebDriverWait(driver, 40);
+					wait.until(ExpectedConditions.elementToBeClickable(dynamicRunTestButtonXpath));
+					WebElement dynamicRunTestButton = driver.findElement(dynamicRunTestButtonXpath);
+					actions.moveToElement(dynamicRunTestButton).click().build().perform();
+					break;
+				} catch (Exception e) {
 
+				}
 			}
-			Dashboard.backArrow().click();
-//			verifyTestsCount(TestData.fiberTestExpectedIncompleteTestsCount, TestData.fiberTestExpectedPassedTestsCount,
-//					TestData.fiberTestExpectedFailedTestsCount);
-//			break;
+
+			System.out.println("  - Clicked on Run test");
+
+			while (true) {
+				try {
+					Dashboard.waitUntilOkButtonIsDisplayed();
+					wait = new WebDriverWait(driver, 40);
+					wait.until(ExpectedConditions.elementToBeClickable(Dashboard.okButton()));
+					Thread.sleep(1000);
+					Dashboard.okButton().click();
+					i++;
+					break;
+				} catch (Exception e) {
+					
+				}
+			}
+
+			System.out.println("  - Clicked on Ok button in graph");
+
+			Thread.sleep(2000);
+
+			if (FiberResults.isGoToFiberButtonVisible()) {
+				wait = new WebDriverWait(driver, 20);
+				try {
+					wait.until(ExpectedConditions.elementToBeClickable(FiberResults.goToFiberButton()));
+					FiberResults.goToFiberButton().click();
+					System.out.println("  - Clicked on Go to fiber button");
+				} catch (Exception e) {
+					System.out.println("**Go to fiber button was not clickable**");
+				}
+			} else {
+				System.out.println("**Go to fiber button was not visible**");
+			}
+
+			while (true) {
+				try {
+					wait = new WebDriverWait(driver, 40);
+					FiberResults.waitUntilStopTestsButtonIsDisplayed();
+					FiberResults.stopButton().click();
+					System.out.println("  - Clicked on Stop test button");
+					break;
+				} catch (Exception e) {
+					
+				}
+			}
+			Thread.sleep(2000);
+			
+			if (Dashboard.isOpenNavigationButtonDisplayed()) {
+				try {
+					Dashboard.openNavigationButton().click();
+				} catch (Exception e) {
+					
+				}
+				if (SideMenu.isDashboardButtonDisplayed()) {
+					SideMenu.settingsButton().click();
+					Thread.sleep(2000);
+					Dashboard.backArrow().click();
+					System.out.println("  - Clicked on Back Arrow from settings page");
+					Thread.sleep(2000);
+				} else {
+					try {
+						Dashboard.closeNavigationButton().click();
+					} catch (Exception e) {
+						
+					}
+				}
+			}
+
 		}
 	}
 
@@ -914,7 +979,7 @@ public class BaseClass {
 		JobDetailsPage.reportsTab().click();
 	}
 
-	public static void stopExecution() throws InterruptedException {
+	public static void stopExecution() throws Exception {
 
 		robot.keyPress(KeyEvent.VK_ALT);
 		robot.keyPress(KeyEvent.VK_TAB);

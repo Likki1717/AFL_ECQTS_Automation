@@ -22,7 +22,7 @@ public class JobDetailsPage extends BaseClass {
 	}
 
 	public static boolean isOtdrSettingsTabDisplayed() {
-		return isElementDisplayed(ByName.name("OTDR Settings"), 50);
+		return isElementDisplayed(ByName.name("OTDR Settings"), 5);
 	}
 
 	public static WebElement opticsTab() {
@@ -100,16 +100,12 @@ public class JobDetailsPage extends BaseClass {
 		return driver.findElementByAccessibilityId("HelixFactorValueLabel");
 	}
 
-	public static WebElement okButton() {
-		return driver.findElementByAccessibilityId("AcceptButton");
-	}
-
 	public static boolean isProtectionLayerTabDisplayed() {
 		return isElementDisplayed(ByName.name("Protection Layer"), 5);
 	}
 
 	public static boolean isMissingFiberIdWarningPopupDisplayed() {
-		return isElementDisplayed(ByName.name("Missing Fiber Id; Please create a NCMIR;"), 50);
+		return isElementDisplayed(ByName.name("Missing Fiber Id; Please create a NCMIR;"), 5);
 	}
 
 	public static WebElement org() {

@@ -36,39 +36,47 @@ public class FiberResults extends BaseClass {
 	public static WebElement runTestsButtonOfFirstFiber() {
 		return driver.findElement(By.xpath("(//Button[@Name='Run Tests'])[1]"));
 	}
-	
+
 	public static boolean isRunTestsButtonDisplayed() {
 		return isElementDisplayed(By.xpath("(//Button[@Name='Run Tests'])[1]"), 3);
 	}
 	
-	public static boolean isContinueTestsButtonDisplayed() {
-		return isElementDisplayed(ByAccessibilityId.AccessibilityId("ContinueButton"), 120);
+	public static boolean isContinueTestsButtonDisplayed()
+	{
+		return isElementDisplayed(ByAccessibilityId.AccessibilityId("ContinueButton"), 10);
 	}
 	
+	public static boolean isStopTestsButtonDisplayed()
+	{
+		return isElementDisplayed(ByAccessibilityId.AccessibilityId("StopButton"), 10);
+	}
+
+	public static void waitUntilStopTestsButtonIsDisplayed() throws InterruptedException {
+		while (!isElementDisplayed(ByAccessibilityId.AccessibilityId("StopButton"), 5)) {
+			Thread.sleep(1000);
+		}
+	}
+
 	public static boolean isTestsCompletedTextDisplayed() {
 		return isElementDisplayed(ByName.name("Tests Complete"), 5);
 	}
-	
+
 	public static WebElement stopButton() {
 		return driver.findElementByAccessibilityId("StopButton");
 	}
-	
+
 	public static WebElement cancelButton() {
 		return driver.findElementByAccessibilityId("CancelButton");
 	}
 	
-	public static boolean isOkButtonDisplayed() {
-		return isElementDisplayed(ByAccessibilityId.AccessibilityId("AcceptButton"), 30);
-	}
-
-	public static WebElement okButton() {
-		return driver.findElementByAccessibilityId("AcceptButton");
+	public static boolean isCancelButtonVisible() {
+		return isElementDisplayed(ByName.name("CancelButton"), 10);
 	}
 
 	public static WebElement continueButton() {
-		return driver.findElementByAccessibilityId("ContinueButton");
+		return driver.findElementByName("Continue");
 	}
-	
+
 	public static WebElement goToFiberButton() {
 		return driver.findElementByAccessibilityId("GoToFiberButton");
 	}
@@ -76,18 +84,16 @@ public class FiberResults extends BaseClass {
 	public static boolean isGoToFiberButtonVisible() {
 		return isElementDisplayed(ByAccessibilityId.AccessibilityId("GoToFiberButton"), 10);
 	}
-	
+
 	public static boolean isGoToFiberButtonNotVisible() {
 		return isElementNotDisplayed(ByAccessibilityId.AccessibilityId("GoToFiberButton"), 10);
 	}
 
-	public static WebElement showTracesButton()
-	{
+	public static WebElement showTracesButton() {
 		return driver.findElementByAccessibilityId("ShowTracesInfoFilter");
 	}
-	
-	public static WebElement showMoreInfoButton()
-	{
+
+	public static WebElement showMoreInfoButton() {
 		return driver.findElementByAccessibilityId("ShowMoreInfoFilter");
 	}
 }

@@ -2,33 +2,56 @@
 <testng-results ignored="0" total="1" passed="0" failed="1" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2026-05-21T18:38:50 IST" name="Default suite" finished-at="2026-05-21T18:46:05 IST" duration-ms="435251">
+  <suite started-at="2026-05-23T14:07:31 IST" name="Default suite" finished-at="2026-05-23T14:12:53 IST" duration-ms="322106">
     <groups>
     </groups>
-    <test started-at="2026-05-21T18:38:50 IST" name="Default test" finished-at="2026-05-21T18:46:05 IST" duration-ms="435251">
+    <test started-at="2026-05-23T14:07:31 IST" name="Default test" finished-at="2026-05-23T14:12:53 IST" duration-ms="322106">
       <class name="DesktopApplicationTests.RegressionTests">
-        <test-method signature="runRegressionTestSuite()[pri:0, instance:DesktopApplicationTests.RegressionTests@235834f2]" started-at="2026-05-21T18:38:50 IST" name="runRegressionTestSuite" finished-at="2026-05-21T18:46:05 IST" duration-ms="435225" status="FAIL">
-          <exception class="java.lang.AssertionError">
+        <test-method signature="runRegressionTestSuite()[pri:0, instance:DesktopApplicationTests.RegressionTests@5656be13]" started-at="2026-05-23T14:07:31 IST" name="runRegressionTestSuite" finished-at="2026-05-23T14:12:53 IST" duration-ms="322084" status="FAIL">
+          <exception class="org.openqa.selenium.NoSuchElementException">
             <message>
-              <![CDATA[The following asserts failed:
-taihan Import completed - Waited for 5 seconds, Protection Layer tab is not displayed expected [true] but found [false],
-taihan Import completed - OTDR Length mismatch. expected [6205 m] but found [6181 m],
-taihan Import completed - Helix Factor mismatch. expected [1.017] but found [1.02],
-Job number is not as expected in taihan expected [7877-] but found [7887],
-Test results count mismatch in Taihan Import expected [Incomplete: 291, Passed: 576, Failed: 1] but found [Incomplete: 51, Passed: 98, Failed: 0],
-Test results count mismatch in Fiber test with Job # 25305754 expected [Incomplete: 0, Passed: 88, Failed: 3] but found [Incomplete: 60, Passed: 24, Failed: 7]]]>
+              <![CDATA[An element could not be located on the page using the given search parameters. (WARNING: The server did not provide any stacktrace information)
+Command duration or timeout: 0 milliseconds
+For documentation on this error, please visit: https://www.seleniumhq.org/exceptions/no_such_element.html
+Build info: version: '3.141.59', revision: 'e82be7d358', time: '2018-11-14T08:17:03'
+System info: host: 'VELTRISMS785', ip: '192.168.29.113', os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '21.0.4'
+Driver info: io.appium.java_client.windows.WindowsDriver
+Capabilities {app: com.ecsite.afl.dev_aqd9xyv2..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
+Session ID: 8D3594F1-EBB7-4672-95C2-2BD8F49433BC
+*** Element info: {Using=accessibility id, value=StopButton}]]>
             </message>
             <full-stacktrace>
-              <![CDATA[java.lang.AssertionError: The following asserts failed:
-taihan Import completed - Waited for 5 seconds, Protection Layer tab is not displayed expected [true] but found [false],
-taihan Import completed - OTDR Length mismatch. expected [6205 m] but found [6181 m],
-taihan Import completed - Helix Factor mismatch. expected [1.017] but found [1.02],
-Job number is not as expected in taihan expected [7877-] but found [7887],
-Test results count mismatch in Taihan Import expected [Incomplete: 291, Passed: 576, Failed: 1] but found [Incomplete: 51, Passed: 98, Failed: 0],
-Test results count mismatch in Fiber test with Job # 25305754 expected [Incomplete: 0, Passed: 88, Failed: 3] but found [Incomplete: 60, Passed: 24, Failed: 7]
-at org.testng.asserts.SoftAssert.assertAll(SoftAssert.java:46)
-at org.testng.asserts.SoftAssert.assertAll(SoftAssert.java:30)
-at DesktopApplicationTests.RegressionTests.runRegressionTestSuite(RegressionTests.java:63)
+              <![CDATA[org.openqa.selenium.NoSuchElementException: An element could not be located on the page using the given search parameters. (WARNING: The server did not provide any stacktrace information)
+Command duration or timeout: 0 milliseconds
+For documentation on this error, please visit: https://www.seleniumhq.org/exceptions/no_such_element.html
+Build info: version: '3.141.59', revision: 'e82be7d358', time: '2018-11-14T08:17:03'
+System info: host: 'VELTRISMS785', ip: '192.168.29.113', os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '21.0.4'
+Driver info: io.appium.java_client.windows.WindowsDriver
+Capabilities {app: com.ecsite.afl.dev_aqd9xyv2..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
+Session ID: 8D3594F1-EBB7-4672-95C2-2BD8F49433BC
+*** Element info: {Using=accessibility id, value=StopButton}
+at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
+at org.openqa.selenium.remote.ErrorHandler.createThrowable(ErrorHandler.java:214)
+at org.openqa.selenium.remote.ErrorHandler.throwIfResponseFailed(ErrorHandler.java:166)
+at org.openqa.selenium.remote.http.JsonHttpResponseCodec.reconstructValue(JsonHttpResponseCodec.java:40)
+at org.openqa.selenium.remote.http.AbstractHttpResponseCodec.decode(AbstractHttpResponseCodec.java:80)
+at org.openqa.selenium.remote.http.AbstractHttpResponseCodec.decode(AbstractHttpResponseCodec.java:44)
+at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:158)
+at io.appium.java_client.remote.AppiumCommandExecutor.execute(AppiumCommandExecutor.java:250)
+at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:552)
+at io.appium.java_client.DefaultGenericMobileDriver.execute(DefaultGenericMobileDriver.java:41)
+at io.appium.java_client.AppiumDriver.execute(AppiumDriver.java:1)
+at io.appium.java_client.windows.WindowsDriver.execute(WindowsDriver.java:1)
+at org.openqa.selenium.remote.RemoteWebDriver.findElement(RemoteWebDriver.java:323)
+at io.appium.java_client.DefaultGenericMobileDriver.findElement(DefaultGenericMobileDriver.java:61)
+at io.appium.java_client.AppiumDriver.findElement(AppiumDriver.java:1)
+at io.appium.java_client.windows.WindowsDriver.findElement(WindowsDriver.java:1)
+at io.appium.java_client.FindsByAccessibilityId.findElementByAccessibilityId(FindsByAccessibilityId.java:37)
+at pageObjects.Modules.FiberTest.JobDetails.FiberResults.stopButton(FiberResults.java:60)
+at base.BaseClass.runFiberTest(BaseClass.java:813)
+at DesktopApplicationTests.RegressionTests.runRegressionTestSuite(RegressionTests.java:53)
 at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 at org.testng.internal.invokers.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:141)
@@ -57,7 +80,7 @@ at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:293)
 at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:91)
 ]]>
             </full-stacktrace>
-          </exception> <!-- java.lang.AssertionError -->
+          </exception> <!-- org.openqa.selenium.NoSuchElementException -->
           <reporter-output>
           </reporter-output>
         </test-method> <!-- runRegressionTestSuite -->

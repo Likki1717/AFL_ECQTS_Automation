@@ -4,8 +4,10 @@ import org.testng.annotations.Test;
 
 import base.BaseClass;
 import base.TestData;
+import pageObjects.CommonPages.Dashboard;
+import pageObjects.Modules.FiberTest.JobDetailsPage;
 
-public class RunFiberTestsInLoop extends BaseClass{
+public class RunFiberTestsInLoop extends BaseClass {
 
 	@Test
 	public static void runFiberTestAndSwitchToSettingsAndRepeatInLoop() throws Exception {
@@ -16,10 +18,16 @@ public class RunFiberTestsInLoop extends BaseClass{
 		loginToApplication();
 		updateTestSettings();
 		updateApplicationSettings();
-		searchJobAndNavigationToJobDetailsPage(TestData.fiberTestJobSearchOrg, TestData.fiberTestJobSearchJobNumber, TestData.fiberTestJobSearchCutNumber,
-				TestData.fiberTestJobSearchCutNumberInfo);
-		runGetLengthTest();
-		runTestInLoopAlongWithSwitchingToSettingsPage();
-		softAssert.assertAll();
+		while (true) {
+			searchJobAndNavigationToJobDetailsPage(TestData.fiberTestJobSearchOrg, "45193192-2869194",
+					new java.text.SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date()),
+					TestData.fiberTestJobSearchCutNumberInfo);
+			if (JobDetailsPage.isMissingFiberIdWarningPopupDisplayed()) {
+				Dashboard.isOkButtonDisplayed();
+				Dashboard.okButton().click();
+			}
+			runGetLengthTest();
+			runTestInLoopAlongWithSwitchingToSettingsPage();
+		}
 	}
 }
