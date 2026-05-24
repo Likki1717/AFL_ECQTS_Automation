@@ -2,34 +2,32 @@
 <testng-results ignored="0" total="1" passed="0" failed="1" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2026-05-23T14:07:31 IST" name="Default suite" finished-at="2026-05-23T14:12:53 IST" duration-ms="322106">
+  <suite started-at="2026-05-24T14:15:41 IST" name="Default suite" finished-at="2026-05-24T14:16:35 IST" duration-ms="54039">
     <groups>
     </groups>
-    <test started-at="2026-05-23T14:07:31 IST" name="Default test" finished-at="2026-05-23T14:12:53 IST" duration-ms="322106">
-      <class name="DesktopApplicationTests.RegressionTests">
-        <test-method signature="runRegressionTestSuite()[pri:0, instance:DesktopApplicationTests.RegressionTests@5656be13]" started-at="2026-05-23T14:07:31 IST" name="runRegressionTestSuite" finished-at="2026-05-23T14:12:53 IST" duration-ms="322084" status="FAIL">
-          <exception class="org.openqa.selenium.NoSuchElementException">
+    <test started-at="2026-05-24T14:15:41 IST" name="Default test" finished-at="2026-05-24T14:16:35 IST" duration-ms="54039">
+      <class name="DesktopApplicationTests.RunFiberTestsInLoop">
+        <test-method signature="runFiberTestAndSwitchToSettingsAndRepeatInLoop()[pri:0, instance:DesktopApplicationTests.RunFiberTestsInLoop@5656be13]" started-at="2026-05-24T14:15:41 IST" name="runFiberTestAndSwitchToSettingsAndRepeatInLoop" finished-at="2026-05-24T14:16:35 IST" duration-ms="54006" status="FAIL">
+          <exception class="org.openqa.selenium.NoSuchWindowException">
             <message>
-              <![CDATA[An element could not be located on the page using the given search parameters. (WARNING: The server did not provide any stacktrace information)
+              <![CDATA[Currently selected window has been closed (WARNING: The server did not provide any stacktrace information)
 Command duration or timeout: 0 milliseconds
-For documentation on this error, please visit: https://www.seleniumhq.org/exceptions/no_such_element.html
 Build info: version: '3.141.59', revision: 'e82be7d358', time: '2018-11-14T08:17:03'
 System info: host: 'VELTRISMS785', ip: '192.168.29.113', os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '21.0.4'
 Driver info: io.appium.java_client.windows.WindowsDriver
 Capabilities {app: com.ecsite.afl.dev_aqd9xyv2..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
-Session ID: 8D3594F1-EBB7-4672-95C2-2BD8F49433BC
-*** Element info: {Using=accessibility id, value=StopButton}]]>
+Session ID: 75A7A795-5138-4A94-898B-762CCDB36828
+*** Element info: {Using=xpath, value=//ComboBox[@AutomationId='OrgIdDropdown']}]]>
             </message>
             <full-stacktrace>
-              <![CDATA[org.openqa.selenium.NoSuchElementException: An element could not be located on the page using the given search parameters. (WARNING: The server did not provide any stacktrace information)
+              <![CDATA[org.openqa.selenium.NoSuchWindowException: Currently selected window has been closed (WARNING: The server did not provide any stacktrace information)
 Command duration or timeout: 0 milliseconds
-For documentation on this error, please visit: https://www.seleniumhq.org/exceptions/no_such_element.html
 Build info: version: '3.141.59', revision: 'e82be7d358', time: '2018-11-14T08:17:03'
 System info: host: 'VELTRISMS785', ip: '192.168.29.113', os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '21.0.4'
 Driver info: io.appium.java_client.windows.WindowsDriver
 Capabilities {app: com.ecsite.afl.dev_aqd9xyv2..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
-Session ID: 8D3594F1-EBB7-4672-95C2-2BD8F49433BC
-*** Element info: {Using=accessibility id, value=StopButton}
+Session ID: 75A7A795-5138-4A94-898B-762CCDB36828
+*** Element info: {Using=xpath, value=//ComboBox[@AutomationId='OrgIdDropdown']}
 at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
 at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
 at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
@@ -48,10 +46,18 @@ at org.openqa.selenium.remote.RemoteWebDriver.findElement(RemoteWebDriver.java:3
 at io.appium.java_client.DefaultGenericMobileDriver.findElement(DefaultGenericMobileDriver.java:61)
 at io.appium.java_client.AppiumDriver.findElement(AppiumDriver.java:1)
 at io.appium.java_client.windows.WindowsDriver.findElement(WindowsDriver.java:1)
-at io.appium.java_client.FindsByAccessibilityId.findElementByAccessibilityId(FindsByAccessibilityId.java:37)
-at pageObjects.Modules.FiberTest.JobDetails.FiberResults.stopButton(FiberResults.java:60)
-at base.BaseClass.runFiberTest(BaseClass.java:813)
-at DesktopApplicationTests.RegressionTests.runRegressionTestSuite(RegressionTests.java:53)
+at org.openqa.selenium.remote.RemoteWebDriver.findElementByXPath(RemoteWebDriver.java:428)
+at io.appium.java_client.DefaultGenericMobileDriver.findElementByXPath(DefaultGenericMobileDriver.java:151)
+at io.appium.java_client.AppiumDriver.findElementByXPath(AppiumDriver.java:1)
+at io.appium.java_client.windows.WindowsDriver.findElementByXPath(WindowsDriver.java:1)
+at org.openqa.selenium.By$ByXPath.findElement(By.java:353)
+at org.openqa.selenium.remote.RemoteWebDriver.findElement(RemoteWebDriver.java:315)
+at io.appium.java_client.DefaultGenericMobileDriver.findElement(DefaultGenericMobileDriver.java:57)
+at io.appium.java_client.AppiumDriver.findElement(AppiumDriver.java:1)
+at io.appium.java_client.windows.WindowsDriver.findElement(WindowsDriver.java:1)
+at pageObjects.Modules.FiberTest.JobSearch.orgField(JobSearch.java:15)
+at base.BaseClass.searchJobAndNavigationToJobDetailsPage(BaseClass.java:662)
+at DesktopApplicationTests.RunFiberTestsInLoop.runFiberTestAndSwitchToSettingsAndRepeatInLoop(RunFiberTestsInLoop.java:24)
 at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 at org.testng.internal.invokers.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:141)
@@ -80,11 +86,11 @@ at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:293)
 at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:91)
 ]]>
             </full-stacktrace>
-          </exception> <!-- org.openqa.selenium.NoSuchElementException -->
+          </exception> <!-- org.openqa.selenium.NoSuchWindowException -->
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- runRegressionTestSuite -->
-      </class> <!-- DesktopApplicationTests.RegressionTests -->
+        </test-method> <!-- runFiberTestAndSwitchToSettingsAndRepeatInLoop -->
+      </class> <!-- DesktopApplicationTests.RunFiberTestsInLoop -->
     </test> <!-- Default test -->
   </suite> <!-- Default suite -->
 </testng-results>

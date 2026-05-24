@@ -16,6 +16,8 @@ public class RunFiberTestsInLoop extends BaseClass {
 		launchWinAppDriver();
 		launch_ECQTS_Application();
 		loginToApplication();
+		deleteAllExistingConnectionProfiles();
+		createProfile(TestData.officeOtdrProfileName, TestData.officeOTDR_IP_Address, TestData.officeOTDR_Port);
 		updateTestSettings();
 		updateApplicationSettings();
 		while (true) {
