@@ -9,7 +9,7 @@ public class RegressionTests extends BaseClass {
 	@Test
 	public static void runRegressionTestSuite() throws Exception {
 
-//		launchOpenVpnAppAndConnect();
+		launchOpenVpnAppAndConnect();
 
 		clearPreviousSessionData();
 
@@ -17,25 +17,25 @@ public class RegressionTests extends BaseClass {
 		
 		launch_ECQTS_Application();
 		
-//		verifyIncorrectCredentials();
+		verifyIncorrectCredentials();
 		
 		loginToApplication();
 		
-//		verifyBuildVersion();
+		verifyBuildVersion();
 		
-//		deleteAllExistingConnectionProfiles();
-//		
-//		createConnectionProfiles();
-//		
-//		editConnectionProfile();
-//		
-//		updateTestSettings();
-//		
-//		updateApplicationSettings();
-//		
-//		importPrysmianJob();
-//		
-//		importSwindonJob();
+		deleteAllExistingConnectionProfiles();
+		
+		createConnectionProfiles();
+		
+		editConnectionProfile();
+		
+		updateTestSettings();
+		
+		updateApplicationSettings();
+		
+		importPrysmianJob();
+		
+		importSwindonJob();
 		
 		importTaihanJob();
 		
@@ -52,6 +52,9 @@ public class RegressionTests extends BaseClass {
 		
 		runFiberTest(TestData.numberOfFibersToTest);
 		
+		downloadSorFile("1550");
+		downloadSorFile("1310");
+		
 		enterCompletionLayerValues();
 		
 		download_OCR_Report();
@@ -59,6 +62,8 @@ public class RegressionTests extends BaseClass {
 		verifyTestResultsCount(TestData.fiberTestExpectedIncompleteTestsCount,
 				TestData.fiberTestExpectedPassedTestsCount, TestData.fiberTestExpectedFailedTestsCount,
 				"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumber);
+		
+		verify_SOR_OCR_Files_Downloaded();
 		
 		softAssert.assertAll();
 		

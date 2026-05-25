@@ -75,10 +75,6 @@ public class Import extends BaseClass {
 	public static WebElement fileNameTextBox() {
 		return driver.findElement(By.xpath("//ComboBox[@Name='File name:']/Edit"));
 	}
-
-	public static boolean isFileNameTextBoxDisplayed() {
-		return isElementDisplayed(ByName.name("File name:"), 10);
-	}
 	
 	public static String getJobNumberFromImportSuccessFulPopup() {
 		// Name Job imported successfully, but we couldn't load the job details right

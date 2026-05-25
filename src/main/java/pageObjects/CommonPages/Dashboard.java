@@ -67,4 +67,12 @@ public class Dashboard extends BaseClass {
 			Thread.sleep(1000);
 		}
 	}
+	
+	public static boolean isSyncStatusPopupDisplayed() {
+		return isElementDisplayed(ByAccessibilityId.AccessibilityId("SyncStatusMessage"), 1);
+	}
+	
+	public static boolean isFileNameTextBoxDisplayed() {
+		return isElementDisplayed(ByName.name("File name:"), 10);
+	}
 }

@@ -74,6 +74,8 @@ public class TestData {
 	public static String fiberTestExpectedPassedTestsCount = fiberTestJobSearchJobNumber.equals("25305754") ? "20"
 			: "17";
 	public static String fiberTestExpectedFailedTestsCount = fiberTestJobSearchJobNumber.equals("25305754") ? "5" : "6";
+	
+	public static String fiberTestCompletionTabIseSeqValue = fiberTestJobSearchJobNumber.equals("25305754") ? "9886" : "9674";
 
 	public static String ecqtsAppUsername() {
 		String username = null;

@@ -96,4 +96,12 @@ public class FiberResults extends BaseClass {
 	public static WebElement showMoreInfoButton() {
 		return driver.findElementByAccessibilityId("ShowMoreInfoFilter");
 	}
+	
+	public static WebElement SOR_1550_Attn_DownloadIcon() {
+		return driver.findElementByXPath("//*[@Name='1550:']/following-sibling::Image");
+	}
+	
+	public static WebElement SOR_1310_Attn_DownloadIcon() {
+		return driver.findElementByXPath("//*[@Name='1310:']/following-sibling::Image");
+	}
 }

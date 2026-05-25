@@ -16,7 +16,7 @@ public class SideMenu extends BaseClass {
 	}
 	
 	public static boolean  isDashboardButtonDisplayed() {
-		return isElementDisplayed(By.xpath("//Group[@AutomationId='MenuItemsHost']/ListItem[@Name='Dashboard']"),5);
+		return isElementDisplayed(By.xpath("//Group[@AutomationId='MenuItemsHost']/ListItem[@Name='Dashboard']"),3);
 	}
 
 	public static WebElement aboutButton() {

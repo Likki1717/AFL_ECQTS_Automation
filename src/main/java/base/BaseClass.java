@@ -79,6 +79,22 @@ public class BaseClass {
 			}
 		}
 
+		deleteAttempts = 0;
+		File SorReportFolder = new File(TestData.SOR_Files_Path);
+
+		// Delete the SOR files folder if it exists, to verify if the newly downloaded
+		// sor file is available in this folder
+		while (SorReportFolder.exists()) {
+			if (deleteAttempts == 0) {
+				deleteAttempts++;
+				deleteDirectory(SorReportFolder);
+			} else {
+				// If deletion failed, likely due to files being in use
+				System.out.println("*****Close any open app / file and run the script again*****");
+				stopExecution();
+			}
+		}
+
 		// Create SOR files folder it if missing, to verify if the nelwy downloaded Sor
 		// file is available in this folder
 		File sorFolder = new File(TestData.SOR_Files_Path);
@@ -523,7 +539,7 @@ public class BaseClass {
 		robot.keyPress(KeyEvent.VK_TAB);
 		robot.keyRelease(KeyEvent.VK_TAB);
 		Import.uploadFileButton().click();
-		softAssert.assertTrue(Import.isFileNameTextBoxDisplayed(), importType
+		softAssert.assertTrue(Dashboard.isFileNameTextBoxDisplayed(), importType
 				+ " Import - Waited for 10 seconds, to enter file name, the file name text box was not visible");
 
 		// Send file paths
@@ -824,7 +840,42 @@ public class BaseClass {
 		}
 	}
 
+	public static void downloadSorFile(String attnNumber) throws Exception {
+
+		if (attnNumber.equals("1550")) {
+
+			FiberResults.SOR_1550_Attn_DownloadIcon().click();
+
+		} else if (attnNumber.equals("1310")) {
+
+			FiberResults.SOR_1310_Attn_DownloadIcon().click();
+		}
+
+		Dashboard.isFileNameTextBoxDisplayed();
+
+		// TAB navigation to reach address/location field
+		robot.keyPress(KeyEvent.VK_ALT);
+		robot.keyPress(KeyEvent.VK_D);
+
+		robot.keyRelease(KeyEvent.VK_D);
+		robot.keyRelease(KeyEvent.VK_ALT);
+
+		copyPasteAndClickEnter(TestData.SOR_Files_Path);
+
+		Thread.sleep(1000);
+
+		robot.keyPress(KeyEvent.VK_ALT);
+		robot.keyPress(KeyEvent.VK_S);
+
+		robot.keyRelease(KeyEvent.VK_S);
+		robot.keyRelease(KeyEvent.VK_ALT);
+
+		Dashboard.isLoaderNotDisplayed();
+	}
+
 	public static void runTestInLoopAlongWithSwitchingToSettingsPage() throws Exception {
+		Dashboard.waitUntilLoaderIsNotDisplayed();
+		dismissSyncStatusPopupIfDisplayed();
 		JobDetailsPage.isProtectionLayerTabDisplayed();
 		wait = new WebDriverWait(driver, 40);
 		WebElement bufferTube = driver.findElement(By
@@ -836,24 +887,27 @@ public class BaseClass {
 		FiberResults.showMoreInfoButton().click();
 		int i = 1;
 		while (i <= 288) {
+			Dashboard.waitUntilLoaderIsNotDisplayed();
+			dismissSyncStatusPopupIfDisplayed();
 			By dynamicRunTestButtonXpath = By.xpath("//Text[@Name='" + i + " / 288']/..//Button[@Name='Run Tests']");
-
 			while (true) {
 				try {
-					while (!isElementDisplayed(dynamicRunTestButtonXpath, 5)) {
+					dismissSyncStatusPopupIfDisplayed();
+					while (!isElementDisplayed(dynamicRunTestButtonXpath, 2)) {
+						System.out.println(
+								"**Run test for fiber " + i + " / 288 is not displayed hence scrolling down**");
 						int j = i - 1;
 						By previousFiberNumberXpath = By.xpath("//Text[@Name='" + j + " / 288']");
 						driver.findElement(previousFiberNumberXpath).click();
 						robot.mouseWheel(2);
 					}
 					System.out.println("\nNext test to run - " + i + "/288");
-					wait = new WebDriverWait(driver, 40);
-					wait.until(ExpectedConditions.elementToBeClickable(dynamicRunTestButtonXpath));
 					WebElement dynamicRunTestButton = driver.findElement(dynamicRunTestButtonXpath);
-					actions.moveToElement(dynamicRunTestButton).click().build().perform();
+					dynamicRunTestButton.click();
 					break;
 				} catch (Exception e) {
-
+					dismissSyncStatusPopupIfDisplayed();
+					System.out.println("**Clicking on Run test for fiber " + i + " / 288 failed, trying again**");
 				}
 			}
 
@@ -861,6 +915,7 @@ public class BaseClass {
 
 			while (true) {
 				try {
+					dismissSyncStatusPopupIfDisplayed();
 					Dashboard.waitUntilOkButtonIsDisplayed();
 					wait = new WebDriverWait(driver, 40);
 					wait.until(ExpectedConditions.elementToBeClickable(Dashboard.okButton()));
@@ -869,7 +924,8 @@ public class BaseClass {
 					i++;
 					break;
 				} catch (Exception e) {
-					
+					dismissSyncStatusPopupIfDisplayed();
+					System.out.println("**Clicking on Ok button in graph failed, trying again**");
 				}
 			}
 
@@ -884,7 +940,7 @@ public class BaseClass {
 					FiberResults.goToFiberButton().click();
 					System.out.println("  - Clicked on Go to fiber button");
 				} catch (Exception e) {
-					System.out.println("**Go to fiber button was not clickable**");
+					System.out.println("**Clicking on Go to fiber button failed**");
 				}
 			} else {
 				System.out.println("**Go to fiber button was not visible**");
@@ -892,59 +948,79 @@ public class BaseClass {
 
 			while (true) {
 				try {
+					dismissSyncStatusPopupIfDisplayed();
 					wait = new WebDriverWait(driver, 40);
 					FiberResults.waitUntilStopTestsButtonIsDisplayed();
 					FiberResults.stopButton().click();
 					System.out.println("  - Clicked on Stop test button");
 					break;
 				} catch (Exception e) {
-					
+					dismissSyncStatusPopupIfDisplayed();
+					System.out.println("**Clicking on Stop test button failed, trying again**");
 				}
 			}
-			Thread.sleep(2000);
-			
+
+			dismissSyncStatusPopupIfDisplayed();
+
 			if (Dashboard.isOpenNavigationButtonDisplayed()) {
 				try {
 					Dashboard.openNavigationButton().click();
 				} catch (Exception e) {
-					
+					System.out.println(
+							"**Clicking on Open Navigation failed, moving ahead to test next fiber without navigating to settings**");
 				}
 				if (SideMenu.isDashboardButtonDisplayed()) {
 					SideMenu.settingsButton().click();
 					Thread.sleep(2000);
 					Dashboard.backArrow().click();
 					System.out.println("  - Clicked on Back Arrow from settings page");
-					Thread.sleep(2000);
 				} else {
+					System.out.println(
+							"**Dashboard button in Open Navigation side menu is not displayed, closing navigation and moving ahead to test next fiber without navigating to settings**");
 					try {
 						Dashboard.closeNavigationButton().click();
 					} catch (Exception e) {
-						
+						System.out.println("**Clicking on close navigation failed, moving ahead to test next fiber**");
 					}
 				}
+			} else {
+				System.out.println(
+						"**Did not find Open navigation, moving ahead to test next fiber without navigating to settings**");
 			}
-
 		}
 	}
 
 	public static void enterCompletionLayerValues() {
-
 		try {
+
 			softAssert.assertTrue(JobDetailsPage.isCompletionTabDisplayed(),
 					"Waited for 10 seconds, completion tab is not displayed");
 			wait = new WebDriverWait(driver, 10);
 			wait.until(ExpectedConditions.elementToBeClickable(JobDetailsPage.completionTab()));
 			actions.moveToElement(JobDetailsPage.completionTab()).click().build().perform();
 			softAssert.assertTrue(Completion.isSeqNumberTestDisplayed(),
-					"Waited for 5 seconds, ISE Sequence test is not displayed ");
-			Completion.ISE_Seq_Number().sendKeys("1000");
-			Completion.ISE_Seq_Number_uoM().sendKeys("ft");
+					"Waited for 10 seconds, ISE Sequence test is not displayed ");
 
-			Completion.OSE_Seq_Number().sendKeys("100");
-			Completion.OSE_Seq_Number_uoM().sendKeys("ft");
+			Completion.ISE_Seq_Number().sendKeys(TestData.fiberTestCompletionTabIseSeqValue);
+			Completion.ISE_Seq_Number_uoM().sendKeys("m");
+
+			Completion.OSE_Seq_Number().sendKeys("1");
+			Completion.OSE_Seq_Number_uoM().sendKeys("m");
+
+			Dashboard.isLoaderDisplayed();
+			Dashboard.isLoaderNotDisplayed();
+
+			softAssert.assertTrue(Completion.isCompletionTabIseTestResultPassDisplayed(),
+					"Waited for 40 seconds, Result is PASS test is not displayed ");
+			softAssert.assertTrue(Completion.isCompletionTabOseTestResultPassDisplayed(),
+					"Waited for 40 seconds, Result is PASS test is not displayed ");
+
+			Completion.ISE_Seq_Number().clear();
+			Completion.ISE_Seq_Number()
+					.sendKeys(String.valueOf(Integer.parseInt(TestData.fiberTestCompletionTabIseSeqValue) + 1));
 
 			softAssert.assertTrue(Completion.isInvalidMeterMarksPopupDisplayed(),
-					"Waited for 20 seconds, Invalid Meter Marks text is not visible");
+					"Waited for 30 seconds, Invalid Meter Marks text is not visible");
 
 			Completion.okButton().click();
 
@@ -956,6 +1032,7 @@ public class BaseClass {
 
 			Completion.OSE_Print_Spacing().sendKeys("2");
 			Completion.ISE_Print_Spacing().sendKeys("2");
+
 		} catch (Exception e) {
 			System.out.println(
 					"****Could not enter all the values in Completion tab, possibly this job does not have all fields****");
@@ -979,8 +1056,33 @@ public class BaseClass {
 		JobDetailsPage.reportsTab().click();
 	}
 
-	public static void stopExecution() throws Exception {
+	public static void verify_SOR_OCR_Files_Downloaded() {
+		softAssert.assertEquals(getFilesCount(TestData.OCR_Report_Path), 1);
+		softAssert.assertEquals(getFilesCount(TestData.SOR_Files_Path), 2);
+	}
 
+	public static int getFilesCount(String folderPath) {
+
+		File folder = new File(folderPath);
+		File[] files = folder.listFiles(file -> file.isFile());
+		if (files != null) {
+			return files.length;
+		}
+		return 0;
+	}
+
+	public static void dismissSyncStatusPopupIfDisplayed() {
+		try {
+			if (Dashboard.isSyncStatusPopupDisplayed()) {
+				Dashboard.okButton().click();
+				System.out.println("\n**Closed ECQTS Sync Status popup**");
+			}
+		} catch (Exception e) {
+			// Popup not present or already closed — safe to ignore
+		}
+	}
+
+	public static void stopExecution() throws Exception {
 		robot.keyPress(KeyEvent.VK_ALT);
 		robot.keyPress(KeyEvent.VK_TAB);
 		Thread.sleep(500);
