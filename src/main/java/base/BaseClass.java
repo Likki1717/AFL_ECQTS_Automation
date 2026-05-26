@@ -264,7 +264,7 @@ public class BaseClass {
 			SignIn.passwordField().clear();
 			SignIn.passwordField().sendKeys(TestData.ecqtsAppPassword());
 			SignIn.signInButton().click();
-			Dashboard.isLoaderNotDisplayed();
+			Dashboard.waitUntilLoaderIsNotDisplayed();
 			softAssert.assertTrue(Dashboard.isFiberTestModuleDisplayed(),
 					"Tried for 10 secs, Fiber Test module was not visible after login");
 		} catch (Exception e) {
@@ -972,7 +972,13 @@ public class BaseClass {
 				if (SideMenu.isDashboardButtonDisplayed()) {
 					SideMenu.settingsButton().click();
 					Thread.sleep(2000);
-					Dashboard.backArrow().click();
+					try {
+						Dashboard.backArrow().click();
+					} catch (Exception e) {
+						System.out.println("**Trying to click on Back Arrow from Catch block**");
+						Thread.sleep(3000);
+						Dashboard.backArrow().click();
+					}
 					System.out.println("  - Clicked on Back Arrow from settings page");
 				} else {
 					System.out.println(
