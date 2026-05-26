@@ -96,6 +96,10 @@ public class ConnectionProfiles extends BaseClass{
 	public static WebElement instrumentType_Anritsu_MT_9085() {
 		return driver.findElementByXPath("//Text[@Name='Anritsu MT-9085']");
 	}
+	
+	public static WebElement instrumentType_Anritsu_MT_9083() {
+		return driver.findElementByXPath("//Text[@Name='Anritsu MT-9083']");
+	}
  
 	public static WebElement editButton() {
 		return driver.findElementByXPath("//Button[@Name='Edit']");

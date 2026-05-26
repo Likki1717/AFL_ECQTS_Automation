@@ -123,4 +123,20 @@ public class JobDetailsPage extends BaseClass {
 	public static WebElement cutNumberInfo() {
 		return driver.findElement(By.xpath("//Text[@Name='Cut Info:']/following-sibling::Text"));
 	}
+	
+	public static WebElement editAdjLengthIcon()
+	{
+		return driver.findElementByAccessibilityId("EditAdjustedLengthButton");
+	}
+	
+	public static WebElement adjLengthInputField()
+	{
+		return driver.findElementByAccessibilityId("AdjustedLengthEntry");
+	}
+	
+	public static WebElement adjLengthSaveIcon()
+	{
+		return driver.findElementByAccessibilityId("SaveAdjustedLengthButton");
+	}
+
 }

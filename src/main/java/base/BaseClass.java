@@ -415,13 +415,18 @@ public class BaseClass {
 		try {
 			ConnectionProfiles.editButton().click();
 			ConnectionProfiles.instrumentTypeDropdown().click();
-			ConnectionProfiles.instrumentType_Anritsu_MT_9085().click();
+			if (TestData.testEnvironment.equals("Dev") || TestData.testEnvironment.equals("QA")) {
+				ConnectionProfiles.instrumentType_Anritsu_MT_9085().click();
+			} else {
+				ConnectionProfiles.instrumentType_Anritsu_MT_9083().click();
+			}
 			softAssert.assertTrue(
 					ConnectionProfiles.ipAddressTextBox().getAttribute("Value.Value")
 							.contains(TestData.anritsu_9085_Ip_Address),
 					"Ip address did not change when we changed instrument from Simulator to Anritsu 9085");
 			ConnectionProfiles.ipAddressTextBox().clear();
 			ConnectionProfiles.ipAddressTextBox().sendKeys(TestData.anritsu_9085_Ip_Address);
+			robot.mouseWheel(3);
 			ConnectionProfiles.saveProfileButton().click();
 			ConnectionProfiles.testConnection().click();
 			softAssert.assertTrue(ConnectionProfiles.isConnectionFailurePopupDisplayed(),
@@ -431,9 +436,14 @@ public class BaseClass {
 			softAssert.assertTrue(ConnectionProfiles.ipAddressTextBox().getAttribute("Value.Value")
 					.contains(TestData.anritsu_9085_Ip_Address));
 			ConnectionProfiles.instrumentTypeDropdown().click();
-			ConnectionProfiles.instrumentType_Simulator().click();
+			if (TestData.testEnvironment.equals("Dev") || TestData.testEnvironment.equals("QA")) {
+				ConnectionProfiles.instrumentType_Simulator().click();
+			} else {
+				ConnectionProfiles.instrumentType_Anritsu_MT_9085().click();
+			}
 			ConnectionProfiles.ipAddressTextBox().clear();
 			ConnectionProfiles.ipAddressTextBox().sendKeys(TestData.simulatorIP_Address);
+			robot.mouseWheel(3);
 			ConnectionProfiles.saveProfileButton().click();
 		} catch (Exception e) {
 			System.out.println("****Exception in editConnectionProfile()****");
@@ -715,6 +725,7 @@ public class BaseClass {
 		Dashboard.waitUntilLoaderIsNotDisplayed();
 		softAssert.assertTrue(JobDetailsPage.isOtdrSettingsTabDisplayed(),
 				"Tried for 5 seconds, Protection Layer tab is not displayed");
+		dismissSyncStatusPopupIfDisplayed();
 	}
 
 	public static void verifyJobDetailsHeader(String org, String jobNumber, String cutNumber, String cutNumberInfo,
@@ -764,10 +775,12 @@ public class BaseClass {
 	}
 
 	public static void runGetLengthTest() {
+		dismissSyncStatusPopupIfDisplayed();
 		JobDetailsPage.isOtdrSettingsTabDisplayed();
 		wait = new WebDriverWait(driver, 20);
 		wait.until(ExpectedConditions.elementToBeClickable(JobDetailsPage.OTDR_Settings()));
 		JobDetailsPage.OTDR_Settings().click();
+		dismissSyncStatusPopupIfDisplayed();
 		softAssert.assertTrue(OTDR_Settings.isConnectionProfileDropDownDisplayed(),
 				"Waited for 50 seconds, connection profiles drop down on OTDR settings page is not displayed");
 		OTDR_Settings.connectionProfile().sendKeys(TestData.OTDR_Settings_ConnectionProfile);
@@ -786,7 +799,18 @@ public class BaseClass {
 		OTDR_Settings.okButton().click();
 		Dashboard.isLoaderNotDisplayed();
 		softAssert.assertTrue(OTDR_Settings.isGetLengthHistoryDropDownFieldDisplayed(),
-				"Waited for 50 seconds, Get Length history drop down field is not displayed");
+				"Waited for 50 seconds, Get Length history drop down field is not displayed");	
+	}
+	
+	public static void editAdjLength() throws Exception
+	{
+		JobDetailsPage.editAdjLengthIcon().click();
+		Thread.sleep(1000);
+		JobDetailsPage.adjLengthInputField().click();
+		JobDetailsPage.adjLengthInputField().clear();
+		JobDetailsPage.adjLengthInputField().sendKeys("9836");
+		JobDetailsPage.adjLengthSaveIcon().click();
+		Thread.sleep(1000);
 	}
 
 	public static void runFiberTest(int numberOfFibersToTest) throws Exception {
@@ -810,11 +834,14 @@ public class BaseClass {
 				Dashboard.waitUntilLoaderIsNotDisplayed();
 				FiberResults.isRunTestsButtonDisplayed();
 				FiberResults.showMoreInfoButton().click();
+				FiberResults.isRunTestsButtonDisplayed();
+				wait = new WebDriverWait(driver, 40);
 				wait.until(ExpectedConditions.elementToBeClickable(FiberResults.runTestsButtonOfFirstFiber()));
 				FiberResults.runTestsButtonOfFirstFiber().click();
 				startTestingInNewBufferTube = false;
 			}
 			Dashboard.waitUntilOkButtonIsDisplayed();
+			wait = new WebDriverWait(driver, 40);
 			wait.until(ExpectedConditions.elementToBeClickable(Dashboard.okButton()));
 			Thread.sleep(1000);
 			Dashboard.okButton().click();
@@ -836,6 +863,11 @@ public class BaseClass {
 				}
 			}
 		}
+	}
+
+	public static void download_1310_And_1550_SOR_Files() throws Exception {
+		downloadSorFile("1550");
+		downloadSorFile("1310");
 	}
 
 	public static void downloadSorFile(String attnNumber) throws Exception {
@@ -960,37 +992,37 @@ public class BaseClass {
 
 			dismissSyncStatusPopupIfDisplayed();
 
-			if (Dashboard.isOpenNavigationButtonDisplayed()) {
-				try {
-					Dashboard.openNavigationButton().click();
-				} catch (Exception e) {
-					System.out.println(
-							"**Clicking on Open Navigation failed, moving ahead to test next fiber without navigating to settings**");
-				}
-				if (SideMenu.isDashboardButtonDisplayed()) {
-					SideMenu.settingsButton().click();
-					Thread.sleep(2000);
-					try {
-						Dashboard.backArrow().click();
-					} catch (Exception e) {
-						System.out.println("**Trying to click on Back Arrow from Catch block**");
-						Thread.sleep(3000);
-						Dashboard.backArrow().click();
-					}
-					System.out.println("  - Clicked on Back Arrow from settings page");
-				} else {
-					System.out.println(
-							"**Dashboard button in Open Navigation side menu is not displayed, closing navigation and moving ahead to test next fiber without navigating to settings**");
-					try {
-						Dashboard.closeNavigationButton().click();
-					} catch (Exception e) {
-						System.out.println("**Clicking on close navigation failed, moving ahead to test next fiber**");
-					}
-				}
-			} else {
-				System.out.println(
-						"**Did not find Open navigation, moving ahead to test next fiber without navigating to settings**");
-			}
+//			if (Dashboard.isOpenNavigationButtonDisplayed()) {
+//				try {
+//					Dashboard.openNavigationButton().click();
+//				} catch (Exception e) {
+//					System.out.println(
+//							"**Clicking on Open Navigation failed, moving ahead to test next fiber without navigating to settings**");
+//				}
+//				if (SideMenu.isDashboardButtonDisplayed()) {
+//					SideMenu.settingsButton().click();
+//					Thread.sleep(2000);
+//					try {
+//						Dashboard.backArrow().click();
+//					} catch (Exception e) {
+//						System.out.println("**Trying to click on Back Arrow from Catch block**");
+//						Thread.sleep(3000);
+//						Dashboard.backArrow().click();
+//					}
+//					System.out.println("  - Clicked on Back Arrow from settings page");
+//				} else {
+//					System.out.println(
+//							"**Dashboard button in Open Navigation side menu is not displayed, closing navigation and moving ahead to test next fiber without navigating to settings**");
+//					try {
+//						Dashboard.closeNavigationButton().click();
+//					} catch (Exception e) {
+//						System.out.println("**Clicking on close navigation failed, moving ahead to test next fiber**");
+//					}
+//				}
+//			} else {
+//				System.out.println(
+//						"**Did not find Open navigation, moving ahead to test next fiber without navigating to settings**");
+//			}
 		}
 	}
 
@@ -1014,19 +1046,31 @@ public class BaseClass {
 			Dashboard.isLoaderDisplayed();
 			Dashboard.isLoaderNotDisplayed();
 
-			softAssert.assertTrue(Completion.isCompletionTabIseTestResultPassDisplayed(),
-					"Waited for 40 seconds, Result is PASS test is not displayed ");
-			softAssert.assertTrue(Completion.isCompletionTabOseTestResultPassDisplayed(),
-					"Waited for 40 seconds, Result is PASS test is not displayed ");
+			Thread.sleep(1000);
+
+			softAssert.assertEquals(Completion.completionTabIseTestResult().getText().trim(), "PASS",
+					"Mismatch in Completion tab ISE Seq test result.");
+			softAssert.assertEquals(Completion.completionTabOseTestResult().getText().trim(), "PASS",
+					"Mismatch in Completion tab OSE Seq test result.");
 
 			Completion.ISE_Seq_Number().clear();
 			Completion.ISE_Seq_Number()
 					.sendKeys(String.valueOf(Integer.parseInt(TestData.fiberTestCompletionTabIseSeqValue) + 1));
+			Completion.OSE_Seq_Number().click();
+
+			Dashboard.isLoaderDisplayed();
 
 			softAssert.assertTrue(Completion.isInvalidMeterMarksPopupDisplayed(),
-					"Waited for 30 seconds, Invalid Meter Marks text is not visible");
+					"Waited for 30 seconds, Invalid Meter Marks popup is not visible");
 
-			Completion.okButton().click();
+			if (Completion.isInvalidMeterMarksPopupDisplayed()) {
+				Completion.okButton().click();
+			}
+
+			softAssert.assertEquals(Completion.completionTabIseTestResult().getText().trim(), "FAIL",
+					"Mismatch in Completion tab ISE Seq test result.");
+			softAssert.assertEquals(Completion.completionTabOseTestResult().getText().trim(), "FAIL",
+					"Mismatch in Completion tab OSE Seq test result.");
 
 			Completion.ISE_Print_Verified().sendKeys("2");
 			Completion.OSE_Print_Verified().sendKeys("2");
@@ -1061,8 +1105,8 @@ public class BaseClass {
 	}
 
 	public static void verify_SOR_OCR_Files_Downloaded() {
-		softAssert.assertEquals(getFilesCount(TestData.OCR_Report_Path), 1);
-		softAssert.assertEquals(getFilesCount(TestData.SOR_Files_Path), 2);
+		softAssert.assertEquals(getFilesCount(TestData.OCR_Report_Path), 1, "Mismatch in downloaded OCR report count.");
+		softAssert.assertEquals(getFilesCount(TestData.SOR_Files_Path), 2, "Mismatch in downloaded SOR files count.");
 	}
 
 	public static int getFilesCount(String folderPath) {

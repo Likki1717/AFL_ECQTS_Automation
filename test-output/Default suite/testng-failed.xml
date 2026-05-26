@@ -3,11 +3,11 @@
 <suite name="Failed suite [Default suite]" guice-stage="DEVELOPMENT">
   <test thread-count="5" name="Default test(failed)">
     <classes>
-      <class name="DesktopApplicationTests.RunFiberTestsInLoop">
+      <class name="DesktopApplicationTests.RegressionTests">
         <methods>
-          <include name="runFiberTestAndSwitchToSettingsAndRepeatInLoop"/>
+          <include name="runRegressionTestSuite"/>
         </methods>
-      </class> <!-- DesktopApplicationTests.RunFiberTestsInLoop -->
+      </class> <!-- DesktopApplicationTests.RegressionTests -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->

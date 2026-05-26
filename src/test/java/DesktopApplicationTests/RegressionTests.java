@@ -9,13 +9,13 @@ public class RegressionTests extends BaseClass {
 	@Test
 	public static void runRegressionTestSuite() throws Exception {
 
-		launchOpenVpnAppAndConnect();
-
 		clearPreviousSessionData();
 
 		launchWinAppDriver();
 		
 		launch_ECQTS_Application();
+		
+		launchOpenVpnAppAndConnect();
 		
 		verifyIncorrectCredentials();
 		
@@ -50,10 +50,11 @@ public class RegressionTests extends BaseClass {
 		
 		runGetLengthTest();
 		
+		editAdjLength();
+		
 		runFiberTest(TestData.numberOfFibersToTest);
 		
-		downloadSorFile("1550");
-		downloadSorFile("1310");
+		download_1310_And_1550_SOR_Files();
 		
 		enterCompletionLayerValues();
 		

@@ -38,7 +38,7 @@ public class FiberResults extends BaseClass {
 	}
 
 	public static boolean isRunTestsButtonDisplayed() {
-		return isElementDisplayed(By.xpath("(//Button[@Name='Run Tests'])[1]"), 3);
+		return isElementDisplayed(By.xpath("(//Button[@Name='Run Tests'])[1]"), 10);
 	}
 	
 	public static boolean isContinueTestsButtonDisplayed()

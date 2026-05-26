@@ -60,11 +60,11 @@ public class Completion extends BaseClass {
 		return isElementDisplayed(ByName.name("Invalid Meter Marks"), 30);
 	}
 	
-	public static boolean isCompletionTabIseTestResultPassDisplayed() {
-		return isElementDisplayed(By.xpath("//Text[@Name='ISE Seq Mark']/following::Text[@Name='PASS']"), 40);
+	public static WebElement completionTabIseTestResult() {
+		return driver.findElement(By.xpath("//Text[@Name='ISE Seq Mark']/following::Text"));
 		}
 	
-	public static boolean isCompletionTabOseTestResultPassDisplayed() {
-		return isElementDisplayed(By.xpath("//Text[@Name='OSE Seq Mark']/following::Text[@Name='PASS']"), 40);
+	public static WebElement completionTabOseTestResult() {
+		return driver.findElement(By.xpath("//Text[@Name='OSE Seq Mark']/following::Text"));
 		}
 }

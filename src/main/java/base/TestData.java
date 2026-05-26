@@ -3,8 +3,8 @@ package base;
 import java.io.File;
 
 public class TestData {
-	public static String testEnvironment = "Dev"; // Dev /QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
-	public static String expectedAppVersion = "Version: 7.6.11.0";
+	public static String testEnvironment = "Soft Release Prod"; // Dev /QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
+	public static String expectedAppVersion = "Version: 7.6.15.0";
 	public static boolean useOfficeOtdr = true;
 	public static boolean useExternalCamera = true;
 	public static int numberOfFibersToTest = 1;
@@ -13,10 +13,10 @@ public class TestData {
 	public static String fiberTestJobSearchOrg = "CAB";
 
 	// All below local paths to be updated from system
-	public static String OCR_Report_Path = "C:\\Users\\sumeeth\\AppData\\Local\\Packages\\" + appId().split("!")[0]
+	public static String OCR_Report_Path = "C:\\Users\\sumeeth\\AppData\\Local\\Packages\\" + packageName(testEnvironment)
 			+ "\\LocalState\\Downloads\\" + fiberTestJobSearchOrg + "";
 	public static String secureStorageFolderPath = "C:\\Users\\sumeeth\\AppData\\Local\\Packages\\"
-			+ appId().split("!")[0] + "\\LocalState\\SecureStorage"; // Deleting this SecureStorage folder will delete
+			+ packageName(testEnvironment) + "\\LocalState\\SecureStorage"; // Deleting this SecureStorage folder will delete
 																		// the login cache and app by default will be in
 																		// logged out state
 
@@ -75,7 +75,7 @@ public class TestData {
 			: "17";
 	public static String fiberTestExpectedFailedTestsCount = fiberTestJobSearchJobNumber.equals("25305754") ? "5" : "6";
 	
-	public static String fiberTestCompletionTabIseSeqValue = fiberTestJobSearchJobNumber.equals("25305754") ? "9886" : "9674";
+	public static String fiberTestCompletionTabIseSeqValue = "9886";
 
 	public static String ecqtsAppUsername() {
 		String username = null;
@@ -87,16 +87,16 @@ public class TestData {
 			username = "sumeetDev"; // sumeetDev Mandeep executiveDev
 			break;
 		case "Prod":
-			username = "executiveProd";
+			username = "testerProd";
 			break;
 		case "Second Prod":
-			username = "sumeethProd";
+			username = "testerProd";
 			break;
 		case "Soft Release Prod":
-			username = "executiveProd";
+			username = "testerProd";
 			break;
 		case "Soft Release Second Prod":
-			username = "executiveProd";
+			username = "testerProd";
 			break;
 		}
 		return username;
@@ -112,16 +112,16 @@ public class TestData {
 			password = "Welcome@123"; // Password123#
 			break;
 		case "Prod":
-			password = "";
+			password = "Welcome@0650";
 			break;
 		case "Second Prod":
-			password = "";
+			password = "Welcome@0650";
 			break;
 		case "Soft Release Prod":
-			password = "";
+			password = "Welcome@0650";
 			break;
 		case "Soft Release Second Prod":
-			password = "";
+			password = "Welcome@0650";
 			break;
 		}
 		return password;
@@ -168,6 +168,17 @@ public class TestData {
 			break;
 		}
 		return appId;
+	}
+	
+	public static String packageName(String testEnvironment)
+	{
+		 switch (testEnvironment) {
+		    case "Soft Release Prod":
+		    	return "com.ecsite.afl.softrelease_aqd9xyv20zq6r";
+
+		    default:
+		        return appId().split("!")[0];
+		    }
 	}
 
 	/*
