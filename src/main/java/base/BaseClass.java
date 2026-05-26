@@ -120,7 +120,7 @@ public class BaseClass {
 	public static void launchOpenVpnAppAndConnect() throws Exception {
 		if (TestData.useOfficeOtdr) {
 			launchDependentApplication(TestData.openVpnAppPath);
-			robot.delay(3000);
+			robot.delay(5000);
 			for (int i = 0; i < 4; i++) {
 				robot.keyPress(KeyEvent.VK_TAB);
 				robot.keyRelease(KeyEvent.VK_TAB);
@@ -472,7 +472,7 @@ public class BaseClass {
 			softAssert.assertTrue(ApplicationSettings.isCameraSourceDropDownDisplayed(),
 					"Waited for 3 secs, Camera source drop down is not displayed ");
 			if (TestData.useExternalCamera == ApplicationSettings.cameraSourceDropDown().getText()
-					.contains("Integrated Camera")) {
+					.contains("Integrated")) {
 				ApplicationSettings.cameraSourceDropDown().click();
 				if (TestData.useExternalCamera) {
 					if (ApplicationSettings.isExternalCameraDisplayed()) {
@@ -555,7 +555,7 @@ public class BaseClass {
 			stopExecution();
 		}
 
-		Thread.sleep(1000);
+		Thread.sleep(2000);
 		Import.submitButton().click();
 		Dashboard.isLoaderDisplayed();
 
@@ -797,26 +797,24 @@ public class BaseClass {
 		while (numberOfFibersToTest != fibersTested) {
 // Below if block is needed only to click on the first buffer tube, which is at start of test 
 // OR when all tests are completed and still number of fibers to test are less than overall fibers tested
+			Dashboard.waitUntilLoaderIsNotDisplayed();
 			if (startTestFromFirstBufferTube) {
 				JobDetailsPage.isBufferTubeDisplayed();
 				wait.until(ExpectedConditions.elementToBeClickable(JobDetailsPage.bufferTubeTab()));
-				while (!FiberResults.isRunTestsButtonDisplayed()) {
-					JobDetailsPage.bufferTubeTab().click();
-				}
+				JobDetailsPage.bufferTubeTab().click();
 				startTestFromFirstBufferTube = false;
 			}
 // Below if blocked is needed to click on Show more info button and to click on Run Test button of first fiber,
 // which is at start of test OR when moved to new buffer tube			
 			if (startTestingInNewBufferTube) {
+				Dashboard.waitUntilLoaderIsNotDisplayed();
 				FiberResults.isRunTestsButtonDisplayed();
 				FiberResults.showMoreInfoButton().click();
 				wait.until(ExpectedConditions.elementToBeClickable(FiberResults.runTestsButtonOfFirstFiber()));
 				FiberResults.runTestsButtonOfFirstFiber().click();
 				startTestingInNewBufferTube = false;
 			}
-			Dashboard.isLoaderDisplayed();
-			Dashboard.isLoaderNotDisplayed();
-			Dashboard.isOkButtonDisplayed();
+			Dashboard.waitUntilOkButtonIsDisplayed();
 			wait.until(ExpectedConditions.elementToBeClickable(Dashboard.okButton()));
 			Thread.sleep(1000);
 			Dashboard.okButton().click();
@@ -824,7 +822,7 @@ public class BaseClass {
 			FiberResults.isGoToFiberButtonVisible();
 			wait.until(ExpectedConditions.elementToBeClickable(FiberResults.goToFiberButton()));
 			FiberResults.goToFiberButton().click();
-			FiberResults.isStopTestsButtonDisplayed();
+			FiberResults.waitUntilStopTestsButtonIsDisplayed();
 			if (numberOfFibersToTest == fibersTested) {
 				FiberResults.stopButton().click();
 			} else {
