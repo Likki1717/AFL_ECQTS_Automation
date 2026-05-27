@@ -61,9 +61,9 @@ public class Completion extends BaseClass {
 	}
 	
 	public static WebElement completionTabIseTestResult() {
-		return driver.findElement(By.xpath("//Text[@Name='ISE Seq Mark']/following::Text"));
+		return driver.findElement(By.xpath("//Text[@Name='ISE Seq Mark']/following::ComboBox/following::Text"));
 		}
-	
+
 	public static WebElement completionTabOseTestResult() {
 		return driver.findElement(By.xpath("//Text[@Name='OSE Seq Mark']/following::Text"));
 		}

@@ -53,7 +53,7 @@ public class TestData {
 	public static String swindonExpectedPassedTests = "295";
 	public static String swindonExpectedFailedTests = "1";
 	public static String swindonExpectedHelixFactor = "1.02";
-	public static String swindonExpectedOtdrLength = "6253 m";
+	public static String swindonExpectedOtdrLength = "6353 m";
 	public static String swindonJobNumberStartsWith = "250592";
 
 	public static String taihanExpectedIncompleteTests = "51";
@@ -61,7 +61,7 @@ public class TestData {
 	public static String taihanExpectedFailedTests = "0";
 	public static String taihanExpectedHelixFactor = "1.02";
 	public static String taihanExpectedOtdrLength = "6181 m";
-	public static String taihanJobNumberStartsWith = "7877";
+	public static String taihanJobNumberStartsWith = "7887";
 
 	public static String fiberTestJobSearchJobNumber = "25305754"; // Large Job - 15811448
 	public static String fiberTestJobSearchCutNumber = new java.text.SimpleDateFormat("yyyyMMddHHmmss")

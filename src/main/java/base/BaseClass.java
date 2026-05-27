@@ -417,8 +417,16 @@ public class BaseClass {
 			ConnectionProfiles.instrumentTypeDropdown().click();
 			if (TestData.testEnvironment.equals("Dev") || TestData.testEnvironment.equals("QA")) {
 				ConnectionProfiles.instrumentType_Anritsu_MT_9085().click();
+				softAssert.assertTrue(
+						ConnectionProfiles.ipAddressTextBox().getAttribute("Value.Value")
+								.contains(TestData.anritsu_9085_Ip_Address),
+						"Ip address did not change when we changed instrument from Simulator to Anritsu 9085");
 			} else {
 				ConnectionProfiles.instrumentType_Anritsu_MT_9083().click();
+				softAssert.assertTrue(
+						ConnectionProfiles.ipAddressTextBox().getAttribute("Value.Value")
+								.contains(TestData.anritsu_9085_Ip_Address),
+						"Ip address did not change when we changed instrument from Anritsu 9085 to Anritsu 9083");
 			}
 			softAssert.assertTrue(
 					ConnectionProfiles.ipAddressTextBox().getAttribute("Value.Value")
@@ -626,7 +634,7 @@ public class BaseClass {
 			String prysmianFilePath = "\"" + TestData.prysmianAttenuationFilePath + "\" \""
 					+ TestData.prysmianJacketOdFilePath + "\"";
 
-			importJob("prysmian", prysmianFilePath, TestData.prysmianExpectedOtdrLength,
+			importJob("Prysmian", prysmianFilePath, TestData.prysmianExpectedOtdrLength,
 					TestData.prysmianExpectedHelixFactor, TestData.prysmianJobNumberStartsWith);
 
 			// Validating test results count
@@ -644,7 +652,7 @@ public class BaseClass {
 			String swindonFilePath = "\"" + TestData.swindonAttenuationFilePath + "\" \""
 					+ TestData.swindonJacketOdFilePath + "\"";
 
-			importJob("swindon", swindonFilePath, TestData.swindonExpectedOtdrLength,
+			importJob("Swindon", swindonFilePath, TestData.swindonExpectedOtdrLength,
 					TestData.swindonExpectedHelixFactor, TestData.swindonJobNumberStartsWith);
 
 			verifyTestResultsCount(TestData.swindonExpectedIncompleteTests, TestData.swindonExpectedPassedTests,
@@ -661,7 +669,7 @@ public class BaseClass {
 			// Multi-file string
 			String taihanFilePath = "\"" + TestData.taihanAttenuationFilePath + "\"";
 
-			importJob("taihan", taihanFilePath, TestData.taihanExpectedOtdrLength, TestData.taihanExpectedHelixFactor,
+			importJob("Taihan", taihanFilePath, TestData.taihanExpectedOtdrLength, TestData.taihanExpectedHelixFactor,
 					TestData.taihanJobNumberStartsWith);
 
 			verifyTestResultsCount(TestData.taihanExpectedIncompleteTests, TestData.taihanExpectedPassedTests,
@@ -732,16 +740,16 @@ public class BaseClass {
 			String whichTestBeingPerformed) {
 
 		softAssert.assertEquals(JobDetailsPage.org().getText().trim(), org,
-				"Org is not as expected in " + whichTestBeingPerformed);
+				whichTestBeingPerformed + " Import completed - Org mismatch.");
 
 		softAssert.assertEquals(JobDetailsPage.jobNumber().getText().trim().split("-")[0], jobNumber,
-				"Job number is not as expected in " + whichTestBeingPerformed);
+				whichTestBeingPerformed + " Import completed - Job number mismatch.");
 
 		softAssert.assertEquals(JobDetailsPage.cutNumber().getText().trim(), cutNumber,
-				"Cut number is not as expected in " + whichTestBeingPerformed);
+				whichTestBeingPerformed + " Import completed - Cut number mismatch.");
 
 		softAssert.assertEquals(JobDetailsPage.cutNumberInfo().getText().trim(), cutNumberInfo,
-				"Cut number info is not as expected in " + whichTestBeingPerformed);
+				whichTestBeingPerformed + " Import completed - Cut number info mismatch.");
 	}
 
 	public static void verifyTestResultsCount(String expectedIncompleteTestsCount, String expectedPassedTestsCount,
@@ -799,11 +807,10 @@ public class BaseClass {
 		OTDR_Settings.okButton().click();
 		Dashboard.isLoaderNotDisplayed();
 		softAssert.assertTrue(OTDR_Settings.isGetLengthHistoryDropDownFieldDisplayed(),
-				"Waited for 50 seconds, Get Length history drop down field is not displayed");	
+				"Waited for 50 seconds, Get Length history drop down field is not displayed");
 	}
-	
-	public static void editAdjLength() throws Exception
-	{
+
+	public static void editAdjLength() throws Exception {
 		JobDetailsPage.editAdjLengthIcon().click();
 		Thread.sleep(1000);
 		JobDetailsPage.adjLengthInputField().click();

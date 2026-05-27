@@ -9,16 +9,23 @@
 <table>
 <tr><th>Test</th><th># Passed</th><th># Skipped</th><th># Retried</th><th># Failed</th><th>Time (ms)</th><th>Included Groups</th><th>Excluded Groups</th></tr>
 <tr><th colspan="8">Default suite</th></tr>
-<tr><td><a href="#t0">Default test</a></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num attn">1</td><td class="num">405,957</td><td></td><td></td></tr>
+<tr><td><a href="#t0">Default test</a></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num attn">1</td><td class="num">715,741</td><td></td><td></td></tr>
 </table>
-<table id='summary'><thead><tr><th>Class</th><th>Method</th><th>Start</th><th>Time (ms)</th></tr></thead><tbody><tr><th colspan="4">Default suite</th></tr></tbody><tbody id="t0"><tr><th colspan="4">Default test &#8212; failed</th></tr><tr class="failedeven"><td rowspan="1">DesktopApplicationTests.RegressionTests</td><td><a href="#m0">runRegressionTestSuite</a></td><td rowspan="1">1779815984507</td><td rowspan="1">405922</td></tr></tbody>
+<table id='summary'><thead><tr><th>Class</th><th>Method</th><th>Start</th><th>Time (ms)</th></tr></thead><tbody><tr><th colspan="4">Default suite</th></tr></tbody><tbody id="t0"><tr><th colspan="4">Default test &#8212; failed</th></tr><tr class="failedeven"><td rowspan="1">DesktopApplicationTests.RegressionTests</td><td><a href="#m0">runRegressionTestSuite</a></td><td rowspan="1">1779854077009</td><td rowspan="1">715701</td></tr></tbody>
 </table>
 <h2>Default test</h2><h3 id="m0">DesktopApplicationTests.RegressionTests#runRegressionTestSuite</h3><table class="result"><tr><th>Exception</th></tr><tr><td><div class="stacktrace">java.lang.AssertionError: The following asserts failed:
-	Waited for 30 seconds, Invalid Meter Marks text is not visible expected [true] but found [false],
-	Test results count mismatch in Fiber test with Job # 25305754 expected [Incomplete: 66, Passed: 20, Failed: 5] but found [Incomplete: 72, Passed: 16, Failed: 3]
+	Ip address did not change when we changed instrument from Simulator to Anritsu 9085 expected [true] but found [false],
+	swindon Import completed - OTDR Length mismatch. expected [6253 m] but found [6353 m],
+	taihan Import completed - Waited for 3 seconds, buffer tube is not displayed expected [true] but found [false],
+	Job number is not as expected in taihan expected [7877] but found [7887],
+	Test results count mismatch in Taihan Import expected [Incomplete: 51, Passed: 98, Failed: 1] but found [Incomplete: 51, Passed: 98, Failed: 0],
+	Mismatch in Completion tab ISE Seq test result. expected [PASS] but found [0],
+	Mismatch in Completion tab OSE Seq test result. expected [PASS] but found [0],
+	Mismatch in Completion tab ISE Seq test result. expected [FAIL] but found [0],
+	Mismatch in Completion tab OSE Seq test result. expected [FAIL] but found [0]
 	at org.testng.asserts.SoftAssert.assertAll(SoftAssert.java:46)
 	at org.testng.asserts.SoftAssert.assertAll(SoftAssert.java:30)
-	at DesktopApplicationTests.RegressionTests.runRegressionTestSuite(RegressionTests.java:68)
+	at DesktopApplicationTests.RegressionTests.runRegressionTestSuite(RegressionTests.java:69)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at org.testng.internal.invokers.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:141)
