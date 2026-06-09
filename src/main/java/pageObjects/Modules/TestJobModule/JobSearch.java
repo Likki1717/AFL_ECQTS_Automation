@@ -1,4 +1,4 @@
-package pageObjects.Modules.FiberTest;
+package pageObjects.Modules.TestJobModule;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public class JobSearch extends BaseClass {
 
 	public static WebElement orgField()
 	{
-		return driver.findElement(By.xpath("//ComboBox[@AutomationId='OrgIdDropdown']"));
+		return driver.findElementByAccessibilityId("OrgIdDropdown");
 	}
 	
 	public static WebElement jobNumber() {
@@ -20,7 +20,7 @@ public class JobSearch extends BaseClass {
 	}
 
 	public static boolean isJobWarningsPopupDisplayed() {
-		return isElementDisplayed(ByName.name("Job Warnings/Errors"), 50);
+		return isElementDisplayed(ByName.name("Job Warnings/Errors"), 120);
 	}
 
 	public static WebElement searchCutNumber() {

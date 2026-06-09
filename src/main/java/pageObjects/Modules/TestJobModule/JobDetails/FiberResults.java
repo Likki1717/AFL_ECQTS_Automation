@@ -1,4 +1,4 @@
-package pageObjects.Modules.FiberTest.JobDetails;
+package pageObjects.Modules.TestJobModule.JobDetails;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.By.ByName;

@@ -1,4 +1,4 @@
-package pageObjects.Modules.FiberTest.JobDetails;
+package pageObjects.Modules.TestJobModule.JobDetails;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -28,9 +28,18 @@ public class OTDR_Settings extends BaseClass {
 	public static WebElement launchLength() {
 		return driver.findElementByAccessibilityId("LaunchLengthEntry");
 	}
+	
+	public static WebElement launchLength2()
+	{
+		return driver.findElementByAccessibilityId("LaunchLengthWtcEntry");
+	}
 
 	public static WebElement cutLength() {
 		return driver.findElementByAccessibilityId("CutLengthEntry");
+	}
+	
+	public static WebElement manufactureLength() {
+		return driver.findElementByAccessibilityId("ManufacturedLengthEntry");
 	}
 
 	public static WebElement horizontal() {
@@ -40,7 +49,7 @@ public class OTDR_Settings extends BaseClass {
 	public static WebElement vertical() {
 		return driver.findElementByAccessibilityId("VerticalEntry");
 	}
-
+	
 	public static WebElement getLengthButton() {
 		return driver.findElementByAccessibilityId("GetLengthButton");
 	}

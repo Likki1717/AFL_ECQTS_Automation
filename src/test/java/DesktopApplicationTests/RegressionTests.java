@@ -15,8 +15,6 @@ public class RegressionTests extends BaseClass {
 		
 		launch_ECQTS_Application();
 		
-		launchOpenVpnAppAndConnect();
-		
 		verifyIncorrectCredentials();
 		
 		loginToApplication();
@@ -32,15 +30,17 @@ public class RegressionTests extends BaseClass {
 		updateTestSettings();
 		
 		updateApplicationSettings();
-		
-		importPrysmianJob();
-		
+				
 		importSwindonJob();
-		
+
+		importPrysmianJob();
+						
 		importTaihanJob();
 		
-		searchJobAndNavigationToJobDetailsPage(TestData.fiberTestJobSearchOrg, TestData.fiberTestJobSearchJobNumber,
+		searchJobAndNavigationToJobDetailsPage(TestData.fiberTestModuleName, TestData.fiberTestJobSearchOrg, TestData.fiberTestJobSearchJobNumber,
 				TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo);
+		
+		launchOpenVpnAppAndConnect();
 		
 		verifyJobDetailsHeader(TestData.fiberTestJobSearchOrg, TestData.fiberTestJobSearchJobNumber,
 				TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo,
@@ -48,7 +48,7 @@ public class RegressionTests extends BaseClass {
 		
 		enterProtectionLayerValues();
 		
-		runGetLengthTest();
+		runGetLengthTest(TestData.fiberTestModuleName);
 		
 		editAdjLength();
 		

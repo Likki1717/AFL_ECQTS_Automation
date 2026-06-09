@@ -5,31 +5,46 @@ import org.testng.annotations.Test;
 import base.BaseClass;
 import base.TestData;
 import pageObjects.CommonPages.Dashboard;
-import pageObjects.Modules.FiberTest.JobDetailsPage;
+import pageObjects.Modules.TestJobModule.JobDetailsPage;
 
 public class RunFiberTestsInLoop extends BaseClass {
 
 	@Test
-	public static void runFiberTestAndSwitchToSettingsAndRepeatInLoop() throws Exception {
+	public static void runFiberTestInLoop() throws Exception {
+
 		clearPreviousSessionData();
+
 		launchOpenVpnAppAndConnect();
+
 		launchWinAppDriver();
+
 		launch_ECQTS_Application();
+
 		loginToApplication();
+
 		deleteAllExistingConnectionProfiles();
-		createProfile(TestData.officeOtdrProfileName, TestData.officeOTDR_IP_Address, TestData.officeOTDR_Port);
+
+		if (TestData.useOfficeOtdr) {
+			createProfile(TestData.connectionProfileName_Office_OTDR, TestData.connectionProfile_Office_OTDR_IP_Address, TestData.connectionProfile_Office_OTDR_Port);
+		} else {
+			createProfile(TestData.connectionProfileName_Simulator, TestData.connectionProfile_Simulator_IP_Address, TestData.connectionProfile_Simulator_Port);
+		}
+
 		updateTestSettings();
+
 		updateApplicationSettings();
+
 		while (true) {
-			searchJobAndNavigationToJobDetailsPage(TestData.fiberTestJobSearchOrg, "45193192-2869194",
-					new java.text.SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date()),
+			searchJobAndNavigationToJobDetailsPage(TestData.fiberTestModuleName, TestData.fiberTestJobSearchOrg,
+					"45193192-2869194", TestData.fiberTestJobSearchCutNumber,
 					TestData.fiberTestJobSearchCutNumberInfo);
 			if (JobDetailsPage.isMissingFiberIdWarningPopupDisplayed()) {
 				Dashboard.isOkButtonDisplayed();
 				Dashboard.okButton().click();
 			}
-			runGetLengthTest();
-			runTestInLoopAlongWithSwitchingToSettingsPage();
+			takeDump("afterJobSearch", 25);
+			runGetLengthTest(TestData.fiberTestModuleName);
+			runFiberTestForAllFibersInJob(true, 20, 30);
 		}
 	}
 }

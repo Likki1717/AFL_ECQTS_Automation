@@ -1,4 +1,4 @@
-package pageObjects.Modules.FiberTest;
+package pageObjects.Modules.TestJobModule;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.By.ByName;
@@ -24,15 +24,21 @@ public class JobDetailsPage extends BaseClass {
 	public static boolean isOtdrSettingsTabDisplayed() {
 		return isElementDisplayed(ByName.name("OTDR Settings"), 5);
 	}
+	
+	public static boolean isWtcTabDisplayed() {
+		return isElementDisplayed(ByName.name("WTC"), 5);
+	}
+	
+	public static WebElement wtcTab() {
+		return driver.findElementByName("WTC");
+	}
 
 	public static WebElement opticsTab() {
 		return driver.findElementByName("Optics");
 	}
 
 	public static boolean isBufferTubeDisplayed() {
-		return isElementDisplayed(
-				By.xpath("//Text[@AutomationId='OpticsButton']/../following-sibling::ListItem/Text[@Name='"
-						+ TestData.fiberTestBufferTube + "']"),
+		return isElementDisplayed(By.xpath("//ListItem/Text[contains(@Name, '" + TestData.fiberTestBufferTube + "')]"),
 				3);
 	}
 
@@ -123,19 +129,16 @@ public class JobDetailsPage extends BaseClass {
 	public static WebElement cutNumberInfo() {
 		return driver.findElement(By.xpath("//Text[@Name='Cut Info:']/following-sibling::Text"));
 	}
-	
-	public static WebElement editAdjLengthIcon()
-	{
+
+	public static WebElement editAdjLengthIcon() {
 		return driver.findElementByAccessibilityId("EditAdjustedLengthButton");
 	}
-	
-	public static WebElement adjLengthInputField()
-	{
+
+	public static WebElement adjLengthInputField() {
 		return driver.findElementByAccessibilityId("AdjustedLengthEntry");
 	}
-	
-	public static WebElement adjLengthSaveIcon()
-	{
+
+	public static WebElement adjLengthSaveIcon() {
 		return driver.findElementByAccessibilityId("SaveAdjustedLengthButton");
 	}
 

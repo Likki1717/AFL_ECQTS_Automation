@@ -3,11 +3,11 @@
 <suite name="Failed suite [Default suite]" guice-stage="DEVELOPMENT">
   <test thread-count="5" name="Default test(failed)">
     <classes>
-      <class name="DesktopApplicationTests.RegressionTests">
+      <class name="DesktopApplicationTests.RunWTCTestsInLoop">
         <methods>
-          <include name="runRegressionTestSuite"/>
+          <include name="runWtcTestInLoop"/>
         </methods>
-      </class> <!-- DesktopApplicationTests.RegressionTests -->
+      </class> <!-- DesktopApplicationTests.RunWTCTestsInLoop -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->

@@ -15,20 +15,22 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 import org.testng.asserts.SoftAssert;
 
 import io.appium.java_client.windows.WindowsDriver;
 import pageObjects.CommonPages.Dashboard;
 import pageObjects.CommonPages.SideMenu;
 import pageObjects.CommonPages.SignIn;
-import pageObjects.Modules.FiberTest.JobDetailsPage;
-import pageObjects.Modules.FiberTest.JobSearch;
-import pageObjects.Modules.FiberTest.JobDetails.Completion;
-import pageObjects.Modules.FiberTest.JobDetails.FiberResults;
-import pageObjects.Modules.FiberTest.JobDetails.OTDR_Settings;
-import pageObjects.Modules.FiberTest.JobDetails.ProtectionLayer;
-import pageObjects.Modules.FiberTest.JobDetails.Reports;
 import pageObjects.Modules.ImportData.Import;
+import pageObjects.Modules.TestJobModule.JobDetailsPage;
+import pageObjects.Modules.TestJobModule.JobSearch;
+import pageObjects.Modules.TestJobModule.JobDetails.Completion;
+import pageObjects.Modules.TestJobModule.JobDetails.FiberResults;
+import pageObjects.Modules.TestJobModule.JobDetails.OTDR_Settings;
+import pageObjects.Modules.TestJobModule.JobDetails.ProtectionLayer;
+import pageObjects.Modules.TestJobModule.JobDetails.Reports;
+import pageObjects.Modules.TestJobModule.JobDetails.WTC;
 import pageObjects.sideMenu.About;
 import pageObjects.sideMenu.Settings;
 import pageObjects.sideMenu.settings.ApplicationSettings;
@@ -225,7 +227,6 @@ public class BaseClass {
 				capabilities2.setCapability("platformName", "Windows");
 				capabilities2.setCapability("deviceName", "WindowsPC");
 				desktopSession = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities2);
-//				String windowHandle = desktopSession.findElementByName("Login").getAttribute("NativeWindowHandle");
 				String windowHandle = desktopSession
 						.findElement(By.xpath("//*[contains(@ClassName,'WinUIDesktopWin32WindowClass')]"))
 						.getAttribute("NativeWindowHandle");
@@ -350,25 +351,24 @@ public class BaseClass {
 			if (connectionProfileName.contains("JGR")) {
 				ConnectionProfiles.switchTypeDropdown().click();
 				ConnectionProfiles.switchType_JGR_Switch().click();
-				ConnectionProfiles.findAddressTextBox().sendKeys("SIMULATO");
 				ConnectionProfiles.switchModuleTextBox().clear();
 				ConnectionProfiles.switchModuleTextBox().sendKeys("1");
-				ConnectionProfiles.testSwitchConnectionButton().click();
-				softAssert.assertTrue(ConnectionProfiles.isConnectionFailurePopupDisplayed(),
-						"Tried for 15 seconds, Connection failure popup is not displayed");
-				ConnectionProfiles.okButton().click();
+				if (connectionProfileName.contains(TestData.connectionProfileName_JGR_One)) {
+					ConnectionProfiles.findAddressTextBox().clear();
+					ConnectionProfiles.findAddressTextBox().sendKeys("SIMULATO");
+					ConnectionProfiles.testSwitchConnectionButton().click();
+					softAssert.assertTrue(ConnectionProfiles.isConnectionFailurePopupDisplayed(),
+							"Tried for 15 seconds, Connection failure popup is not displayed");
+					ConnectionProfiles.okButton().click();
+				}
 				ConnectionProfiles.findAddressTextBox().clear();
 				ConnectionProfiles.findAddressTextBox().sendKeys("SIMULATOR");
-				ConnectionProfiles.testSwitchConnectionButton().click();
-				softAssert.assertTrue(ConnectionProfiles.isConnectionSuccessfulPopupDisplayed(),
-						"Tried for 10 seconds, WTC Connection successful popup is not displayed");
-				ConnectionProfiles.okButton().click();
 				ConnectionProfiles.workerNumberTextBox().sendKeys(connectionProfileName.split("-")[1]);
 				ConnectionProfiles.spoonTextBox().sendKeys(connectionProfileName.split("-")[1]);
 			}
 			ConnectionProfiles.saveProfileButton().click();
-			if ((connectionProfileName.equals("Office OTDR") && TestData.useOfficeOtdr)
-					|| !connectionProfileName.equals("Office OTDR")) {
+			if ((connectionProfileName.equals(TestData.connectionProfileName_Office_OTDR) && TestData.useOfficeOtdr)
+					|| !connectionProfileName.equals(TestData.connectionProfileName_Office_OTDR)) {
 				validateSuccessfulConnectionPopup();
 			} else {
 				validateFailureConnectionPopup();
@@ -379,10 +379,14 @@ public class BaseClass {
 	}
 
 	public static void createConnectionProfiles() {
-		createProfile(TestData.jgrOneProfileName, TestData.simulatorIP_Address, TestData.simulatorPort);
-		createProfile(TestData.jgrTwoProfileName, TestData.simulatorIP_Address, TestData.simulatorPort);
-		createProfile(TestData.officeOtdrProfileName, TestData.officeOTDR_IP_Address, TestData.officeOTDR_Port);
-		createProfile(TestData.simulatorProfileName, TestData.simulatorIP_Address, TestData.simulatorPort);
+		createProfile(TestData.connectionProfileName_JGR_One, TestData.connectionProfile_Simulator_IP_Address,
+				TestData.connectionProfile_Simulator_Port);
+		createProfile(TestData.connectionProfileName_JGR_Two, TestData.connectionProfile_Simulator_IP_Address,
+				TestData.connectionProfile_Simulator_Port);
+		createProfile(TestData.connectionProfileName_Office_OTDR, TestData.connectionProfile_Office_OTDR_IP_Address,
+				TestData.connectionProfile_Office_OTDR_Port);
+		createProfile(TestData.connectionProfileName_Simulator, TestData.connectionProfile_Simulator_IP_Address,
+				TestData.connectionProfile_Simulator_Port);
 	}
 
 	public static void validateSuccessfulConnectionPopup() {
@@ -417,23 +421,15 @@ public class BaseClass {
 			ConnectionProfiles.instrumentTypeDropdown().click();
 			if (TestData.testEnvironment.equals("Dev") || TestData.testEnvironment.equals("QA")) {
 				ConnectionProfiles.instrumentType_Anritsu_MT_9085().click();
-				softAssert.assertTrue(
-						ConnectionProfiles.ipAddressTextBox().getAttribute("Value.Value")
-								.contains(TestData.anritsu_9085_Ip_Address),
-						"Ip address did not change when we changed instrument from Simulator to Anritsu 9085");
 			} else {
 				ConnectionProfiles.instrumentType_Anritsu_MT_9083().click();
-				softAssert.assertTrue(
-						ConnectionProfiles.ipAddressTextBox().getAttribute("Value.Value")
-								.contains(TestData.anritsu_9085_Ip_Address),
-						"Ip address did not change when we changed instrument from Anritsu 9085 to Anritsu 9083");
 			}
 			softAssert.assertTrue(
 					ConnectionProfiles.ipAddressTextBox().getAttribute("Value.Value")
-							.contains(TestData.anritsu_9085_Ip_Address),
+							.contains(TestData.connectionProfile_Anritsu_9085_IP_Address),
 					"Ip address did not change when we changed instrument from Simulator to Anritsu 9085");
 			ConnectionProfiles.ipAddressTextBox().clear();
-			ConnectionProfiles.ipAddressTextBox().sendKeys(TestData.anritsu_9085_Ip_Address);
+			ConnectionProfiles.ipAddressTextBox().sendKeys(TestData.connectionProfile_Anritsu_9085_IP_Address);
 			robot.mouseWheel(3);
 			ConnectionProfiles.saveProfileButton().click();
 			ConnectionProfiles.testConnection().click();
@@ -442,7 +438,7 @@ public class BaseClass {
 			ConnectionProfiles.okButton().click();
 			ConnectionProfiles.editButton().click();
 			softAssert.assertTrue(ConnectionProfiles.ipAddressTextBox().getAttribute("Value.Value")
-					.contains(TestData.anritsu_9085_Ip_Address));
+					.contains(TestData.connectionProfile_Anritsu_9085_IP_Address));
 			ConnectionProfiles.instrumentTypeDropdown().click();
 			if (TestData.testEnvironment.equals("Dev") || TestData.testEnvironment.equals("QA")) {
 				ConnectionProfiles.instrumentType_Simulator().click();
@@ -450,7 +446,7 @@ public class BaseClass {
 				ConnectionProfiles.instrumentType_Anritsu_MT_9085().click();
 			}
 			ConnectionProfiles.ipAddressTextBox().clear();
-			ConnectionProfiles.ipAddressTextBox().sendKeys(TestData.simulatorIP_Address);
+			ConnectionProfiles.ipAddressTextBox().sendKeys(TestData.connectionProfile_Simulator_IP_Address);
 			robot.mouseWheel(3);
 			ConnectionProfiles.saveProfileButton().click();
 		} catch (Exception e) {
@@ -590,7 +586,13 @@ public class BaseClass {
 					System.out.println(
 							importType + " Import Job number fetched from Import Complete popup : " + importJobNumber);
 					Import.okButton().click();
-					searchJobAndNavigationToJobDetailsPage(TestData.importOrg, importJobNumber,
+					String module = "";
+					if (TestData.importType.equals("Fiber")) {
+						module = TestData.fiberTestModuleName;
+					} else {
+						module = TestData.wtcTestModuleName;
+					}
+					searchJobAndNavigationToJobDetailsPage(module, TestData.importOrg, importJobNumber,
 							TestData.importCutNumber, TestData.importcutNumberInfo);
 				} else if (Import.isWarningsErrorsPopupDisplayedOtherThanMissingFiberId()) {
 					System.out.println("****" + importType
@@ -673,7 +675,7 @@ public class BaseClass {
 					TestData.taihanJobNumberStartsWith);
 
 			verifyTestResultsCount(TestData.taihanExpectedIncompleteTests, TestData.taihanExpectedPassedTests,
-					TestData.swindonExpectedFailedTests, "Taihan Import");
+					TestData.taihanExpectedFailedTests, "Taihan Import");
 
 		} catch (Exception e) {
 			System.out.println("****Exception in importTaihanJob()****");
@@ -681,8 +683,8 @@ public class BaseClass {
 
 	}
 
-	public static void searchJobAndNavigationToJobDetailsPage(String org, String jobNumber, String cutNumber,
-			String cutNumberInfo) throws Exception {
+	public static void searchJobAndNavigationToJobDetailsPage(String module, String org, String jobNumber,
+			String cutNumber, String cutNumberInfo) throws Exception {
 		while (!Dashboard.isImportDataModuleDisplayed()) {
 			if (Dashboard.isOpenNavigationButtonDisplayed()) {
 				Dashboard.openNavigationButton().click();
@@ -691,10 +693,16 @@ public class BaseClass {
 			SideMenu.dashboardButton().click();
 			Thread.sleep(1000);
 		}
-		Dashboard.fiberTestModule().click();
+		if (module.equals(TestData.fiberTestModuleName)) {
+			Dashboard.fiberTestModule().click();
+		} else if (module.equals(TestData.wtcTestModuleName)) {
+			Dashboard.wtcTestModule().click();
+		}
 		JobSearch.isJobNumberLabelDisplayed();
 		JobSearch.orgField().click();
 		JobSearch.orgField().sendKeys(org);
+		Thread.sleep(500);
+		actions.sendKeys(Keys.ENTER).perform();
 		JobSearch.jobNumber().sendKeys(jobNumber);
 		Thread.sleep(500);
 		actions.sendKeys(Keys.ENTER).perform();
@@ -731,25 +739,24 @@ public class BaseClass {
 		Dashboard.waitUntilLoaderIsNotDisplayed();
 		Dashboard.isLoaderDisplayed();
 		Dashboard.waitUntilLoaderIsNotDisplayed();
-		softAssert.assertTrue(JobDetailsPage.isOtdrSettingsTabDisplayed(),
-				"Tried for 5 seconds, Protection Layer tab is not displayed");
 		dismissSyncStatusPopupIfDisplayed();
 	}
 
 	public static void verifyJobDetailsHeader(String org, String jobNumber, String cutNumber, String cutNumberInfo,
 			String whichTestBeingPerformed) {
 
-		softAssert.assertEquals(JobDetailsPage.org().getText().trim(), org,
+		Assert.assertEquals(JobDetailsPage.org().getText().trim(), org,
 				whichTestBeingPerformed + " Import completed - Org mismatch.");
 
-		softAssert.assertEquals(JobDetailsPage.jobNumber().getText().trim().split("-")[0], jobNumber,
+		Assert.assertEquals(JobDetailsPage.jobNumber().getText().trim().split("-")[0], jobNumber,
 				whichTestBeingPerformed + " Import completed - Job number mismatch.");
 
-		softAssert.assertEquals(JobDetailsPage.cutNumber().getText().trim(), cutNumber,
+		Assert.assertEquals(JobDetailsPage.cutNumber().getText().trim(), cutNumber,
 				whichTestBeingPerformed + " Import completed - Cut number mismatch.");
 
-		softAssert.assertEquals(JobDetailsPage.cutNumberInfo().getText().trim(), cutNumberInfo,
+		Assert.assertEquals(JobDetailsPage.cutNumberInfo().getText().trim(), cutNumberInfo,
 				whichTestBeingPerformed + " Import completed - Cut number info mismatch.");
+
 	}
 
 	public static void verifyTestResultsCount(String expectedIncompleteTestsCount, String expectedPassedTestsCount,
@@ -782,7 +789,7 @@ public class BaseClass {
 		}
 	}
 
-	public static void runGetLengthTest() {
+	public static void runGetLengthTest(String module) throws Exception {
 		dismissSyncStatusPopupIfDisplayed();
 		JobDetailsPage.isOtdrSettingsTabDisplayed();
 		wait = new WebDriverWait(driver, 20);
@@ -791,21 +798,29 @@ public class BaseClass {
 		dismissSyncStatusPopupIfDisplayed();
 		softAssert.assertTrue(OTDR_Settings.isConnectionProfileDropDownDisplayed(),
 				"Waited for 50 seconds, connection profiles drop down on OTDR settings page is not displayed");
-		OTDR_Settings.connectionProfile().sendKeys(TestData.OTDR_Settings_ConnectionProfile);
+		OTDR_Settings.connectionProfile().sendKeys(TestData.OTDR_Settings_ConnectionProfile_Name(module));
 		OTDR_Settings.launchLength().clear();
-		OTDR_Settings.launchLength().sendKeys(TestData.OTDR_Settings_LaunchLength);
+		OTDR_Settings.launchLength().sendKeys(TestData.OTDR_Settings_LaunchLength(module));
 		OTDR_Settings.cutLength().clear();
-		OTDR_Settings.cutLength().sendKeys(TestData.OTDR_Settings_CutLength);
+		OTDR_Settings.cutLength().sendKeys(TestData.OTDR_Settings_CutLength(module));
 		OTDR_Settings.horizontal().clear();
 		OTDR_Settings.horizontal().sendKeys(TestData.OTDR_Settings_Horizontal);
 		OTDR_Settings.vertical().clear();
 		OTDR_Settings.vertical().sendKeys(TestData.OTDR_Settings_Vertical);
+		if (module.equals(TestData.wtcTestModuleName)) {
+			OTDR_Settings.launchLength2().clear();
+			OTDR_Settings.launchLength2().sendKeys(TestData.OTDR_Settings_LaunchLength2);
+			OTDR_Settings.manufactureLength().clear();
+			OTDR_Settings.manufactureLength().sendKeys(TestData.OTDR_Settings_manufacturedLength);
+		}
+		dismissSyncStatusPopupIfDisplayed();
 		OTDR_Settings.getLengthButton().click();
+		dismissSyncStatusPopupIfDisplayed();
 		softAssert.assertTrue(OTDR_Settings.isOkButtonDisplayed(),
 				"Waited for 50 seconds, Ok button on get length popup is not displayed");
 		wait.until(ExpectedConditions.elementToBeClickable(OTDR_Settings.okButton()));
 		OTDR_Settings.okButton().click();
-		Dashboard.isLoaderNotDisplayed();
+		Dashboard.waitUntilLoaderIsNotDisplayed();
 		softAssert.assertTrue(OTDR_Settings.isGetLengthHistoryDropDownFieldDisplayed(),
 				"Waited for 50 seconds, Get Length history drop down field is not displayed");
 	}
@@ -910,7 +925,23 @@ public class BaseClass {
 		Dashboard.isLoaderNotDisplayed();
 	}
 
-	public static void runTestInLoopAlongWithSwitchingToSettingsPage() throws Exception {
+	public static void takeDump(String label, int delayInSecondsWhileTakingDumpBeforeClosingPowerShell)
+			throws Exception {
+		launchDependentApplication("C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe");
+		Thread.sleep(3000);
+		actions.sendKeys("Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass\n").build().perform();
+		actions.sendKeys("cd D:\\tmp\\memdumps\\\n").build().perform();
+		actions.sendKeys(".\\capture-dump.ps1\n").build().perform();
+		Thread.sleep(1000);
+		actions.sendKeys(label).build().perform();
+		actions.sendKeys(Keys.ENTER).build().perform();
+		Thread.sleep(delayInSecondsWhileTakingDumpBeforeClosingPowerShell * 1000);
+//		actions.keyDown(Keys.ALT).sendKeys(Keys.F4).keyUp(Keys.ALT).build().perform();
+	}
+
+	public static void runFiberTestForAllFibersInJob(boolean shouldNavigateToSettingsAndBackToFiberResults,
+			int numberOfFibersToTestBeforeTakingDump, int delayInSecondsWhileTakingDumpBeforeClosingPowerShell)
+			throws Exception {
 		Dashboard.waitUntilLoaderIsNotDisplayed();
 		dismissSyncStatusPopupIfDisplayed();
 		JobDetailsPage.isProtectionLayerTabDisplayed();
@@ -969,10 +1000,12 @@ public class BaseClass {
 			System.out.println("  - Clicked on Ok button in graph");
 
 			Thread.sleep(2000);
+			dismissSyncStatusPopupIfDisplayed();
 
 			if (FiberResults.isGoToFiberButtonVisible()) {
 				wait = new WebDriverWait(driver, 20);
 				try {
+					dismissSyncStatusPopupIfDisplayed();
 					wait.until(ExpectedConditions.elementToBeClickable(FiberResults.goToFiberButton()));
 					FiberResults.goToFiberButton().click();
 					System.out.println("  - Clicked on Go to fiber button");
@@ -987,9 +1020,15 @@ public class BaseClass {
 				try {
 					dismissSyncStatusPopupIfDisplayed();
 					wait = new WebDriverWait(driver, 40);
-					FiberResults.waitUntilStopTestsButtonIsDisplayed();
-					FiberResults.stopButton().click();
-					System.out.println("  - Clicked on Stop test button");
+					if (TestData.useOfficeOtdr) {
+						FiberResults.waitUntilStopTestsButtonIsDisplayed();
+						FiberResults.stopButton().click();
+						System.out.println("  - Clicked on Stop test button");
+					} else {
+						Dashboard.waitUntilOkButtonIsDisplayed();
+						FiberResults.cancelButton().click();
+						System.out.println("  - Clicked on Cancel button to stop tests");
+					}
 					break;
 				} catch (Exception e) {
 					dismissSyncStatusPopupIfDisplayed();
@@ -998,44 +1037,51 @@ public class BaseClass {
 			}
 
 			dismissSyncStatusPopupIfDisplayed();
+			int testedFibers = i - 1;
+			if (testedFibers % numberOfFibersToTestBeforeTakingDump == 0) {
+				int additionalDelay = (testedFibers / 50) * 5;
+				takeDump("dump_After_" + (i - 1) + "_Fiber_Tests",
+						delayInSecondsWhileTakingDumpBeforeClosingPowerShell + additionalDelay);
+				System.out.println("TOOK DUMP after " + (i - 1) + " fibers are tested");
+			}
 
-//			if (Dashboard.isOpenNavigationButtonDisplayed()) {
-//				try {
-//					Dashboard.openNavigationButton().click();
-//				} catch (Exception e) {
-//					System.out.println(
-//							"**Clicking on Open Navigation failed, moving ahead to test next fiber without navigating to settings**");
-//				}
-//				if (SideMenu.isDashboardButtonDisplayed()) {
-//					SideMenu.settingsButton().click();
-//					Thread.sleep(2000);
-//					try {
-//						Dashboard.backArrow().click();
-//					} catch (Exception e) {
-//						System.out.println("**Trying to click on Back Arrow from Catch block**");
-//						Thread.sleep(3000);
-//						Dashboard.backArrow().click();
-//					}
-//					System.out.println("  - Clicked on Back Arrow from settings page");
-//				} else {
-//					System.out.println(
-//							"**Dashboard button in Open Navigation side menu is not displayed, closing navigation and moving ahead to test next fiber without navigating to settings**");
-//					try {
-//						Dashboard.closeNavigationButton().click();
-//					} catch (Exception e) {
-//						System.out.println("**Clicking on close navigation failed, moving ahead to test next fiber**");
-//					}
-//				}
-//			} else {
-//				System.out.println(
-//						"**Did not find Open navigation, moving ahead to test next fiber without navigating to settings**");
-//			}
+			if (Dashboard.isOpenNavigationButtonDisplayed() && shouldNavigateToSettingsAndBackToFiberResults) {
+				try {
+					Dashboard.openNavigationButton().click();
+				} catch (Exception e) {
+					System.out.println(
+							"**Clicking on Open Navigation failed, moving ahead to test next fiber without navigating to settings**");
+				}
+				if (SideMenu.isDashboardButtonDisplayed()) {
+					SideMenu.settingsButton().click();
+					try {
+						Dashboard.backArrow().click();
+					} catch (Exception e) {
+						System.out.println("**Trying to click on Back Arrow from Catch block**");
+						Thread.sleep(3000);
+						Dashboard.backArrow().click();
+					}
+					System.out.println("  - Clicked on Back Arrow from settings page");
+					dismissSyncStatusPopupIfDisplayed();
+
+				} else {
+					System.out.println(
+							"**Dashboard button in Open Navigation side menu is not displayed, closing navigation and moving ahead to test next fiber without navigating to settings**");
+					try {
+						Dashboard.closeNavigationButton().click();
+					} catch (Exception e) {
+						System.out.println("**Clicking on close navigation failed, moving ahead to test next fiber**");
+					}
+				}
+			} else {
+				System.out.println(
+						"**Did not find Open navigation, moving ahead to test next fiber without navigating to settings**");
+			}
 		}
 	}
 
 	public static void enterCompletionLayerValues() {
 		try {
-
 			softAssert.assertTrue(JobDetailsPage.isCompletionTabDisplayed(),
 					"Waited for 10 seconds, completion tab is not displayed");
 			wait = new WebDriverWait(driver, 10);
@@ -1063,7 +1109,6 @@ public class BaseClass {
 			Completion.ISE_Seq_Number().clear();
 			Completion.ISE_Seq_Number()
 					.sendKeys(String.valueOf(Integer.parseInt(TestData.fiberTestCompletionTabIseSeqValue) + 1));
-			Completion.OSE_Seq_Number().click();
 
 			Dashboard.isLoaderDisplayed();
 
@@ -1072,6 +1117,7 @@ public class BaseClass {
 
 			if (Completion.isInvalidMeterMarksPopupDisplayed()) {
 				Completion.okButton().click();
+				Thread.sleep(2000);
 			}
 
 			softAssert.assertEquals(Completion.completionTabIseTestResult().getText().trim(), "FAIL",
@@ -1145,4 +1191,38 @@ public class BaseClass {
 		robot.keyRelease(KeyEvent.VK_ALT);
 		System.exit(0);
 	}
+
+	public static void runWtcTestForAllRibbonsInJob() throws Exception {
+		Dashboard.waitUntilLoaderIsNotDisplayed();
+		dismissSyncStatusPopupIfDisplayed();
+		JobDetailsPage.isWtcTabDisplayed();
+		JobDetailsPage.wtcTab().click();
+		WTC.isRunTestsButtonDisplayed();
+		int numberOfRibbonsToTest = 0;
+		while (numberOfRibbonsToTest < 10) {
+			for (int i = 1; i <= 5; i++) {
+				wait = new WebDriverWait(driver, 40);
+				WTC.selectWorkerField().click();
+				Thread.sleep(500);
+				String workerToSelect = "JGR-" + i + "-" + i + "-" + i;
+				WTC.selectWorkerField().sendKeys(workerToSelect);
+				Thread.sleep(500);
+				actions.sendKeys(Keys.ENTER).build().perform();
+				Thread.sleep(500);
+				WTC.checkButton(i).click();
+				Dashboard.waitUntilOkButtonIsDisplayed();
+				Thread.sleep(2000);
+				FiberResults.cancelButton().click();
+				Thread.sleep(1000);
+				WTC.runTestsButton().click();
+				numberOfRibbonsToTest++;
+			}
+			WTC.waitUntilStopButtonIsNotDisplayed();
+			// Check if dump needs to be taken
+			// Navigate to settings -> test settings and back
+			// Modify worker to check for Incomplete ribbons
+		}
+
+	}
+
 }

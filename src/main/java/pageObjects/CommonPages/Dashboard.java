@@ -27,6 +27,10 @@ public class Dashboard extends BaseClass {
 	public static WebElement fiberTestModule() {
 		return driver.findElementByAccessibilityId("Fiber TestButton");
 	}
+	
+	public static WebElement wtcTestModule() {
+		return driver.findElementByAccessibilityId("WTC TestButton");
+	}
 
 	public static WebElement importDataModule() {
 		return driver.findElementByAccessibilityId("Import DataButton");
@@ -49,7 +53,7 @@ public class Dashboard extends BaseClass {
 	}
 	
 	public static void waitUntilLoaderIsNotDisplayed() throws InterruptedException {
-		while (!Dashboard.isLoaderNotDisplayed()) {
+		while (isElementDisplayed(ByAccessibilityId.AccessibilityId("LottiePlayer"), 1)) {
 			Thread.sleep(1000);
 		}
 	}

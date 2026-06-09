@@ -1,4 +1,4 @@
-package pageObjects.Modules.FiberTest.JobDetails;
+package pageObjects.Modules.TestJobModule.JobDetails;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.By.ByName;
@@ -65,6 +65,6 @@ public class Completion extends BaseClass {
 		}
 
 	public static WebElement completionTabOseTestResult() {
-		return driver.findElement(By.xpath("//Text[@Name='OSE Seq Mark']/following::Text"));
+		return driver.findElement(By.xpath("//Text[@Name='OSE Seq Mark']/following::ComboBox/following::Text"));
 		}
 }
