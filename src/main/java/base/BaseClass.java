@@ -16,6 +16,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+import org.testng.annotations.Listeners;
 import org.testng.asserts.SoftAssert;
 
 import io.appium.java_client.windows.WindowsDriver;
@@ -37,6 +38,7 @@ import pageObjects.sideMenu.settings.ApplicationSettings;
 import pageObjects.sideMenu.settings.ConnectionProfiles;
 import pageObjects.sideMenu.settings.TestSettings;
 
+@Listeners(TestFailureListener.class)
 public class BaseClass {
 	public static WindowsDriver<?> driver;
 	public static WindowsDriver<?> desktopSession;
@@ -192,14 +194,14 @@ public class BaseClass {
 	public static void waitForWinAppDriver() throws Exception {
 		int waited = 0;
 
-		while (waited < 10) {
+		while (waited < 30) {
 			if (isPortOpen("127.0.0.1", 4723)) {
 				return;
 			}
 			Thread.sleep(500);
 			waited++;
 		}
-		throw new RuntimeException("WinAppDriver not started within 5 seconds time out");
+		throw new RuntimeException("WinAppDriver not started within 15 seconds time out");
 	}
 
 	public static void launch_ECQTS_Application() throws Exception {
@@ -300,7 +302,7 @@ public class BaseClass {
 			Dashboard.openNavigationButton().click();
 			SideMenu.aboutButton().click();
 			String appVersion = About.versionNumber().getText();
-			softAssert.assertEquals(appVersion, TestData.expectedAppVersion, "Build version mismatch.");
+			Assert.assertEquals(appVersion, TestData.expectedAppVersion, "Build version mismatch.");
 			String expectedTextInPortalLink = (TestData.testEnvironment.equals("Dev")
 					|| TestData.testEnvironment.equals("QA")) ? TestData.testEnvironment.toLowerCase()
 							: TestData.prodWebUrl;
@@ -711,7 +713,7 @@ public class BaseClass {
 		JobSearch.isJobWarningsPopupDisplayed();
 		Dashboard.waitUntilOkButtonIsDisplayed();
 		Dashboard.okButton().click();
-		wait = new WebDriverWait(driver, 20);
+		wait = new WebDriverWait(driver, 120);
 		wait.until(ExpectedConditions.elementToBeClickable(JobSearch.searchCutNumber()));
 		while (!JobSearch.searchCutNumber().equals(driver.switchTo().activeElement())) {
 			JobSearch.searchCutNumber().click();
@@ -1105,7 +1107,7 @@ public class BaseClass {
 					"Waited for 10 seconds, completion tab is not displayed");
 			wait = new WebDriverWait(driver, 10);
 			wait.until(ExpectedConditions.elementToBeClickable(JobDetailsPage.completionTab()));
-			actions.moveToElement(JobDetailsPage.completionTab()).click().build().perform();
+			JobDetailsPage.completionTab().click();
 			softAssert.assertTrue(Completion.isSeqNumberTestDisplayed(),
 					"Waited for 10 seconds, ISE Sequence test is not displayed ");
 
@@ -1222,37 +1224,46 @@ public class BaseClass {
 		int numberOfRibbonsTested = 0;
 		for (int i = 1; numberOfRibbonsTested < 72; i++) {
 			dismissSyncStatusPopupIfDisplayed();
-			Thread.sleep(500);
 			String presentWorkerToSelect = "JGR-" + i + "-" + i + "-" + i;
 			if (numberOfRibbonsTested >= 5) {
 				WTC.waitUntilTestIsCompletedForSelectedWorker(presentWorkerToSelect);
 			}
-			int attempts = 1;
+//			int attempts = 1;
 			do {
-				if (attempts > 2 && numberOfRibbonsTested >= 6) {
-					WTC.previousRunTestsButton().click();
-					robot.mouseWheel(3);
-					attempts = 1;
-				}
+//				if (attempts > 2 && numberOfRibbonsTested >= 6) {
+//					WTC.previousRunTestsButton().click();
+//					robot.mouseWheel(1);
+//					attempts = 1;
+//				}
 				try {
+					WTC.checkButton().click();
 					WTC.selectWorkerField().click();
 					WTC.selectWorkerField().sendKeys(presentWorkerToSelect);
-					Thread.sleep(500);
 					actions.sendKeys(Keys.TAB).build().perform();
 				} catch (Exception e) {
 
 				}
-				Thread.sleep(1000);
-				attempts++;
+//				attempts++;
 			} while (!WTC.selectWorkerField().getText().contains(presentWorkerToSelect));
 			WTC.checkButton().click();
 			Dashboard.waitUntilOkButtonIsDisplayed();
 			Thread.sleep(2000);
 			FiberResults.cancelButton().click();
 			Thread.sleep(1000);
-			WTC.runTestsButton().click();
+			while(true) {
+				try {
+					actions.moveToElement(WTC.runTestsButton()).click().build().perform();
+					break;
+				} catch (Exception e) {
+					Thread.sleep(1000);
+				}
+			}
 			numberOfRibbonsTested++;
-			System.out.println("\nRibbons Tested - " + numberOfRibbonsTested);
+			System.out.println("Ribbons Tested - " + numberOfRibbonsTested);
+			JobDetailsPage.ribbonPosition(numberOfRibbonsTested).click();
+			if (numberOfRibbonsTested == 1) {
+				FiberResults.showTracesButton().click();
+			}
 			if (numberOfRibbonsTested % numberOfRibbonsToTestBeforeTakingDump == 0) {
 				int additionalDelay = (numberOfRibbonsTested / 50) * 5;
 				takeDump("dump_After_" + numberOfRibbonsTested + "_Ribbon_Tests",

@@ -21,6 +21,8 @@ public class RunWTCTestsInLoop extends BaseClass {
 		launch_ECQTS_Application();
 
 		loginToApplication();
+		
+		verifyBuildVersion();
 
 		deleteAllExistingConnectionProfiles();
 
@@ -46,9 +48,9 @@ public class RunWTCTestsInLoop extends BaseClass {
 				Dashboard.isOkButtonDisplayed();
 				Dashboard.okButton().click();
 			}
-			takeDump("afterJobSearch", 1);
+//			takeDump("afterJobSearch", 1);
 			runGetLengthTest(TestData.wtcTestModuleName);
-			runWtcTestForAllRibbonsInJob(10, 1);
+			runWtcTestForAllRibbonsInJob(100, 1);
 		}
 	}
 }

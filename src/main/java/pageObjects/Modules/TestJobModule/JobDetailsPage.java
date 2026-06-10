@@ -24,11 +24,11 @@ public class JobDetailsPage extends BaseClass {
 	public static boolean isOtdrSettingsTabDisplayed() {
 		return isElementDisplayed(ByName.name("OTDR Settings"), 5);
 	}
-	
+
 	public static boolean isWtcTabDisplayed() {
 		return isElementDisplayed(ByName.name("WTC"), 5);
 	}
-	
+
 	public static WebElement wtcTab() {
 		return driver.findElementByName("WTC");
 	}
@@ -141,5 +141,10 @@ public class JobDetailsPage extends BaseClass {
 	public static WebElement adjLengthSaveIcon() {
 		return driver.findElementByAccessibilityId("SaveAdjustedLengthButton");
 	}
+
+	public static WebElement ribbonPosition(int ribbonNumber) {
+		return driver.findElement(By.xpath("(//Text[@AutomationId='OpticsButton']/../following-sibling::ListItem)["+ribbonNumber+"]"));
+	}
+		
 
 }
