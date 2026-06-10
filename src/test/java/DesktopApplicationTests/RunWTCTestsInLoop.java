@@ -16,41 +16,39 @@ public class RunWTCTestsInLoop extends BaseClass {
 
 		clearPreviousSessionData();
 
-		launchOpenVpnAppAndConnect();
-
 		launchWinAppDriver();
 
 		launch_ECQTS_Application();
 
 		loginToApplication();
 
-//		deleteAllExistingConnectionProfiles();
-//
-//		createProfile(TestData.connectionProfileName_JGR_One, TestData.connectionProfile_Simulator_IP_Address, TestData.connectionProfile_Simulator_Port);
-//
-//		createProfile(TestData.connectionProfileName_JGR_Two, TestData.connectionProfile_Simulator_IP_Address, TestData.connectionProfile_Simulator_Port);
-//
-//		createProfile(TestData.connectionProfileName_JGR_Three, TestData.connectionProfile_Simulator_IP_Address, TestData.connectionProfile_Simulator_Port);
-//
-//		createProfile(TestData.connectionProfileName_JGR_Four, TestData.connectionProfile_Simulator_IP_Address, TestData.connectionProfile_Simulator_Port);
-//
-//		createProfile(TestData.connectionProfileName_JGR_Five, TestData.connectionProfile_Simulator_IP_Address, TestData.connectionProfile_Simulator_Port);
-//
-//		updateTestSettings();
-//
-//		updateApplicationSettings();
+		deleteAllExistingConnectionProfiles();
+
+		createProfile(TestData.connectionProfileName_JGR_One, TestData.connectionProfile_Simulator_IP_Address, TestData.connectionProfile_Simulator_Port);
+
+		createProfile(TestData.connectionProfileName_JGR_Two, TestData.connectionProfile_Simulator_IP_Address, TestData.connectionProfile_Simulator_Port);
+
+		createProfile(TestData.connectionProfileName_JGR_Three, TestData.connectionProfile_Simulator_IP_Address, TestData.connectionProfile_Simulator_Port);
+
+		createProfile(TestData.connectionProfileName_JGR_Four, TestData.connectionProfile_Simulator_IP_Address, TestData.connectionProfile_Simulator_Port);
+
+		createProfile(TestData.connectionProfileName_JGR_Five, TestData.connectionProfile_Simulator_IP_Address, TestData.connectionProfile_Simulator_Port);
+
+		updateTestSettings();
+
+		updateApplicationSettings();
 
 		while (true) {
 			searchJobAndNavigationToJobDetailsPage(TestData.wtcTestModuleName, TestData.wtcTestJobSearchOrg,
-					TestData.wtcTestJobSearchJobNumber, TestData.wtcTestJobSearchCutNumber,
+					TestData.wtcTestJobSearchJobNumber, TestData.getCurrentDateTimeStamp(),
 					TestData.wtcTestJobSearchCutNumberInfo);
 			if (JobDetailsPage.isMissingFiberIdWarningPopupDisplayed()) {
 				Dashboard.isOkButtonDisplayed();
 				Dashboard.okButton().click();
 			}
-//			takeDump("afterJobSearch", 25);
+			takeDump("afterJobSearch", 1);
 			runGetLengthTest(TestData.wtcTestModuleName);
-			runWtcTestForAllRibbonsInJob();
+			runWtcTestForAllRibbonsInJob(10, 1);
 		}
 	}
 }

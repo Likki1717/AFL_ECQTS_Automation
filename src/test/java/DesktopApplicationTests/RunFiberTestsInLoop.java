@@ -36,15 +36,15 @@ public class RunFiberTestsInLoop extends BaseClass {
 
 		while (true) {
 			searchJobAndNavigationToJobDetailsPage(TestData.fiberTestModuleName, TestData.fiberTestJobSearchOrg,
-					"45193192-2869194", TestData.fiberTestJobSearchCutNumber,
+					"45193192-2869194", TestData.getCurrentDateTimeStamp(),
 					TestData.fiberTestJobSearchCutNumberInfo);
 			if (JobDetailsPage.isMissingFiberIdWarningPopupDisplayed()) {
 				Dashboard.isOkButtonDisplayed();
 				Dashboard.okButton().click();
 			}
-			takeDump("afterJobSearch", 25);
+			takeDump("afterJobSearch", 1);
 			runGetLengthTest(TestData.fiberTestModuleName);
-			runFiberTestForAllFibersInJob(true, 20, 30);
+			runFiberTestForAllFibersInJob(true, 20, 1);
 		}
 	}
 }

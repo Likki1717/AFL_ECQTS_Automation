@@ -164,7 +164,8 @@ public class BaseClass {
 
 		robot.delay(200);
 		// Copy path to clipboard
-		StringSelection selection = new StringSelection(textToCopy);
+		String pathToCopy = "\"" + textToCopy + "\"";
+		StringSelection selection = new StringSelection(pathToCopy);
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
 
 		// Paste using CTRL + V
@@ -698,6 +699,7 @@ public class BaseClass {
 		} else if (module.equals(TestData.wtcTestModuleName)) {
 			Dashboard.wtcTestModule().click();
 		}
+		System.out.println("Job search popup to show up next");
 		JobSearch.isJobNumberLabelDisplayed();
 		JobSearch.orgField().click();
 		JobSearch.orgField().sendKeys(org);
@@ -707,6 +709,7 @@ public class BaseClass {
 		Thread.sleep(500);
 		actions.sendKeys(Keys.ENTER).perform();
 		JobSearch.isJobWarningsPopupDisplayed();
+		Dashboard.waitUntilOkButtonIsDisplayed();
 		Dashboard.okButton().click();
 		wait = new WebDriverWait(driver, 20);
 		wait.until(ExpectedConditions.elementToBeClickable(JobSearch.searchCutNumber()));
@@ -793,7 +796,7 @@ public class BaseClass {
 		dismissSyncStatusPopupIfDisplayed();
 		JobDetailsPage.isOtdrSettingsTabDisplayed();
 		wait = new WebDriverWait(driver, 20);
-		wait.until(ExpectedConditions.elementToBeClickable(JobDetailsPage.OTDR_Settings()));
+//		wait.until(ExpectedConditions.elementToBeClickable(JobDetailsPage.OTDR_Settings()));
 		JobDetailsPage.OTDR_Settings().click();
 		dismissSyncStatusPopupIfDisplayed();
 		softAssert.assertTrue(OTDR_Settings.isConnectionProfileDropDownDisplayed(),
@@ -820,6 +823,7 @@ public class BaseClass {
 				"Waited for 50 seconds, Ok button on get length popup is not displayed");
 		wait.until(ExpectedConditions.elementToBeClickable(OTDR_Settings.okButton()));
 		OTDR_Settings.okButton().click();
+		Dashboard.isLoaderDisplayed();
 		Dashboard.waitUntilLoaderIsNotDisplayed();
 		softAssert.assertTrue(OTDR_Settings.isGetLengthHistoryDropDownFieldDisplayed(),
 				"Waited for 50 seconds, Get Length history drop down field is not displayed");
@@ -927,10 +931,23 @@ public class BaseClass {
 
 	public static void takeDump(String label, int delayInSecondsWhileTakingDumpBeforeClosingPowerShell)
 			throws Exception {
-		launchDependentApplication("C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe");
-		Thread.sleep(3000);
-		actions.sendKeys("Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass\n").build().perform();
-		actions.sendKeys("cd D:\\tmp\\memdumps\\\n").build().perform();
+		if (label.equals("afterJobSearch")) {
+			launchDependentApplication("C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe");
+			Thread.sleep(3000);
+			actions.sendKeys("Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass\n").build().perform();
+			actions.sendKeys("cd D:\\tmp\\memdumps\\\n").build().perform();
+		} else {
+			try {
+				Thread.sleep(2000);
+				actions.keyDown(Keys.ALT).sendKeys(Keys.TAB).keyUp(Keys.ALT).build().perform();
+				Thread.sleep(1000);
+			} catch (Exception e) {
+				launchDependentApplication("C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe");
+				Thread.sleep(3000);
+				actions.sendKeys("Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass\n").build().perform();
+				actions.sendKeys("cd D:\\tmp\\memdumps\\\n").build().perform();
+			}
+		}
 		actions.sendKeys(".\\capture-dump.ps1\n").build().perform();
 		Thread.sleep(1000);
 		actions.sendKeys(label).build().perform();
@@ -1073,6 +1090,8 @@ public class BaseClass {
 						System.out.println("**Clicking on close navigation failed, moving ahead to test next fiber**");
 					}
 				}
+			} else if (!shouldNavigateToSettingsAndBackToFiberResults) {
+
 			} else {
 				System.out.println(
 						"**Did not find Open navigation, moving ahead to test next fiber without navigating to settings**");
@@ -1192,37 +1211,59 @@ public class BaseClass {
 		System.exit(0);
 	}
 
-	public static void runWtcTestForAllRibbonsInJob() throws Exception {
+	public static void runWtcTestForAllRibbonsInJob(int numberOfRibbonsToTestBeforeTakingDump,
+			int delayInSecondsWhileTakingDumpBeforeClosingPowerShell) throws Exception {
 		Dashboard.waitUntilLoaderIsNotDisplayed();
 		dismissSyncStatusPopupIfDisplayed();
 		JobDetailsPage.isWtcTabDisplayed();
 		JobDetailsPage.wtcTab().click();
+		dismissSyncStatusPopupIfDisplayed();
 		WTC.isRunTestsButtonDisplayed();
-		int numberOfRibbonsToTest = 0;
-		while (numberOfRibbonsToTest < 10) {
-			for (int i = 1; i <= 5; i++) {
-				wait = new WebDriverWait(driver, 40);
-				WTC.selectWorkerField().click();
-				Thread.sleep(500);
-				String workerToSelect = "JGR-" + i + "-" + i + "-" + i;
-				WTC.selectWorkerField().sendKeys(workerToSelect);
-				Thread.sleep(500);
-				actions.sendKeys(Keys.ENTER).build().perform();
-				Thread.sleep(500);
-				WTC.checkButton(i).click();
-				Dashboard.waitUntilOkButtonIsDisplayed();
-				Thread.sleep(2000);
-				FiberResults.cancelButton().click();
-				Thread.sleep(1000);
-				WTC.runTestsButton().click();
-				numberOfRibbonsToTest++;
+		int numberOfRibbonsTested = 0;
+		for (int i = 1; numberOfRibbonsTested < 72; i++) {
+			dismissSyncStatusPopupIfDisplayed();
+			Thread.sleep(500);
+			String presentWorkerToSelect = "JGR-" + i + "-" + i + "-" + i;
+			if (numberOfRibbonsTested >= 5) {
+				WTC.waitUntilTestIsCompletedForSelectedWorker(presentWorkerToSelect);
 			}
-			WTC.waitUntilStopButtonIsNotDisplayed();
-			// Check if dump needs to be taken
-			// Navigate to settings -> test settings and back
-			// Modify worker to check for Incomplete ribbons
-		}
+			int attempts = 1;
+			do {
+				if (attempts > 2 && numberOfRibbonsTested >= 6) {
+					WTC.previousRunTestsButton().click();
+					robot.mouseWheel(3);
+					attempts = 1;
+				}
+				try {
+					WTC.selectWorkerField().click();
+					WTC.selectWorkerField().sendKeys(presentWorkerToSelect);
+					Thread.sleep(500);
+					actions.sendKeys(Keys.TAB).build().perform();
+				} catch (Exception e) {
 
+				}
+				Thread.sleep(1000);
+				attempts++;
+			} while (!WTC.selectWorkerField().getText().contains(presentWorkerToSelect));
+			WTC.checkButton().click();
+			Dashboard.waitUntilOkButtonIsDisplayed();
+			Thread.sleep(2000);
+			FiberResults.cancelButton().click();
+			Thread.sleep(1000);
+			WTC.runTestsButton().click();
+			numberOfRibbonsTested++;
+			System.out.println("\nRibbons Tested - " + numberOfRibbonsTested);
+			if (numberOfRibbonsTested % numberOfRibbonsToTestBeforeTakingDump == 0) {
+				int additionalDelay = (numberOfRibbonsTested / 50) * 5;
+				takeDump("dump_After_" + numberOfRibbonsTested + "_Ribbon_Tests",
+						delayInSecondsWhileTakingDumpBeforeClosingPowerShell + additionalDelay);
+				System.out.println("TOOK DUMP after " + numberOfRibbonsTested + " Ribbons are tested");
+			}
+			if (i == 5) {
+				i = 0;
+			}
+		}
+		WTC.waitUntilStopButtonIsNotDisplayed();
 	}
 
 }

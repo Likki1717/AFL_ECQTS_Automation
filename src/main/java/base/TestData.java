@@ -68,7 +68,7 @@ public class TestData {
 	public static String fiberTestModuleName = "Fiber Test";
 	public static String fiberTestJobSearchJobNumber = "25305754"; // Large Job - 15811448
 
-	public static String fiberTestJobSearchCutNumber = new java.text.SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
+	public static String fiberTestJobSearchCutNumber = getCurrentDateTimeStamp();
 
 	public static String fiberTestJobSearchCutNumberInfo = "ZTEST01";
 	public static String fiberTestBufferTube = "10-BLUE";
@@ -82,8 +82,7 @@ public class TestData {
 
 	public static String wtcTestModuleName = "WTC Test";
 	public static String wtcTestJobSearchJobNumber = "51022495-3028378";
-	public static String wtcTestJobSearchCutNumber = new java.text.SimpleDateFormat("yyyyMMddHHmmss")
-			.format(new java.util.Date());
+	public static String wtcTestJobSearchCutNumber = getCurrentDateTimeStamp();
 	public static String wtcTestJobSearchCutNumberInfo = "ZTEST01";
 	public static String wtcTestBufferTube = "10-BLUE";
 	public static String wtcTestExpectedIncompleteTestsCount = "883";
@@ -224,6 +223,11 @@ public class TestData {
 		default:
 			return appId().split("!")[0];
 		}
+	}
+	
+	public static String getCurrentDateTimeStamp()
+	{
+		return new java.text.SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
 	}
 
 	/*

@@ -21,6 +21,14 @@ public class RegressionTests extends BaseClass {
 		
 		verifyBuildVersion();
 		
+		importSwindonJob();
+
+		importPrysmianJob();
+						
+		importTaihanJob();
+		
+		launchOpenVpnAppAndConnect();
+		
 		deleteAllExistingConnectionProfiles();
 		
 		createConnectionProfiles();
@@ -31,16 +39,8 @@ public class RegressionTests extends BaseClass {
 		
 		updateApplicationSettings();
 				
-		importSwindonJob();
-
-		importPrysmianJob();
-						
-		importTaihanJob();
-		
 		searchJobAndNavigationToJobDetailsPage(TestData.fiberTestModuleName, TestData.fiberTestJobSearchOrg, TestData.fiberTestJobSearchJobNumber,
 				TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo);
-		
-		launchOpenVpnAppAndConnect();
 		
 		verifyJobDetailsHeader(TestData.fiberTestJobSearchOrg, TestData.fiberTestJobSearchJobNumber,
 				TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo,

@@ -57,9 +57,9 @@ function toggleAllBoxes() {
 <tr>
 <td>Tests passed/Failed/Skipped:</td><td>0/1/0</td>
 </tr><tr>
-<td>Started on:</td><td>Mon Jun 08 21:20:14 IST 2026</td>
+<td>Started on:</td><td>Wed Jun 10 03:32:57 IST 2026</td>
 </tr>
-<tr><td>Total time:</td><td>369 seconds (369543 ms)</td>
+<tr><td>Total time:</td><td>111 seconds (111047 ms)</td>
 </tr><tr>
 <td>Included groups:</td><td></td>
 </tr><tr>
@@ -77,15 +77,14 @@ function toggleAllBoxes() {
 </tr>
 <tr>
 <td title='DesktopApplicationTests.RunWTCTestsInLoop.runWtcTestInLoop()'><b>runWtcTestInLoop</b><br>Test class: DesktopApplicationTests.RunWTCTestsInLoop</td>
-<td><div><pre>org.openqa.selenium.NoSuchElementException: An element could not be located on the page using the given search parameters. (WARNING: The server did not provide any stacktrace information)
+<td><div><pre>org.openqa.selenium.NoSuchWindowException: Currently selected window has been closed (WARNING: The server did not provide any stacktrace information)
 Command duration or timeout: 0 milliseconds
-For documentation on this error, please visit: https://www.seleniumhq.org/exceptions/no_such_element.html
 Build info: version: &apos;3.141.59&apos;, revision: &apos;e82be7d358&apos;, time: &apos;2018-11-14T08:17:03&apos;
 System info: host: &apos;VELTRISMS785&apos;, ip: &apos;192.168.29.113&apos;, os.name: &apos;Windows 11&apos;, os.arch: &apos;amd64&apos;, os.version: &apos;10.0&apos;, java.version: &apos;21.0.4&apos;
 Driver info: io.appium.java_client.windows.WindowsDriver
 Capabilities {app: com.ecsite.afl.dev_aqd9xyv2..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
-Session ID: 561C8B49-0BE8-4017-B5D8-37EC1168F33F
-*** Element info: {Using=xpath, value=//Text[@AutomationId=&apos;OpticsButton&apos;]/../following-sibling::ListItem/Text[@Name=&apos;10-YELLOW&apos;]}
+Session ID: B3FC5603-46DE-4CE1-AE59-10E02102FD62
+*** Element info: {Using=accessibility id, value=OrgIdDropdown}
 	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
 	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
 	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
@@ -104,17 +103,10 @@ Session ID: 561C8B49-0BE8-4017-B5D8-37EC1168F33F
 	at io.appium.java_client.DefaultGenericMobileDriver.findElement(DefaultGenericMobileDriver.java:61)
 	at io.appium.java_client.AppiumDriver.findElement(AppiumDriver.java:1)
 	at io.appium.java_client.windows.WindowsDriver.findElement(WindowsDriver.java:1)
-	at org.openqa.selenium.remote.RemoteWebDriver.findElementByXPath(RemoteWebDriver.java:428)
-	at io.appium.java_client.DefaultGenericMobileDriver.findElementByXPath(DefaultGenericMobileDriver.java:151)
-	at io.appium.java_client.AppiumDriver.findElementByXPath(AppiumDriver.java:1)
-	at io.appium.java_client.windows.WindowsDriver.findElementByXPath(WindowsDriver.java:1)
-	at org.openqa.selenium.By$ByXPath.findElement(By.java:353)
-	at org.openqa.selenium.remote.RemoteWebDriver.findElement(RemoteWebDriver.java:315)
-	at io.appium.java_client.DefaultGenericMobileDriver.findElement(DefaultGenericMobileDriver.java:57)
-	at io.appium.java_client.AppiumDriver.findElement(AppiumDriver.java:1)
-	at io.appium.java_client.windows.WindowsDriver.findElement(WindowsDriver.java:1)
-	at base.BaseClass.runTestForAllFibers(BaseClass.java:971)
-	at DesktopApplicationTests.RunWTCTestsInLoop.runWtcTestInLoop(RunWTCTestsInLoop.java:53)
+	at io.appium.java_client.FindsByAccessibilityId.findElementByAccessibilityId(FindsByAccessibilityId.java:37)
+	at pageObjects.Modules.TestJobModule.JobSearch.orgField(JobSearch.java:15)
+	at base.BaseClass.searchJobAndNavigationToJobDetailsPage(BaseClass.java:703)
+	at DesktopApplicationTests.RunWTCTestsInLoop.runWtcTestInLoop(RunWTCTestsInLoop.java:42)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at org.testng.internal.invokers.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:141)
@@ -141,16 +133,15 @@ Session ID: 561C8B49-0BE8-4017-B5D8-37EC1168F33F
 	at org.testng.remote.AbstractRemoteTestNG.run(AbstractRemoteTestNG.java:115)
 	at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:293)
 	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:91)
-</pre></div><a href='#' onClick='toggleBox("stack-trace858507952", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
-<div class='stack-trace' id='stack-trace858507952'><pre>org.openqa.selenium.NoSuchElementException: An element could not be located on the page using the given search parameters. (WARNING: The server did not provide any stacktrace information)
+</pre></div><a href='#' onClick='toggleBox("stack-trace317053574", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace317053574'><pre>org.openqa.selenium.NoSuchWindowException: Currently selected window has been closed (WARNING: The server did not provide any stacktrace information)
 Command duration or timeout: 0 milliseconds
-For documentation on this error, please visit: https://www.seleniumhq.org/exceptions/no_such_element.html
 Build info: version: &apos;3.141.59&apos;, revision: &apos;e82be7d358&apos;, time: &apos;2018-11-14T08:17:03&apos;
 System info: host: &apos;VELTRISMS785&apos;, ip: &apos;192.168.29.113&apos;, os.name: &apos;Windows 11&apos;, os.arch: &apos;amd64&apos;, os.version: &apos;10.0&apos;, java.version: &apos;21.0.4&apos;
 Driver info: io.appium.java_client.windows.WindowsDriver
 Capabilities {app: com.ecsite.afl.dev_aqd9xyv2..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
-Session ID: 561C8B49-0BE8-4017-B5D8-37EC1168F33F
-*** Element info: {Using=xpath, value=//Text[@AutomationId=&apos;OpticsButton&apos;]/../following-sibling::ListItem/Text[@Name=&apos;10-YELLOW&apos;]}
+Session ID: B3FC5603-46DE-4CE1-AE59-10E02102FD62
+*** Element info: {Using=accessibility id, value=OrgIdDropdown}
 	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
 	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
 	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
@@ -169,17 +160,10 @@ Session ID: 561C8B49-0BE8-4017-B5D8-37EC1168F33F
 	at io.appium.java_client.DefaultGenericMobileDriver.findElement(DefaultGenericMobileDriver.java:61)
 	at io.appium.java_client.AppiumDriver.findElement(AppiumDriver.java:1)
 	at io.appium.java_client.windows.WindowsDriver.findElement(WindowsDriver.java:1)
-	at org.openqa.selenium.remote.RemoteWebDriver.findElementByXPath(RemoteWebDriver.java:428)
-	at io.appium.java_client.DefaultGenericMobileDriver.findElementByXPath(DefaultGenericMobileDriver.java:151)
-	at io.appium.java_client.AppiumDriver.findElementByXPath(AppiumDriver.java:1)
-	at io.appium.java_client.windows.WindowsDriver.findElementByXPath(WindowsDriver.java:1)
-	at org.openqa.selenium.By$ByXPath.findElement(By.java:353)
-	at org.openqa.selenium.remote.RemoteWebDriver.findElement(RemoteWebDriver.java:315)
-	at io.appium.java_client.DefaultGenericMobileDriver.findElement(DefaultGenericMobileDriver.java:57)
-	at io.appium.java_client.AppiumDriver.findElement(AppiumDriver.java:1)
-	at io.appium.java_client.windows.WindowsDriver.findElement(WindowsDriver.java:1)
-	at base.BaseClass.runTestForAllFibers(BaseClass.java:971)
-	at DesktopApplicationTests.RunWTCTestsInLoop.runWtcTestInLoop(RunWTCTestsInLoop.java:53)
+	at io.appium.java_client.FindsByAccessibilityId.findElementByAccessibilityId(FindsByAccessibilityId.java:37)
+	at pageObjects.Modules.TestJobModule.JobSearch.orgField(JobSearch.java:15)
+	at base.BaseClass.searchJobAndNavigationToJobDetailsPage(BaseClass.java:703)
+	at DesktopApplicationTests.RunWTCTestsInLoop.runWtcTestInLoop(RunWTCTestsInLoop.java:42)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at org.testng.internal.invokers.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:141)
@@ -207,8 +191,8 @@ Session ID: 561C8B49-0BE8-4017-B5D8-37EC1168F33F
 	at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:293)
 	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:91)
 </pre></div></td>
-<td>369</td>
-<td>DesktopApplicationTests.RunWTCTestsInLoop@7b98f307</td></tr>
+<td>111</td>
+<td>DesktopApplicationTests.RunWTCTestsInLoop@4802796d</td></tr>
 </table><p>
 </body>
 </html>
