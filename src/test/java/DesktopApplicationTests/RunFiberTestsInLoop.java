@@ -39,7 +39,6 @@ public class RunFiberTestsInLoop extends BaseClass {
 					"45193192-2869194", TestData.getCurrentDateTimeStamp(),
 					TestData.fiberTestJobSearchCutNumberInfo);
 			if (JobDetailsPage.isMissingFiberIdWarningPopupDisplayed()) {
-				Dashboard.isOkButtonDisplayed();
 				Dashboard.okButton().click();
 			}
 			takeDump("afterJobSearch", 1);

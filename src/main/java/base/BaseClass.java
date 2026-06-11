@@ -701,9 +701,10 @@ public class BaseClass {
 		} else if (module.equals(TestData.wtcTestModuleName)) {
 			Dashboard.wtcTestModule().click();
 		}
-		System.out.println("Job search popup to show up next");
+		System.out.println("Clicked on " + module + " module, Job search popup to show up next");
 		JobSearch.isJobNumberLabelDisplayed();
 		JobSearch.orgField().click();
+		System.out.println("Job search popup is displayed");
 		JobSearch.orgField().sendKeys(org);
 		Thread.sleep(500);
 		actions.sendKeys(Keys.ENTER).perform();
@@ -745,6 +746,7 @@ public class BaseClass {
 		Dashboard.isLoaderDisplayed();
 		Dashboard.waitUntilLoaderIsNotDisplayed();
 		dismissSyncStatusPopupIfDisplayed();
+		System.out.println("Job search is completed");
 	}
 
 	public static void verifyJobDetailsHeader(String org, String jobNumber, String cutNumber, String cutNumberInfo,
@@ -1224,9 +1226,9 @@ public class BaseClass {
 		int numberOfRibbonsTested = 0;
 		for (int i = 1; numberOfRibbonsTested < 72; i++) {
 			dismissSyncStatusPopupIfDisplayed();
-			String presentWorkerToSelect = "JGR-" + i + "-" + i + "-" + i;
+			String nextWorkerToSelect = "JGR-" + i + "-" + i + "-" + i;
 			if (numberOfRibbonsTested >= 5) {
-				WTC.waitUntilTestIsCompletedForSelectedWorker(presentWorkerToSelect);
+				WTC.waitUntilTestIsCompletedForSelectedWorker(nextWorkerToSelect);
 			}
 //			int attempts = 1;
 			do {
@@ -1238,13 +1240,13 @@ public class BaseClass {
 				try {
 					WTC.checkButton().click();
 					WTC.selectWorkerField().click();
-					WTC.selectWorkerField().sendKeys(presentWorkerToSelect);
+					WTC.selectWorkerField().sendKeys(nextWorkerToSelect);
 					actions.sendKeys(Keys.TAB).build().perform();
 				} catch (Exception e) {
 
 				}
 //				attempts++;
-			} while (!WTC.selectWorkerField().getText().contains(presentWorkerToSelect));
+			} while (!WTC.selectWorkerField().getText().contains(nextWorkerToSelect));
 			WTC.checkButton().click();
 			Dashboard.waitUntilOkButtonIsDisplayed();
 			Thread.sleep(2000);

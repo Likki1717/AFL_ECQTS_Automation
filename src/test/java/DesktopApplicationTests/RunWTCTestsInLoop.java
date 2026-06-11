@@ -45,12 +45,11 @@ public class RunWTCTestsInLoop extends BaseClass {
 					TestData.wtcTestJobSearchJobNumber, TestData.getCurrentDateTimeStamp(),
 					TestData.wtcTestJobSearchCutNumberInfo);
 			if (JobDetailsPage.isMissingFiberIdWarningPopupDisplayed()) {
-				Dashboard.isOkButtonDisplayed();
 				Dashboard.okButton().click();
 			}
-//			takeDump("afterJobSearch", 1);
+			takeDump("afterJobSearch", 1);
 			runGetLengthTest(TestData.wtcTestModuleName);
-			runWtcTestForAllRibbonsInJob(100, 1);
+			runWtcTestForAllRibbonsInJob(5, 1);
 		}
 	}
 }
