@@ -715,7 +715,11 @@ public class BaseClass {
 		Dashboard.waitUntilOkButtonIsDisplayed();
 		Dashboard.okButton().click();
 		wait = new WebDriverWait(driver, 120);
-		wait.until(ExpectedConditions.elementToBeClickable(JobSearch.searchCutNumber()));
+		try {
+			wait.until(ExpectedConditions.elementToBeClickable(JobSearch.searchCutNumber()));
+		} catch (Exception e) {
+			System.out.println("Timed out on Job search popup, possibly job load time out after 110 seconds");
+		}
 		while (!JobSearch.searchCutNumber().equals(driver.switchTo().activeElement())) {
 			JobSearch.searchCutNumber().click();
 			Thread.sleep(1000);
@@ -1230,13 +1234,7 @@ public class BaseClass {
 			if (numberOfRibbonsTested >= 5) {
 				WTC.waitUntilTestIsCompletedForSelectedWorker(nextWorkerToSelect);
 			}
-//			int attempts = 1;
 			do {
-//				if (attempts > 2 && numberOfRibbonsTested >= 6) {
-//					WTC.previousRunTestsButton().click();
-//					robot.mouseWheel(1);
-//					attempts = 1;
-//				}
 				try {
 					WTC.checkButton().click();
 					WTC.selectWorkerField().click();
@@ -1245,12 +1243,25 @@ public class BaseClass {
 				} catch (Exception e) {
 
 				}
-//				attempts++;
 			} while (!WTC.selectWorkerField().getText().contains(nextWorkerToSelect));
-			WTC.checkButton().click();
-			Dashboard.waitUntilOkButtonIsDisplayed();
-			Thread.sleep(2000);
-			FiberResults.cancelButton().click();
+			while(true)
+			{
+				try
+				{
+					WTC.checkButton().click();
+					Dashboard.waitUntilOkButtonIsDisplayed();
+					Thread.sleep(1000);
+					FiberResults.cancelButton().click();
+					break;
+				}
+				catch (Exception e)
+				{
+					if(WTC.isErrorMessageDisplayed())
+					{
+						Dashboard.okButton().click();
+					}
+				}
+			}
 			Thread.sleep(1000);
 			while(true) {
 				try {

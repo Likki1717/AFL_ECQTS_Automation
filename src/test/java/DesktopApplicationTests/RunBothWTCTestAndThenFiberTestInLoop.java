@@ -76,6 +76,5 @@ public class RunBothWTCTestAndThenFiberTestInLoop extends BaseClass {
 			runGetLengthTest(TestData.fiberTestModuleName);
 			runFiberTestForAllFibersInJob(true, 20, 1);
 		}
-
 	}
 }

@@ -54,4 +54,9 @@ public class WTC extends BaseClass {
 			Thread.sleep(1000);
 		}
 	}
+	
+	public static boolean isErrorMessageDisplayed()
+	{
+		return isElementDisplayed(ByName.name("Error Message"), 1);
+	}
 }
