@@ -8,8 +8,16 @@ import io.appium.java_client.MobileBy.ByAccessibilityId;
 
 public class SignIn extends BaseClass {
 
+	public static void waitUntilUsernameFieldIsDisplayed() throws Exception
+	{
+		while(!isElementDisplayed(ByAccessibilityId.AccessibilityId("LoginIdEntry"), 1))
+		{
+			Thread.sleep(1000);
+		}
+	}
+	
 	public static boolean isUsernameFieldDisplayed() {
-		return isElementDisplayed(ByAccessibilityId.AccessibilityId("LoginIdEntry"), 10);
+		return isElementDisplayed(ByAccessibilityId.AccessibilityId("LoginIdEntry"), 5);
 	}
 
 	public static WebElement usernameField() {

@@ -2,27 +2,42 @@
 <testng-results ignored="0" total="1" passed="0" failed="1" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2026-06-12T10:25:44 IST" name="Default suite" finished-at="2026-06-12T11:27:18 IST" duration-ms="3693442">
+  <suite started-at="2026-06-19T18:57:33 IST" name="Default suite" finished-at="2026-06-19T19:12:25 IST" duration-ms="892069">
     <groups>
     </groups>
-    <test started-at="2026-06-12T10:25:44 IST" name="Default test" finished-at="2026-06-12T11:27:18 IST" duration-ms="3693442">
+    <test started-at="2026-06-19T18:57:33 IST" name="Default test" finished-at="2026-06-19T19:12:25 IST" duration-ms="892069">
       <class name="DesktopApplicationTests.RunBothWTCTestAndThenFiberTestInLoop">
-        <test-method signature="runWtcTestInLoop()[pri:0, instance:DesktopApplicationTests.RunBothWTCTestAndThenFiberTestInLoop@3e694b3f]" started-at="2026-06-12T10:25:44 IST" name="runWtcTestInLoop" finished-at="2026-06-12T11:27:17 IST" duration-ms="3692955" status="FAIL">
-          <exception class="org.openqa.selenium.WebDriverException">
+        <test-method signature="runWtcTestInLoop()[pri:0, instance:DesktopApplicationTests.RunBothWTCTestAndThenFiberTestInLoop@65fb9ffc]" started-at="2026-06-19T18:57:33 IST" name="runWtcTestInLoop" finished-at="2026-06-19T19:12:25 IST" duration-ms="891804" status="FAIL">
+          <exception class="org.openqa.selenium.NoSuchWindowException">
             <message>
-              <![CDATA[Connection refused: getsockopt
+              <![CDATA[Currently selected window has been closed (WARNING: The server did not provide any stacktrace information)
+Command duration or timeout: 0 milliseconds
 Build info: version: '3.141.59', revision: 'e82be7d358', time: '2018-11-14T08:17:03'
 System info: host: 'VELTRISMS785', ip: '192.168.29.113', os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '21.0.4'
-Driver info: driver.version: WindowsDriver]]>
+Driver info: io.appium.java_client.windows.WindowsDriver
+Capabilities {app: com.ecsite.afl.dev_aqd9xyv2..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
+Session ID: C1C2007A-2507-483A-B4A3-1424B3C062E8
+*** Element info: {Using=xpath, value=//Text[@Name='INCOMPLETE']/../Button[@Name='Run Tests']/following-sibling::ComboBox}]]>
             </message>
             <full-stacktrace>
-              <![CDATA[org.openqa.selenium.WebDriverException: Connection refused: getsockopt
+              <![CDATA[org.openqa.selenium.NoSuchWindowException: Currently selected window has been closed (WARNING: The server did not provide any stacktrace information)
+Command duration or timeout: 0 milliseconds
 Build info: version: '3.141.59', revision: 'e82be7d358', time: '2018-11-14T08:17:03'
 System info: host: 'VELTRISMS785', ip: '192.168.29.113', os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '21.0.4'
-Driver info: driver.version: WindowsDriver
-at io.appium.java_client.remote.AppiumCommandExecutor.lambda$6(AppiumCommandExecutor.java:262)
-at java.base/java.util.Optional.orElseGet(Optional.java:364)
-at io.appium.java_client.remote.AppiumCommandExecutor.execute(AppiumCommandExecutor.java:261)
+Driver info: io.appium.java_client.windows.WindowsDriver
+Capabilities {app: com.ecsite.afl.dev_aqd9xyv2..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
+Session ID: C1C2007A-2507-483A-B4A3-1424B3C062E8
+*** Element info: {Using=xpath, value=//Text[@Name='INCOMPLETE']/../Button[@Name='Run Tests']/following-sibling::ComboBox}
+at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
+at org.openqa.selenium.remote.ErrorHandler.createThrowable(ErrorHandler.java:214)
+at org.openqa.selenium.remote.ErrorHandler.throwIfResponseFailed(ErrorHandler.java:166)
+at org.openqa.selenium.remote.http.JsonHttpResponseCodec.reconstructValue(JsonHttpResponseCodec.java:40)
+at org.openqa.selenium.remote.http.AbstractHttpResponseCodec.decode(AbstractHttpResponseCodec.java:80)
+at org.openqa.selenium.remote.http.AbstractHttpResponseCodec.decode(AbstractHttpResponseCodec.java:44)
+at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:158)
+at io.appium.java_client.remote.AppiumCommandExecutor.execute(AppiumCommandExecutor.java:250)
 at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:552)
 at io.appium.java_client.DefaultGenericMobileDriver.execute(DefaultGenericMobileDriver.java:41)
 at io.appium.java_client.AppiumDriver.execute(AppiumDriver.java:1)
@@ -41,7 +56,7 @@ at io.appium.java_client.DefaultGenericMobileDriver.findElement(DefaultGenericMo
 at io.appium.java_client.AppiumDriver.findElement(AppiumDriver.java:1)
 at io.appium.java_client.windows.WindowsDriver.findElement(WindowsDriver.java:1)
 at pageObjects.Modules.TestJobModule.JobDetails.WTC.selectWorkerField(WTC.java:22)
-at base.BaseClass.runWtcTestForAllRibbonsInJob(BaseClass.java:1242)
+at base.BaseClass.runWtcTestForAllRibbonsInJob(BaseClass.java:1253)
 at DesktopApplicationTests.RunBothWTCTestAndThenFiberTestInLoop.runWtcTestInLoop(RunBothWTCTestAndThenFiberTestInLoop.java:57)
 at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 at java.base/java.lang.reflect.Method.invoke(Method.java:580)
@@ -69,39 +84,9 @@ at org.testng.TestNG.run(TestNG.java:1079)
 at org.testng.remote.AbstractRemoteTestNG.run(AbstractRemoteTestNG.java:115)
 at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:293)
 at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:91)
-Caused by: java.net.ConnectException: Connection refused: getsockopt
-at java.base/sun.nio.ch.Net.pollConnect(Native Method)
-at java.base/sun.nio.ch.Net.pollConnectNow(Net.java:682)
-at java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:542)
-at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:592)
-at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
-at java.base/java.net.Socket.connect(Socket.java:751)
-at okhttp3.internal.platform.Platform.connectSocket(Platform.java:129)
-at okhttp3.internal.connection.RealConnection.connectSocket(RealConnection.java:245)
-at okhttp3.internal.connection.RealConnection.connect(RealConnection.java:165)
-at okhttp3.internal.connection.StreamAllocation.findConnection(StreamAllocation.java:257)
-at okhttp3.internal.connection.StreamAllocation.findHealthyConnection(StreamAllocation.java:135)
-at okhttp3.internal.connection.StreamAllocation.newStream(StreamAllocation.java:114)
-at okhttp3.internal.connection.ConnectInterceptor.intercept(ConnectInterceptor.java:42)
-at okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.java:147)
-at okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.java:121)
-at okhttp3.internal.cache.CacheInterceptor.intercept(CacheInterceptor.java:93)
-at okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.java:147)
-at okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.java:121)
-at okhttp3.internal.http.BridgeInterceptor.intercept(BridgeInterceptor.java:93)
-at okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.java:147)
-at okhttp3.internal.http.RetryAndFollowUpInterceptor.intercept(RetryAndFollowUpInterceptor.java:126)
-at okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.java:147)
-at okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.java:121)
-at okhttp3.RealCall.getResponseWithInterceptorChain(RealCall.java:200)
-at okhttp3.RealCall.execute(RealCall.java:77)
-at org.openqa.selenium.remote.internal.OkHttpClient.execute(OkHttpClient.java:103)
-at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:155)
-at io.appium.java_client.remote.AppiumCommandExecutor.execute(AppiumCommandExecutor.java:250)
-... 46 more
 ]]>
             </full-stacktrace>
-          </exception> <!-- org.openqa.selenium.WebDriverException -->
+          </exception> <!-- org.openqa.selenium.NoSuchWindowException -->
           <reporter-output>
           </reporter-output>
         </test-method> <!-- runWtcTestInLoop -->

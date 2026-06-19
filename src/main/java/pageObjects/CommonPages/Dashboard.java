@@ -1,6 +1,7 @@
 package pageObjects.CommonPages;
 
 import org.openqa.selenium.By.ByName;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import base.BaseClass;
@@ -8,6 +9,11 @@ import io.appium.java_client.MobileBy.ByAccessibilityId;
 
 public class Dashboard extends BaseClass {
 
+	public static void waitUntilOpenNavigationButtonIsDisplayed()
+	{
+		
+	}
+	
 	public static WebElement openNavigationButton() {
 		return driver.findElementByXPath("//Button[@Name='Open Navigation']");
 	}
@@ -45,11 +51,11 @@ public class Dashboard extends BaseClass {
 	}
 
 	public static boolean isLoaderNotDisplayed() {
-		return isElementNotDisplayed(ByAccessibilityId.AccessibilityId("LottiePlayer"), 20);
+		return isElementNotDisplayed(ByAccessibilityId.AccessibilityId("LottiePlayer"), 1);
 	}
 
 	public static boolean isLoaderDisplayed() {
-		return isElementDisplayed(ByAccessibilityId.AccessibilityId("LottiePlayer"), 5);
+		return isElementDisplayed(ByAccessibilityId.AccessibilityId("LottiePlayer"), 2);
 	}
 	
 	public static void waitUntilLoaderIsNotDisplayed() throws InterruptedException {
@@ -67,7 +73,7 @@ public class Dashboard extends BaseClass {
 	}
 	
 	public static void waitUntilOkButtonIsDisplayed() throws InterruptedException {
-		while (!isElementDisplayed(ByName.name("OK"), 5)) {
+		while (!isElementDisplayed(ByName.name("OK"), 1)) {
 			Thread.sleep(1000);
 		}
 	}
@@ -76,7 +82,16 @@ public class Dashboard extends BaseClass {
 		return isElementDisplayed(ByAccessibilityId.AccessibilityId("SyncStatusMessage"), 1);
 	}
 	
-	public static boolean isFileNameTextBoxDisplayed() {
-		return isElementDisplayed(ByName.name("File name:"), 10);
+	public static void waitUntilFileNameTextBoxIsDisplayed() throws Exception
+	{
+		while (!isElementDisplayed(ByName.name("File name:"), 1)) {
+			Thread.sleep(1000);
+		}
 	}
+	
+	public static String getWarningMessage()
+	{
+		return driver.findElement(By.xpath("//Text[contains(@AutomationId, 'WarningsMessage')]")).getText();
+	}
+
 }

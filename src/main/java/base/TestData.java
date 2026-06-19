@@ -3,29 +3,36 @@ package base;
 import java.io.File;
 
 public class TestData {
+	public static String systemUsername = "sumeeth"; // veltris
 	public static String testEnvironment = "Dev"; // Dev /QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
-	public static String expectedAppVersion = "Version: 7.6.16.1";
+	public static String expectedAppVersion = "Version: 7.6.21.0";
 	public static boolean useOfficeOtdr = true;
 	public static boolean useExternalCamera = true;
 	public static int numberOfFibersToTest = 1;
-	public static String vpnAppPassword = "kumar@123";
+
+	public static String vpnAppPassword() {
+		if (systemUsername.equals("sumeeth")) {
+			return "kumar@123";
+		} else if (systemUsername.equals("veltris")) {
+			return "manohar@123";
+		} else // Update below if other than Sumeeth and Mandeep is using automation script
+		{
+			return "kumar@1234";
+		}
+	}
 
 	public static String fiberTestJobSearchOrg = "CAB";
 	public static String wtcTestJobSearchOrg = "CAB";
 
-	// All below local paths to be updated from system
-	public static String OCR_Report_Path = "C:\\Users\\sumeeth\\AppData\\Local\\Packages\\"
+	public static String OCR_Report_Path = "C:\\Users\\" + systemUsername + "\\AppData\\Local\\Packages\\"
 			+ packageName(testEnvironment) + "\\LocalState\\Downloads\\" + fiberTestJobSearchOrg + "";
-	public static String secureStorageFolderPath = "C:\\Users\\sumeeth\\AppData\\Local\\Packages\\"
-			+ packageName(testEnvironment) + "\\LocalState\\SecureStorage"; // Deleting this SecureStorage folder will
-																			// delete
-	// the login cache and app by default will be in
-	// logged out state
-
+	// Deleting this SecureStorage folder will have app in logged out state
+	public static String secureStorageFolderPath = "C:\\Users\\" + systemUsername + "\\AppData\\Local\\Packages\\"
+			+ packageName(testEnvironment) + "\\LocalState\\SecureStorage";
 	public static String openVpnAppPath = "C:\\Program Files\\OpenVPN Connect\\OpenVPNConnect.exe";
 	public static String SOR_Files_Path = new File("src/test/Resources/SOR_Files_Downloaded_From_Automation")
 			.getAbsolutePath();
-	public static String winAppDriverPath = new File("src/test/Resources/WinAppDriver/WinAppDriver.exe")
+	public static String winAppDriverPath = new File("C:\\Program Files (x86)\\Windows Application Driver\\WinAppDriver.exe")
 			.getAbsolutePath();
 	public static String prysmianAttenuationFilePath = new File(
 			"src/test/Resources/ImportFiles/PrysmianFiles/attenuation.csv").getAbsolutePath();
@@ -175,8 +182,7 @@ public class TestData {
 		return launchLength;
 	}
 
-	public static String OTDR_Settings_CutLength(String module)
-	{
+	public static String OTDR_Settings_CutLength(String module) {
 		String cutLength = "";
 		if (module.equals(fiberTestModuleName)) {
 			cutLength = useOfficeOtdr ? "10000" : "1000";
@@ -185,6 +191,7 @@ public class TestData {
 		}
 		return cutLength;
 	}
+
 	public static String OTDR_Settings_LaunchLength2 = "1000";
 	public static String OTDR_Settings_manufacturedLength = "1000";
 	public static String OTDR_Settings_Horizontal = "10";
@@ -224,17 +231,15 @@ public class TestData {
 			return appId().split("!")[0];
 		}
 	}
-	
-	public static String getCurrentDateTimeStamp()
-	{
+
+	public static String getCurrentDateTimeStamp() {
 		return new java.text.SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
 	}
 
 	/*
-	 * To get appId, use below command in windows powershell : 
-	 * Get-StartApps | Where-Object {$_.Name -like "*ECQTS*"}
-	 * Name AppID ---- ----- 
-	 * ECQTS Dev com.ecsite.afl.dev_aqd9xyv20zq6r!App ECQTS QA
+	 * To get appId, use below command in windows powershell : Get-StartApps |
+	 * Where-Object {$_.Name -like "*ECQTS*"} Name AppID ---- ----- ECQTS Dev
+	 * com.ecsite.afl.dev_aqd9xyv20zq6r!App ECQTS QA
 	 * com.ecsite.afl.qa_aqd9xyv20zq6r!App ECQTS Soft Release
 	 * com.ecsite.afl.softreleaseprod_aqd9xyv20zq6r!App ECQTS Soft Release Second
 	 * Prod com.ecsite.afl.softreleasesecondprod_aqd9xyv20zq6r!App ECQTS Prod

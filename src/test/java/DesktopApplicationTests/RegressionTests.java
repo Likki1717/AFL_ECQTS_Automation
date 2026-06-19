@@ -10,24 +10,24 @@ public class RegressionTests extends BaseClass {
 	public static void runRegressionTestSuite() throws Exception {
 
 		clearPreviousSessionData();
-
+		
 		launchWinAppDriver();
 		
-		launch_ECQTS_Application();
+		launchOpenVpnAppAndConnect();
 		
+		launch_ECQTS_Application();
+				
 		verifyIncorrectCredentials();
 		
 		loginToApplication();
 		
 		verifyBuildVersion();
 		
-		importSwindonJob();
-
 		importPrysmianJob();
 						
 		importTaihanJob();
 		
-		launchOpenVpnAppAndConnect();
+		importSwindonJob();
 		
 		deleteAllExistingConnectionProfiles();
 		

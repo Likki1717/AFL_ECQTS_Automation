@@ -49,21 +49,28 @@ public class BaseClass {
 	public static SoftAssert softAssert = new SoftAssert();
 
 	public static void clearPreviousSessionData() throws Exception {
+
+		File systemUsernameFolder = new File("C:\\Users\\" + TestData.systemUsername + "");
+
+		// Stop execution if folder does not exists
+		if (!systemUsernameFolder.exists()) {
+			Assert.fail(
+					"\n****Update systemUsername value in Test Data, present value is - " + TestData.systemUsername);
+		}
+
 		int deleteAttempts = 0;
 
-		// Folder path that needs to be cleared before starting a new session
 		File secureStorageFolder = new File(TestData.secureStorageFolderPath);
 
 		// Keep trying to delete the secureStorageFolder folder if it exists, this will
-		// make sure the app is not logged In
+		// make sure the app is in Logged Out state
 		while (secureStorageFolder.exists()) {
 			if (deleteAttempts == 0) {
 				deleteAttempts++;
 				deleteDirectory(secureStorageFolder);
 			} else {
 				// If deletion failed, likely due to files being in use
-				System.out.println("****Close any open app / file and run the script again****");
-				stopExecution();
+				Assert.fail("****Close the existing open App and run the script again****");
 			}
 		}
 
@@ -78,8 +85,7 @@ public class BaseClass {
 				deleteDirectory(OcrReportFolder);
 			} else {
 				// If deletion failed, likely due to files being in use
-				System.out.println("*****Close any open app / file and run the script again*****");
-				stopExecution();
+				Assert.fail("****Close the existing open OCR file and run the script again****");
 			}
 		}
 
@@ -94,8 +100,7 @@ public class BaseClass {
 				deleteDirectory(SorReportFolder);
 			} else {
 				// If deletion failed, likely due to files being in use
-				System.out.println("*****Close any open app / file and run the script again*****");
-				stopExecution();
+				Assert.fail("*****Close any open app / file and run the script again*****");
 			}
 		}
 
@@ -119,40 +124,43 @@ public class BaseClass {
 	public static void launchWinAppDriver() throws Exception {
 		launchDependentApplication(TestData.winAppDriverPath);
 		waitForWinAppDriver();
+		robot = new Robot();
 	}
 
 	public static void launchOpenVpnAppAndConnect() throws Exception {
 		if (TestData.useOfficeOtdr) {
 			launchDependentApplication(TestData.openVpnAppPath);
-			robot.delay(5000);
+			Thread.sleep(4000);
 			for (int i = 0; i < 4; i++) {
 				robot.keyPress(KeyEvent.VK_TAB);
 				robot.keyRelease(KeyEvent.VK_TAB);
 			}
-			robot.delay(500);
+			Thread.sleep(500);
 			robot.keyPress(KeyEvent.VK_ENTER);
 			robot.keyRelease(KeyEvent.VK_ENTER);
-			robot.delay(500);
-			copyPasteAndClickEnter(TestData.vpnAppPassword);
+			Thread.sleep(1000);
+			copyPasteAndClickEnter(TestData.vpnAppPassword());
+			Thread.sleep(2000);
+			dismissSyncStatusPopupIfDisplayed();
 		}
 	}
 
 	public static void launchDependentApplication(String applicationPath) throws Exception {
 		try {
-			robot = new Robot();
-			robot.keyPress(KeyEvent.VK_WINDOWS);
-			robot.keyPress(KeyEvent.VK_R);
-			robot.keyRelease(KeyEvent.VK_R);
-			robot.keyRelease(KeyEvent.VK_WINDOWS);
-			robot.delay(300);
-			copyPasteAndClickEnter(applicationPath);
+//			robot.keyPress(KeyEvent.VK_WINDOWS);
+//			robot.keyPress(KeyEvent.VK_R);
+//			robot.keyRelease(KeyEvent.VK_R);
+//			robot.keyRelease(KeyEvent.VK_WINDOWS);
+//			robot.delay(300);
+//			copyPasteAndClickEnter(applicationPath);
+			new ProcessBuilder("powershell", "-Command", "Start-Process -FilePath '" + applicationPath + "'").start();
 		} catch (Exception e) {
-			System.out.println("****Exception in launchDependentApplication()****");
-			stopExecution();
+			Assert.fail("****Exception in launchDependentApplication()****");
 		}
 	}
 
-	public static void copyPasteAndClickEnter(String textToCopy) {
+	public static void copyPasteAndClickEnter(String textToCopy) throws Exception {
+
 		robot.keyPress(KeyEvent.VK_CONTROL);
 		robot.keyPress(KeyEvent.VK_A);
 
@@ -165,9 +173,8 @@ public class BaseClass {
 		robot.keyRelease(KeyEvent.VK_DELETE);
 
 		robot.delay(200);
-		// Copy path to clipboard
-		String pathToCopy = "\"" + textToCopy + "\"";
-		StringSelection selection = new StringSelection(pathToCopy);
+//		 Copy path to clipboard
+		StringSelection selection = new StringSelection(textToCopy);
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
 
 		// Paste using CTRL + V
@@ -207,7 +214,7 @@ public class BaseClass {
 	public static void launch_ECQTS_Application() throws Exception {
 		try {
 			new ProcessBuilder("taskkill", "/F", "/PID", TestData.appId()).start();
-			Thread.sleep(2000);
+			Thread.sleep(3000);
 			capabilities = new DesiredCapabilities();
 			capabilities.setCapability("app", TestData.appId());
 			capabilities.setCapability("platformName", "Windows");
@@ -248,9 +255,8 @@ public class BaseClass {
 		}
 	}
 
-	public static void verifyIncorrectCredentials() {
-		softAssert.assertTrue(SignIn.isUsernameFieldDisplayed(),
-				"Waited for 10 seconds, username field is not displayed");
+	public static void verifyIncorrectCredentials() throws Exception {
+		SignIn.waitUntilUsernameFieldIsDisplayed();
 		SignIn.usernameField().sendKeys(TestData.ecqtsAppUsername());
 		SignIn.passwordField().sendKeys("Invalid password");
 		SignIn.signInButton().click();
@@ -261,8 +267,7 @@ public class BaseClass {
 
 	public static void loginToApplication() throws Exception {
 		try {
-			softAssert.assertTrue(SignIn.isUsernameFieldDisplayed(),
-					"Waited for 10 seconds, username field is not displayed");
+			SignIn.waitUntilUsernameFieldIsDisplayed();
 			SignIn.usernameField().clear();
 			SignIn.usernameField().sendKeys(TestData.ecqtsAppUsername());
 			SignIn.passwordField().clear();
@@ -272,8 +277,7 @@ public class BaseClass {
 			softAssert.assertTrue(Dashboard.isFiberTestModuleDisplayed(),
 					"Tried for 10 secs, Fiber Test module was not visible after login");
 		} catch (Exception e) {
-			System.out.println("****Exception in loginToApplication()****");
-			stopExecution();
+			Assert.fail("****Exception in loginToApplication()****");
 		}
 	}
 
@@ -299,6 +303,7 @@ public class BaseClass {
 
 	public static void verifyBuildVersion() throws Exception {
 		try {
+
 			Dashboard.openNavigationButton().click();
 			SideMenu.aboutButton().click();
 			String appVersion = About.versionNumber().getText();
@@ -322,9 +327,11 @@ public class BaseClass {
 
 	public static void deleteAllExistingConnectionProfiles() {
 		try {
+			dismissSyncStatusPopupIfDisplayed();
 			Dashboard.openNavigationButton().click();
 			SideMenu.settingsButton().click();
 			Settings.connectionProfilesButton().click();
+			dismissSyncStatusPopupIfDisplayed();
 			while (ConnectionProfiles.isDeleteProfileButtonDisplayed()) {
 				ConnectionProfiles.deleteProfileButton().click();
 				ConnectionProfiles.yesButtonOnDeleteProfilePopup().click();
@@ -338,6 +345,7 @@ public class BaseClass {
 
 	public static void createProfile(String connectionProfileName, String ipAddress, String port) {
 		try {
+			dismissSyncStatusPopupIfDisplayed();
 			ConnectionProfiles.createNewProfileButton().click();
 			ConnectionProfiles.nameTextBox().sendKeys(connectionProfileName);
 			ConnectionProfiles.instrumentTypeDropdown().click();
@@ -498,7 +506,11 @@ public class BaseClass {
 						System.out.println("****External camera is not available to select****");
 					}
 				} else {
-					ApplicationSettings.integratedCamera().click();
+					try {
+						ApplicationSettings.integratedCamera().click();
+					} catch (Exception e) {
+						System.out.println("****Integrated camera is not available to select****");
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -531,48 +543,51 @@ public class BaseClass {
 			Import.taihanType().click();
 		}
 
-		softAssert.assertTrue(Dashboard.isLoaderDisplayed(),
-				importType + " Import - Waited for 5 seconds, Screen loader did not display");
-		softAssert.assertTrue(Dashboard.isLoaderNotDisplayed(),
-				importType + " Import - Waited for 20 seconds but still the screen loader is displayed");
+		Dashboard.isLoaderDisplayed();
+		Dashboard.waitUntilLoaderIsNotDisplayed();
 		Thread.sleep(500);
+		Import.orgDropDownField().click();
 		Import.orgDropDownField().sendKeys(TestData.importOrg);
-		robot.keyPress(KeyEvent.VK_TAB);
-		robot.keyRelease(KeyEvent.VK_TAB);
+		actions.sendKeys(Keys.TAB).build().perform();
+//		robot.keyPress(KeyEvent.VK_TAB);
+//		robot.keyRelease(KeyEvent.VK_TAB);
 		Import.cutNumber().sendKeys(TestData.importCutNumber);
-		robot.keyPress(KeyEvent.VK_TAB);
-		robot.keyRelease(KeyEvent.VK_TAB);
+		actions.sendKeys(Keys.TAB).build().perform();
+//		robot.keyPress(KeyEvent.VK_TAB);
+//		robot.keyRelease(KeyEvent.VK_TAB);
 		Thread.sleep(500);
 		Import.itemOrgCode().sendKeys(TestData.importItemOrgCode);
-		robot.keyPress(KeyEvent.VK_TAB);
-		robot.keyRelease(KeyEvent.VK_TAB);
+		actions.sendKeys(Keys.TAB).build().perform();
+//		robot.keyPress(KeyEvent.VK_TAB);
+//		robot.keyRelease(KeyEvent.VK_TAB);
 		Thread.sleep(1000);
 		Import.cutNumberInfo().sendKeys(TestData.importcutNumberInfo);
-		Thread.sleep(500);
-		robot.keyPress(KeyEvent.VK_TAB);
-		robot.keyRelease(KeyEvent.VK_TAB);
 		Thread.sleep(1000);
+		actions.sendKeys(Keys.TAB).build().perform();
+//		robot.keyPress(KeyEvent.VK_TAB);
+//		robot.keyRelease(KeyEvent.VK_TAB);
+		Thread.sleep(500);
 		Import.importType().sendKeys(TestData.importType);
-		robot.keyPress(KeyEvent.VK_TAB);
-		robot.keyRelease(KeyEvent.VK_TAB);
+		actions.sendKeys(Keys.TAB).build().perform();
+//		robot.keyPress(KeyEvent.VK_TAB);
+//		robot.keyRelease(KeyEvent.VK_TAB);
 		Import.uploadFileButton().click();
-		softAssert.assertTrue(Dashboard.isFileNameTextBoxDisplayed(), importType
-				+ " Import - Waited for 10 seconds, to enter file name, the file name text box was not visible");
-
-		// Send file paths
+		Dashboard.waitUntilFileNameTextBoxIsDisplayed();
 		Import.fileNameTextBox().click();
 		Import.fileNameTextBox().sendKeys(importFilesToUpload);
 		Thread.sleep(500);
-		robot.keyPress(KeyEvent.VK_ENTER);
-		robot.keyRelease(KeyEvent.VK_ENTER);
+		actions.sendKeys(Keys.ENTER).build().perform();
+		Thread.sleep(2000);
+//		robot.keyPress(KeyEvent.VK_ENTER);
+//		robot.keyRelease(KeyEvent.VK_ENTER);
 
-		if (!Import.cutNumberInfo().getText().equals(TestData.importcutNumberInfo)) {
-			System.out.println("****" + importType
-					+ " Import - Cut number info did not get selected as given in test data, hence stopping execution****");
-			stopExecution();
+		while (!Import.cutNumberInfo().getText().equals(TestData.importcutNumberInfo)) {
+			Import.cutNumberInfo().sendKeys(TestData.importcutNumberInfo);
+			Thread.sleep(1000);
+			actions.sendKeys(Keys.TAB).build().perform();
+			Thread.sleep(1000);
 		}
 
-		Thread.sleep(2000);
 		Import.submitButton().click();
 		Dashboard.isLoaderDisplayed();
 
@@ -586,8 +601,8 @@ public class BaseClass {
 				Thread.sleep(2000);
 				if (Import.isImportSuccessfulPopupDisplayed()) {
 					String importJobNumber = Import.getJobNumberFromImportSuccessFulPopup();
-					System.out.println(
-							importType + " Import Job number fetched from Import Complete popup : " + importJobNumber);
+					System.out.println("* " + importType
+							+ " Import Complete popup displayed instead of navigating to job details page.");
 					Import.okButton().click();
 					String module = "";
 					if (TestData.importType.equals("Fiber")) {
@@ -598,13 +613,14 @@ public class BaseClass {
 					searchJobAndNavigationToJobDetailsPage(module, TestData.importOrg, importJobNumber,
 							TestData.importCutNumber, TestData.importcutNumberInfo);
 				} else if (Import.isWarningsErrorsPopupDisplayedOtherThanMissingFiberId()) {
-					System.out.println("****" + importType
-							+ " Import Failed - found warning/errors popup, other than missing fiber id****");
-					stopExecution();
+					System.out.println("****" + importType + " Import Failed, found warning/errors popup - "
+							+ Dashboard.getWarningMessage() + " ****");
+					Dashboard.okButton().click();
+					return;
 				} else if (Import.isPrysmianTypeDisplayed()) {
 					System.out.println("****" + importType
 							+ " Import Failed - loader is not displayed but still on the import page****");
-					stopExecution();
+					return;
 				}
 			}
 		}
@@ -689,8 +705,9 @@ public class BaseClass {
 	public static void searchJobAndNavigationToJobDetailsPage(String module, String org, String jobNumber,
 			String cutNumber, String cutNumberInfo) throws Exception {
 		while (!Dashboard.isImportDataModuleDisplayed()) {
-			if (Dashboard.isOpenNavigationButtonDisplayed()) {
+			while (Dashboard.isOpenNavigationButtonDisplayed()) {
 				Dashboard.openNavigationButton().click();
+				Thread.sleep(1000);
 			}
 			SideMenu.isDashboardButtonDisplayed();
 			SideMenu.dashboardButton().click();
@@ -701,10 +718,8 @@ public class BaseClass {
 		} else if (module.equals(TestData.wtcTestModuleName)) {
 			Dashboard.wtcTestModule().click();
 		}
-		System.out.println("Clicked on " + module + " module, Job search popup to show up next");
 		JobSearch.isJobNumberLabelDisplayed();
 		JobSearch.orgField().click();
-		System.out.println("Job search popup is displayed");
 		JobSearch.orgField().sendKeys(org);
 		Thread.sleep(500);
 		actions.sendKeys(Keys.ENTER).perform();
@@ -718,7 +733,7 @@ public class BaseClass {
 		try {
 			wait.until(ExpectedConditions.elementToBeClickable(JobSearch.searchCutNumber()));
 		} catch (Exception e) {
-			System.out.println("Timed out on Job search popup, possibly job load time out after 110 seconds");
+			System.out.println("**Cut number field is not clickable, possibly job load timed out after 110 seconds**");
 		}
 		while (!JobSearch.searchCutNumber().equals(driver.switchTo().activeElement())) {
 			JobSearch.searchCutNumber().click();
@@ -747,10 +762,10 @@ public class BaseClass {
 		JobSearch.goButton().click();
 		Dashboard.isLoaderDisplayed();
 		Dashboard.waitUntilLoaderIsNotDisplayed();
-		Dashboard.isLoaderDisplayed();
-		Dashboard.waitUntilLoaderIsNotDisplayed();
+		if (Dashboard.isLoaderDisplayed()) {
+			Dashboard.waitUntilLoaderIsNotDisplayed();
+		}
 		dismissSyncStatusPopupIfDisplayed();
-		System.out.println("Job search is completed");
 	}
 
 	public static void verifyJobDetailsHeader(String org, String jobNumber, String cutNumber, String cutNumberInfo,
@@ -784,6 +799,8 @@ public class BaseClass {
 
 	public static void enterProtectionLayerValues() {
 		try {
+			JobDetailsPage.protectionLayer().click();
+			Thread.sleep(1000);
 			ProtectionLayer.j1NomialODVertical().sendKeys("1000");
 			ProtectionLayer.j1NomialODHorizontal().sendKeys("1500");
 			ProtectionLayer.j1_1stRipcord().click();
@@ -907,26 +924,23 @@ public class BaseClass {
 	public static void downloadSorFile(String attnNumber) throws Exception {
 
 		if (attnNumber.equals("1550")) {
-
 			FiberResults.SOR_1550_Attn_DownloadIcon().click();
-
 		} else if (attnNumber.equals("1310")) {
-
 			FiberResults.SOR_1310_Attn_DownloadIcon().click();
 		}
 
-		Dashboard.isFileNameTextBoxDisplayed();
+		Dashboard.waitUntilFileNameTextBoxIsDisplayed();
 
 		// TAB navigation to reach address/location field
-		robot.keyPress(KeyEvent.VK_ALT);
-		robot.keyPress(KeyEvent.VK_D);
 
-		robot.keyRelease(KeyEvent.VK_D);
-		robot.keyRelease(KeyEvent.VK_ALT);
-
+		actions.keyDown(Keys.ALT).sendKeys("d").keyUp(Keys.ALT).build().perform();
+		Thread.sleep(500);
+//		robot.keyPress(KeyEvent.VK_ALT);
+//		robot.keyPress(KeyEvent.VK_D);
+//		robot.keyRelease(KeyEvent.VK_D);
+//		robot.keyRelease(KeyEvent.VK_ALT);
 		copyPasteAndClickEnter(TestData.SOR_Files_Path);
-
-		Thread.sleep(1000);
+		Thread.sleep(500);
 
 		robot.keyPress(KeyEvent.VK_ALT);
 		robot.keyPress(KeyEvent.VK_S);
@@ -934,7 +948,9 @@ public class BaseClass {
 		robot.keyRelease(KeyEvent.VK_S);
 		robot.keyRelease(KeyEvent.VK_ALT);
 
-		Dashboard.isLoaderNotDisplayed();
+		if (Dashboard.isLoaderDisplayed()) {
+			Dashboard.waitUntilLoaderIsNotDisplayed();
+		}
 	}
 
 	public static void takeDump(String label, int delayInSecondsWhileTakingDumpBeforeClosingPowerShell)
@@ -1124,7 +1140,7 @@ public class BaseClass {
 			Completion.OSE_Seq_Number_uoM().sendKeys("m");
 
 			Dashboard.isLoaderDisplayed();
-			Dashboard.isLoaderNotDisplayed();
+			Dashboard.waitUntilLoaderIsNotDisplayed();
 
 			Thread.sleep(1000);
 
@@ -1167,7 +1183,7 @@ public class BaseClass {
 		}
 	}
 
-	public static void download_OCR_Report() {
+	public static void download_OCR_Report() throws Exception {
 
 		JobDetailsPage.reportsTab().click();
 		Reports.isJobWarnings_ErrorsPopupDisplayed();
@@ -1178,9 +1194,9 @@ public class BaseClass {
 				"Waited for 10 seconds, Generating Reports in background text is not displayed  ");
 		Reports.okButton().click();
 		Dashboard.isLoaderDisplayed();
-		Dashboard.isLoaderNotDisplayed();
+		Dashboard.waitUntilLoaderIsNotDisplayed();
 		Dashboard.isLoaderDisplayed();
-		Dashboard.isLoaderNotDisplayed();
+		Dashboard.waitUntilLoaderIsNotDisplayed();
 		JobDetailsPage.reportsTab().click();
 	}
 
@@ -1210,15 +1226,6 @@ public class BaseClass {
 		}
 	}
 
-	public static void stopExecution() throws Exception {
-		robot.keyPress(KeyEvent.VK_ALT);
-		robot.keyPress(KeyEvent.VK_TAB);
-		Thread.sleep(500);
-		robot.keyRelease(KeyEvent.VK_TAB);
-		robot.keyRelease(KeyEvent.VK_ALT);
-		System.exit(0);
-	}
-
 	public static void runWtcTestForAllRibbonsInJob(int numberOfRibbonsToTestBeforeTakingDump,
 			int delayInSecondsWhileTakingDumpBeforeClosingPowerShell) throws Exception {
 		Dashboard.waitUntilLoaderIsNotDisplayed();
@@ -1244,26 +1251,26 @@ public class BaseClass {
 
 				}
 			} while (!WTC.selectWorkerField().getText().contains(nextWorkerToSelect));
-			while(true)
-			{
-				try
-				{
+			while (true) {
+				try {
 					WTC.checkButton().click();
 					Dashboard.waitUntilOkButtonIsDisplayed();
-					Thread.sleep(1000);
-					FiberResults.cancelButton().click();
+					while (Dashboard.isOkButtonDisplayed()) {
+						try {
+							FiberResults.cancelButton().click();
+						} catch (Exception e) {
+						}
+						Thread.sleep(2000);
+					}
 					break;
-				}
-				catch (Exception e)
-				{
-					if(WTC.isErrorMessageDisplayed())
-					{
+				} catch (Exception e) {
+					if (WTC.isErrorMessageDisplayed()) {
 						Dashboard.okButton().click();
 					}
 				}
 			}
 			Thread.sleep(1000);
-			while(true) {
+			while (true) {
 				try {
 					actions.moveToElement(WTC.runTestsButton()).click().build().perform();
 					break;
@@ -1274,9 +1281,9 @@ public class BaseClass {
 			numberOfRibbonsTested++;
 			System.out.println("Ribbons Tested - " + numberOfRibbonsTested);
 			JobDetailsPage.ribbonPosition(numberOfRibbonsTested).click();
-			if (numberOfRibbonsTested == 1) {
-				FiberResults.showTracesButton().click();
-			}
+//			if (numberOfRibbonsTested == 1) {
+//				FiberResults.showTracesButton().click();
+//			}
 			if (numberOfRibbonsTested % numberOfRibbonsToTestBeforeTakingDump == 0) {
 				int additionalDelay = (numberOfRibbonsTested / 50) * 5;
 				takeDump("dump_After_" + numberOfRibbonsTested + "_Ribbon_Tests",

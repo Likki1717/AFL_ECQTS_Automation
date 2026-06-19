@@ -52,9 +52,9 @@ public class RunBothWTCTestAndThenFiberTestInLoop extends BaseClass {
 			if (JobDetailsPage.isMissingFiberIdWarningPopupDisplayed()) {
 				Dashboard.okButton().click();
 			}
-			takeDump("afterJobSearch", 1);
+//			takeDump("afterJobSearch", 1);
 			runGetLengthTest(TestData.wtcTestModuleName);
-			runWtcTestForAllRibbonsInJob(5, 1);
+			runWtcTestForAllRibbonsInJob(200, 1);
 
 			TestData.useOfficeOtdr = true;
 
@@ -72,9 +72,9 @@ public class RunBothWTCTestAndThenFiberTestInLoop extends BaseClass {
 			if (JobDetailsPage.isMissingFiberIdWarningPopupDisplayed()) {
 				Dashboard.okButton().click();
 			}
-			takeDump("afterJobSearch", 1);
+//			takeDump("afterJobSearch", 1);
 			runGetLengthTest(TestData.fiberTestModuleName);
-			runFiberTestForAllFibersInJob(true, 20, 1);
+			runFiberTestForAllFibersInJob(true, 200, 1);
 		}
 	}
 }
