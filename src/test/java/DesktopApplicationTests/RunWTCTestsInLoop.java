@@ -23,6 +23,10 @@ public class RunWTCTestsInLoop extends BaseClass {
 		loginToApplication();
 		
 		verifyBuildVersion();
+		
+		updateTestSettings();
+
+		updateApplicationSettings();
 
 		deleteAllExistingConnectionProfiles();
 
@@ -36,12 +40,8 @@ public class RunWTCTestsInLoop extends BaseClass {
 
 		createProfile(TestData.connectionProfileName_JGR_Five, TestData.connectionProfile_Simulator_IP_Address, TestData.connectionProfile_Simulator_Port);
 
-		updateTestSettings();
-
-		updateApplicationSettings();
-
 		while (true) {
-			searchJobAndNavigationToJobDetailsPage(TestData.wtcTestModuleName, TestData.wtcTestJobSearchOrg,
+			searchJobAndNavigationToJobDetailsPage(TestData.wtcTestModuleName, TestData.jobSearchOrg,
 					TestData.wtcTestJobSearchJobNumber, TestData.getCurrentDateTimeStamp(),
 					TestData.wtcTestJobSearchCutNumberInfo);
 			if (JobDetailsPage.isMissingFiberIdWarningPopupDisplayed()) {

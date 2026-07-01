@@ -65,14 +65,6 @@ public class FiberResults extends BaseClass {
 		return driver.findElementByAccessibilityId("StopButton");
 	}
 
-	public static WebElement cancelButton() {
-		return driver.findElementByAccessibilityId("CancelButton");
-	}
-	
-	public static boolean isCancelButtonVisible() {
-		return isElementDisplayed(ByName.name("CancelButton"), 10);
-	}
-
 	public static WebElement continueButton() {
 		return driver.findElementByName("Continue");
 	}

@@ -11,9 +11,9 @@ public class WTC extends BaseClass {
 
 	public static WebElement previousRunTestsButton() {
 		int count = driver.findElementsByXPath("//Text[@Name='PASS']/../Button[@Name='Run Tests']").size();
-		return driver.findElementByXPath("(//Text[@Name='PASS']/../Button[@Name='Run Tests'])["+count+"]");
+		return driver.findElementByXPath("(//Text[@Name='PASS']/../Button[@Name='Run Tests'])[" + count + "]");
 	}
-	
+
 	public static WebElement runTestsButton() {
 		return driver.findElementByXPath("//Text[@Name='INCOMPLETE']/../Button[@Name='Run Tests']");
 	}
@@ -40,13 +40,18 @@ public class WTC extends BaseClass {
 		}
 	}
 
+	public static WebElement incompleteStatus() {
+		return driver
+				.findElement(By.xpath("//Text[@Name='INCOMPLETE']"));
+	}
+
 	public static WebElement checkButton() {
 		return driver
 				.findElement(By.xpath("//Text[@Name='INCOMPLETE']/../Button[contains(@AutomationId,'CheckButton')]"));
 	}
 
 	public static boolean isRunTestsButtonDisplayed() {
-		return isElementDisplayed(ByXPath.xpath("//Button[@Name='Run Tests']"), 5);
+		return isElementDisplayed(ByXPath.xpath("//Button[@Name='Run Tests']"), 3);
 	}
 
 	public static void waitUntilStopButtonIsNotDisplayed() throws InterruptedException {
@@ -54,9 +59,8 @@ public class WTC extends BaseClass {
 			Thread.sleep(1000);
 		}
 	}
-	
-	public static boolean isErrorMessageDisplayed()
-	{
+
+	public static boolean isErrorMessageDisplayed() {
 		return isElementDisplayed(ByName.name("Error Message"), 1);
 	}
 }

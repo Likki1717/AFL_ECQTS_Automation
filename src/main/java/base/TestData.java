@@ -3,9 +3,10 @@ package base;
 import java.io.File;
 
 public class TestData {
-	public static String systemUsername = "sumeeth"; // veltris
-	public static String testEnvironment = "Dev"; // Dev /QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
-	public static String expectedAppVersion = "Version: 7.6.21.0";
+	public static String systemUsername = "sumeeth"; // veltris // LikhithaR
+	public static String testEnvironment = "Soft Release Second Prod"; // Dev /QA/Soft Release Prod/Soft Release Second
+																		// Prod/Prod/Second Prod
+	public static String expectedAppVersion = "Version: 7.7.0.0";
 	public static boolean useOfficeOtdr = true;
 	public static boolean useExternalCamera = true;
 	public static int numberOfFibersToTest = 1;
@@ -15,25 +16,27 @@ public class TestData {
 			return "kumar@123";
 		} else if (systemUsername.equals("veltris")) {
 			return "manohar@123";
-		} else // Update below if other than Sumeeth and Mandeep is using automation script
-		{
-			return "kumar@1234";
+		} else if (systemUsername.equals("LikhithaR")) {
+			return "kumar@123";
+		} else {
+			return "kumar@1234"; // Update below if other user is using automation script
 		}
 	}
 
-	public static String fiberTestJobSearchOrg = "CAB";
-	public static String wtcTestJobSearchOrg = "CAB";
+	public static String jobSearchOrg = "CAB";
+	public static String jobSearchLocation = "Hillside";
+	public static String jobSearchOperator = "QE1";
 
 	public static String OCR_Report_Path = "C:\\Users\\" + systemUsername + "\\AppData\\Local\\Packages\\"
-			+ packageName(testEnvironment) + "\\LocalState\\Downloads\\" + fiberTestJobSearchOrg + "";
+			+ packageName(testEnvironment) + "\\LocalState\\Downloads\\" + jobSearchOrg + "";
 	// Deleting this SecureStorage folder will have app in logged out state
 	public static String secureStorageFolderPath = "C:\\Users\\" + systemUsername + "\\AppData\\Local\\Packages\\"
 			+ packageName(testEnvironment) + "\\LocalState\\SecureStorage";
 	public static String openVpnAppPath = "C:\\Program Files\\OpenVPN Connect\\OpenVPNConnect.exe";
 	public static String SOR_Files_Path = new File("src/test/Resources/SOR_Files_Downloaded_From_Automation")
 			.getAbsolutePath();
-	public static String winAppDriverPath = new File("C:\\Program Files (x86)\\Windows Application Driver\\WinAppDriver.exe")
-			.getAbsolutePath();
+	public static String winAppDriverPath = new File(
+			"C:\\Program Files (x86)\\Windows Application Driver\\WinAppDriver.exe").getAbsolutePath();
 	public static String prysmianAttenuationFilePath = new File(
 			"src/test/Resources/ImportFiles/PrysmianFiles/attenuation.csv").getAbsolutePath();
 	public static String prysmianJacketOdFilePath = new File(
@@ -45,12 +48,14 @@ public class TestData {
 	public static String taihanAttenuationFilePath = new File(
 			"src/test/Resources/ImportFiles/TaihanFiles/attenuation.csv").getAbsolutePath();
 
+	public static final String importDataModuleName = "Import Data";
 	public static String importOrg = "CAB";
 	public static String importCutNumber = "11";
 	public static String importItemOrgCode = "SPC";
 	public static String importcutNumberInfo = "ZTEST01";
 	public static String importType = "Fiber";
 
+	public static String prysmianImportModuleName = "Prysmian";
 	public static String prysmianExpectedIncompleteTests = "56";
 	public static String prysmianExpectedPassedTests = "103";
 	public static String prysmianExpectedFailedTests = "2";
@@ -58,6 +63,7 @@ public class TestData {
 	public static String prysmianExpectedOtdrLength = "7879 m";
 	public static String prysmianJobNumberStartsWith = "90043053";
 
+	public static String swindonImportModuleName = "Swindon";
 	public static String swindonExpectedIncompleteTests = "159";
 	public static String swindonExpectedPassedTests = "295";
 	public static String swindonExpectedFailedTests = "1";
@@ -65,18 +71,17 @@ public class TestData {
 	public static String swindonExpectedOtdrLength = "6353 m";
 	public static String swindonJobNumberStartsWith = "250592";
 
+	public static String taihanImportModuleName = "Taihan";
 	public static String taihanExpectedIncompleteTests = "51";
-	public static String taihanExpectedPassedTests = "98";
-	public static String taihanExpectedFailedTests = "0";
+	public static String taihanExpectedPassedTests = "96";
+	public static String taihanExpectedFailedTests = "2";
 	public static String taihanExpectedHelixFactor = "1.02";
 	public static String taihanExpectedOtdrLength = "6181 m";
 	public static String taihanJobNumberStartsWith = "7887";
 
-	public static String fiberTestModuleName = "Fiber Test";
+	public static final String fiberTestModuleName = "Fiber Test";
 	public static String fiberTestJobSearchJobNumber = "25305754"; // Large Job - 15811448
-
 	public static String fiberTestJobSearchCutNumber = getCurrentDateTimeStamp();
-
 	public static String fiberTestJobSearchCutNumberInfo = "ZTEST01";
 	public static String fiberTestBufferTube = "10-BLUE";
 	public static String fiberTestExpectedIncompleteTestsCount = fiberTestJobSearchJobNumber.equals("25305754") ? "66"
@@ -84,10 +89,10 @@ public class TestData {
 	public static String fiberTestExpectedPassedTestsCount = fiberTestJobSearchJobNumber.equals("25305754") ? "20"
 			: "17";
 	public static String fiberTestExpectedFailedTestsCount = fiberTestJobSearchJobNumber.equals("25305754") ? "5" : "6";
-
+	public static String editAdjLengthValue = "9836";
 	public static String fiberTestCompletionTabIseSeqValue = "9886";
 
-	public static String wtcTestModuleName = "WTC Test";
+	public static final String wtcTestModuleName = "WTC Test";
 	public static String wtcTestJobSearchJobNumber = "51022495-3028378";
 	public static String wtcTestJobSearchCutNumber = getCurrentDateTimeStamp();
 	public static String wtcTestJobSearchCutNumberInfo = "ZTEST01";
@@ -96,6 +101,21 @@ public class TestData {
 	public static String wtcTestExpectedPassedTestsCount = "20";
 	public static String wtcTestExpectedFailedTestsCount = "6";
 	public static String wtcTestCompletionTabIseSeqValue = "9886";
+
+	public static final String copyResultsModuleName = "Copy Results";
+	public static String copyJobModule = wtcTestModuleName; // fiberTestModuleName
+	public static String copyJobOrg = "CAB";
+	public static String copyJobSourceJobNumber = "50296772-2926838";
+	public static String copyJobSourceCutNumber = "123";
+	public static String copyJobSourceCutNumberInfo = "ZTEST01";
+	public static String copyJobDestinationJobNumber = "50296772-2926838";
+	public static String copyJobDestinationCutNumber = getCurrentDateTimeStamp();
+	public static String copyJobDestinationCutNumberInfo = "ZTEST01";
+	public static String copyJobDestinationJobExpectedIncompleteTests = "2";
+	public static String copyJobDestinationJobExpectedPassedTests = "13833";
+	public static String copyJobDestinationJobExpectedFailedTests = "3";
+	public static String copyJobDestinationJobExpectedHelixFactor = "1.0";
+	public static String copyJobDestinationJobExpectedOtdrLength = "5765 m";
 
 	public static String ecqtsAppUsername() {
 		String username = null;
@@ -146,8 +166,6 @@ public class TestData {
 		}
 		return password;
 	}
-
-	public static String prodWebUrl = "https://www.ecqts.aflglobal.com";
 
 	public static String connectionProfileName_Simulator = "Simulator";
 	public static String connectionProfileName_JGR_One = "JGR-1";

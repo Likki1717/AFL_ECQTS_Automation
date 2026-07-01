@@ -10,17 +10,24 @@ import base.BaseClass;
 
 public class JobSearch extends BaseClass {
 
-	public static WebElement orgField()
-	{
+	public static WebElement orgField() {
 		return driver.findElementByAccessibilityId("OrgIdDropdown");
 	}
-	
+
+	public static WebElement locationField() {
+		return driver.findElementByAccessibilityId("LocationEntry");
+	}
+
+	public static WebElement operatorLine_Cell() {
+		return driver.findElementByAccessibilityId("OperatorIdEntry");
+	}
+
 	public static WebElement jobNumber() {
 		return driver.findElementByName("Job Number");
 	}
 
 	public static boolean isJobWarningsPopupDisplayed() {
-		return isElementDisplayed(ByName.name("Job Warnings/Errors"), 120);
+		return isElementDisplayed(ByName.name("Job Warnings/Errors"), 1);
 	}
 
 	public static WebElement searchCutNumber() {
@@ -35,37 +42,46 @@ public class JobSearch extends BaseClass {
 		return driver.findElement(By.xpath("//Button[@Name='GO']"));
 	}
 
+	public static boolean isGoButtonDisplayed() {
+		return isElementDisplayed(ByName.name("GO"), 1);
+	}
+
+	public static boolean isGoButtonNotDisplayed() throws Exception {
+		return isElementNotDisplayed(ByName.name("GO"), 120);
+	}
+
 	public static boolean isJobNumberLabelDisplayed() {
 		return isElementDisplayed(By.xpath("//Text[@Name='Job Number *']"), 10);
 	}
 
-	public static boolean cutNumberHeaderDisplayed() {
-		return isElementDisplayed(By.xpath("//Text[@Name='Cut Number']"), 5);
+	public static boolean isCutNumberHeaderDisplayed() {
+		return isElementDisplayed(By.xpath("//Text[@Name='Cut Number']"), 1);
 	}
 
-	public static boolean userHeaderDisplayed() {
-		return isElementDisplayed(By.xpath("//Text[@Name='User']"), 5);
+	public static boolean isUserHeaderDisplayed() {
+		return isElementDisplayed(By.xpath("//Text[@Name='User']"), 1);
 	}
 
-	public static boolean dateHeaderDisplayed() {
-		return isElementDisplayed(By.xpath("//Text[@Name='Date']"), 5);
+	public static boolean isDateHeaderDisplayed() {
+		return isElementDisplayed(By.xpath("//Text[@Name='Date']"), 1);
 	}
 
-	public static boolean processHeaderDisplayed() {
-		return isElementDisplayed(By.xpath("//Text[@Name='Process']"), 5);
+	public static boolean isProcessHeaderDisplayed() {
+		return isElementDisplayed(By.xpath("//Text[@Name='Process']"), 1);
 	}
 
-	public static List<?> listOfRowsInCutNumber() {
+	public static List<?> listOfRowsInCutNumberFieldTable() {
 
 		return driver.findElementsByXPath("//ListItem[@Name='Microsoft.Maui.Controls.Platform.ItemTemplateContext']");
 	}
 
-	public static List<?> listOfRowsInCutNumberInfo() {
+	public static List<?> listOfRowsInCutNumberInfoFieldTable() {
 
 		return driver.findElementsByXPath("//ListItem[@Name='Microsoft.Maui.Controls.Platform.ItemTemplateContext']");
 	}
-	
-	public static boolean cutNumberInfoHeader() {
-		return isElementDisplayed(By.xpath("//Text[@Name='Cut Number Info']"), 5);	
+
+	public static boolean isCutNumberInfoHeaderDisplayed() {
+		return isElementDisplayed(
+				By.xpath("//Edit[@Name='Search Cut Number Info']/following-sibling::Text[@Name='Cut Number Info']"), 1);
 	}
 }

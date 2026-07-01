@@ -23,6 +23,10 @@ public class RunBothWTCTestAndThenFiberTestInLoop extends BaseClass {
 		loginToApplication();
 
 		verifyBuildVersion();
+		
+		updateTestSettings();
+		
+		updateApplicationSettings();
 
 		deleteAllExistingConnectionProfiles();
 
@@ -41,12 +45,8 @@ public class RunBothWTCTestAndThenFiberTestInLoop extends BaseClass {
 		createProfile(TestData.connectionProfileName_JGR_Five, TestData.connectionProfile_Simulator_IP_Address,
 				TestData.connectionProfile_Simulator_Port);
 
-		updateTestSettings();
-
-		updateApplicationSettings();
-
 		while (true) {
-			searchJobAndNavigationToJobDetailsPage(TestData.wtcTestModuleName, TestData.wtcTestJobSearchOrg,
+			searchJobAndNavigationToJobDetailsPage(TestData.wtcTestModuleName, TestData.jobSearchOrg,
 					TestData.wtcTestJobSearchJobNumber, TestData.getCurrentDateTimeStamp(),
 					TestData.wtcTestJobSearchCutNumberInfo);
 			if (JobDetailsPage.isMissingFiberIdWarningPopupDisplayed()) {
@@ -54,7 +54,7 @@ public class RunBothWTCTestAndThenFiberTestInLoop extends BaseClass {
 			}
 //			takeDump("afterJobSearch", 1);
 			runGetLengthTest(TestData.wtcTestModuleName);
-			runWtcTestForAllRibbonsInJob(200, 1);
+			runWtcTestForAllRibbonsInJob(200, 1);   
 
 			TestData.useOfficeOtdr = true;
 
@@ -65,9 +65,7 @@ public class RunBothWTCTestAndThenFiberTestInLoop extends BaseClass {
 
 			updateTestSettings();
 
-			updateApplicationSettings();
-
-			searchJobAndNavigationToJobDetailsPage(TestData.fiberTestModuleName, TestData.fiberTestJobSearchOrg,
+			searchJobAndNavigationToJobDetailsPage(TestData.fiberTestModuleName, TestData.jobSearchOrg,
 					"45193192-2869194", TestData.getCurrentDateTimeStamp(), TestData.fiberTestJobSearchCutNumberInfo);
 			if (JobDetailsPage.isMissingFiberIdWarningPopupDisplayed()) {
 				Dashboard.okButton().click();

@@ -43,5 +43,14 @@ public class SignIn extends BaseClass {
 	public static WebElement appWindow() {
 		return desktopSession.findElementByName("Non Client Input Sink Window");
 	}
+	
+	public static WebElement recoverPasswordButton()
+	{
+		return driver.findElement(By.xpath("//*[@AutomationId='RecoverPasswordButton']"));
+	}
+	
+	public static boolean isRecoverPasswordButtonDisplayed() {
+		return isElementDisplayed(By.xpath("//*[@AutomationId='RecoverPasswordButton']"),1);
+	}
 
 }

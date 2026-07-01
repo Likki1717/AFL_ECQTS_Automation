@@ -19,9 +19,13 @@ public class RegressionTests extends BaseClass {
 				
 		verifyIncorrectCredentials();
 		
+		validateRecoverPasswordButtonAvailability();
+		
 		loginToApplication();
 		
 		verifyBuildVersion();
+		
+		verifyCopyResults();
 		
 		importPrysmianJob();
 						
@@ -39,10 +43,10 @@ public class RegressionTests extends BaseClass {
 		
 		updateApplicationSettings();
 				
-		searchJobAndNavigationToJobDetailsPage(TestData.fiberTestModuleName, TestData.fiberTestJobSearchOrg, TestData.fiberTestJobSearchJobNumber,
+		searchJobAndNavigationToJobDetailsPage(TestData.fiberTestModuleName, TestData.jobSearchOrg, TestData.fiberTestJobSearchJobNumber,
 				TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo);
 		
-		verifyJobDetailsHeader(TestData.fiberTestJobSearchOrg, TestData.fiberTestJobSearchJobNumber,
+		verifyJobDetailsHeader(TestData.jobSearchOrg, TestData.fiberTestJobSearchJobNumber,
 				TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo,
 				"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumber);
 		
@@ -51,6 +55,8 @@ public class RegressionTests extends BaseClass {
 		runGetLengthTest(TestData.fiberTestModuleName);
 		
 		editAdjLength();
+		
+		verifyOpticsPage();
 		
 		runFiberTest(TestData.numberOfFibersToTest);
 		

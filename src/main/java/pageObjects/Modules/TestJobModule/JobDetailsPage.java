@@ -6,6 +6,7 @@ import org.openqa.selenium.WebElement;
 
 import base.BaseClass;
 import base.TestData;
+import io.appium.java_client.MobileBy.ByAccessibilityId;
 
 public class JobDetailsPage extends BaseClass {
 
@@ -26,7 +27,7 @@ public class JobDetailsPage extends BaseClass {
 	}
 
 	public static boolean isWtcTabDisplayed() {
-		return isElementDisplayed(ByName.name("WTC"), 5);
+		return isElementDisplayed(ByName.name("WTC"), 3);
 	}
 
 	public static WebElement wtcTab() {
@@ -60,35 +61,6 @@ public class JobDetailsPage extends BaseClass {
 		return driver.findElement(By.xpath("//Text[@Name='Completion']"));
 	}
 
-//	public static String get_Test_Status() {
-//		int incomplete_Tests = Integer
-//				.parseInt(driver.findElement(By.xpath("//Text[@AutomationId='OverallStatusIncompleteValueLabel']"))
-//						.getText().split(":")[1].trim());
-//		int passed_Tests = Integer
-//				.parseInt(driver.findElement(By.xpath("//Text[@AutomationId='OverallStatusSuccessValueLabel']"))
-//						.getText().split(":")[1].trim());
-//		int failed_Tests = Integer
-//				.parseInt(driver.findElement(By.xpath("//Text[@AutomationId='OverallStatusFailureValueLabel']"))
-//						.getText().split(":")[1].trim());
-//		if (ISE_Seq_Mark_Test_Result.equalsIgnoreCase("PASS")) {
-//			passed_Tests = passed_Tests - 1;
-//			incomplete_Tests = incomplete_Tests + 1;
-//		} else if (ISE_Seq_Mark_Test_Result.equalsIgnoreCase("FAIL")) {
-//			failed_Tests = failed_Tests - 1;
-//			incomplete_Tests = incomplete_Tests + 1;
-//		}
-//		if (OSE_Seq_Mark_Test_Result.equalsIgnoreCase("PASS")) {
-//			passed_Tests = passed_Tests - 1;
-//			incomplete_Tests = incomplete_Tests + 1;
-//		} else if (OSE_Seq_Mark_Test_Result.equalsIgnoreCase("FAIL")) {
-//			failed_Tests = failed_Tests - 1;
-//			incomplete_Tests = incomplete_Tests + 1;
-//		}
-//		ISE_Seq_Mark_Test_Result = "Incomplete";
-//		OSE_Seq_Mark_Test_Result = "Incomplete";
-//		return "Incomplete: " + incomplete_Tests + ", Passed: " + passed_Tests + ", Failed: " + failed_Tests;
-//	}
-
 	public static String getActualTestResultsCounts() {
 		int incomplete_Tests = Integer
 				.parseInt(driver.findElement(By.xpath("//Text[@AutomationId='OverallStatusIncompleteValueLabel']"))
@@ -111,7 +83,7 @@ public class JobDetailsPage extends BaseClass {
 	}
 
 	public static boolean isMissingFiberIdWarningPopupDisplayed() {
-		return isElementDisplayed(ByName.name("Missing Fiber Id; Please create a NCMIR;"), 5);
+		return isElementDisplayed(ByName.name("Missing Fiber Id; Please create a NCMIR;"), 2);
 	}
 
 	public static WebElement org() {
@@ -141,10 +113,29 @@ public class JobDetailsPage extends BaseClass {
 	public static WebElement adjLengthSaveIcon() {
 		return driver.findElementByAccessibilityId("SaveAdjustedLengthButton");
 	}
+	
+	public static String getAdjLengthValue()
+	{
+		return driver.findElementByAccessibilityId("AdjustedLengthValueLabel").getAttribute("Name");
+	}
 
 	public static WebElement ribbonPosition(int ribbonNumber) {
-		return driver.findElement(By.xpath("(//Text[@AutomationId='OpticsButton']/../following-sibling::ListItem)["+ribbonNumber+"]"));
+		return driver.findElement(By
+				.xpath("(//Text[@AutomationId='OpticsButton']/../following-sibling::ListItem)[" + ribbonNumber + "]"));
 	}
-		
+
+	public static int countOfBufferTubesListedInJobDetailsPage() {
+		return driver.findElements(By.xpath("//Text[@AutomationId='OpticsButton']/../following-sibling::ListItem/Text/following-sibling::Text[contains(@Name, '%')]")).size();
+	}
+	
+	public static boolean isLoadingLargeJobPopupDisplayed()
+	{
+		return isElementDisplayed(ByAccessibilityId.AccessibilityId("Download All Fibers DataButton"), 2);
+	}
+	
+	public static WebElement downloadAllFibersDataButton()
+	{
+		return driver.findElementByAccessibilityId("Download All Fibers DataButton");
+	}
 
 }

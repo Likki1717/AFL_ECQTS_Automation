@@ -67,15 +67,19 @@ public class Import extends BaseClass {
 	public static WebElement uploadFileButton() {
 		return driver.findElementByName("Upload CSV");
 	}
-	
+
 	public static WebElement submitButton() {
 		return driver.findElement(By.xpath("//Button[@Name='Submit']"));
 	}
-	
+
+	public static String getErrorDisplayedAboveSubmitButton() {
+		return driver.findElement(By.xpath("//Text[@Name='Submit']/following-sibling::Text")).getAttribute("Name");
+	}
+
 	public static WebElement fileNameTextBox() {
 		return driver.findElement(By.xpath("//ComboBox[@Name='File name:']/Edit"));
 	}
-	
+
 	public static String getJobNumberFromImportSuccessFulPopup() {
 		// Name Job imported successfully, but we couldn't load the job details right
 		// now.
@@ -88,7 +92,7 @@ public class Import extends BaseClass {
 	public static boolean isImportSuccessfulPopupDisplayed() {
 		return isElementDisplayed(By.xpath("//Text[contains(@Name,'Job imported successfully')]"), 1);
 	}
-	
+
 	public static WebElement okButton() {
 		return driver.findElement(By.xpath("//Button[@Name='OK']"));
 	}

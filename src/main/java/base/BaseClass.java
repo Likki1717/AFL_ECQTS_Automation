@@ -20,15 +20,18 @@ import org.testng.annotations.Listeners;
 import org.testng.asserts.SoftAssert;
 
 import io.appium.java_client.windows.WindowsDriver;
+import io.appium.java_client.windows.WindowsElement;
 import pageObjects.CommonPages.Dashboard;
 import pageObjects.CommonPages.SideMenu;
 import pageObjects.CommonPages.SignIn;
+import pageObjects.Modules.CopyResults;
 import pageObjects.Modules.ImportData.Import;
 import pageObjects.Modules.TestJobModule.JobDetailsPage;
 import pageObjects.Modules.TestJobModule.JobSearch;
 import pageObjects.Modules.TestJobModule.JobDetails.Completion;
 import pageObjects.Modules.TestJobModule.JobDetails.FiberResults;
 import pageObjects.Modules.TestJobModule.JobDetails.OTDR_Settings;
+import pageObjects.Modules.TestJobModule.JobDetails.Optics;
 import pageObjects.Modules.TestJobModule.JobDetails.ProtectionLayer;
 import pageObjects.Modules.TestJobModule.JobDetails.Reports;
 import pageObjects.Modules.TestJobModule.JobDetails.WTC;
@@ -41,7 +44,7 @@ import pageObjects.sideMenu.settings.TestSettings;
 @Listeners(TestFailureListener.class)
 public class BaseClass {
 	public static WindowsDriver<?> driver;
-	public static WindowsDriver<?> desktopSession;
+	public static WindowsDriver<WindowsElement> desktopSession;
 	public static Actions actions;
 	public static WebDriverWait wait;
 	public static Robot robot;
@@ -130,7 +133,7 @@ public class BaseClass {
 	public static void launchOpenVpnAppAndConnect() throws Exception {
 		if (TestData.useOfficeOtdr) {
 			launchDependentApplication(TestData.openVpnAppPath);
-			Thread.sleep(4000);
+			Thread.sleep(5000);
 			for (int i = 0; i < 4; i++) {
 				robot.keyPress(KeyEvent.VK_TAB);
 				robot.keyRelease(KeyEvent.VK_TAB);
@@ -237,8 +240,7 @@ public class BaseClass {
 				capabilities2.setCapability("platformName", "Windows");
 				capabilities2.setCapability("deviceName", "WindowsPC");
 				desktopSession = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities2);
-				String windowHandle = desktopSession
-						.findElement(By.xpath("//*[contains(@ClassName,'WinUIDesktopWin32WindowClass')]"))
+				String windowHandle = desktopSession.findElementByClassName("WinUIDesktopWin32WindowClass")
 						.getAttribute("NativeWindowHandle");
 				int handle = Integer.parseInt(windowHandle);
 				String hexHandle = "0x" + Integer.toHexString(handle);
@@ -246,12 +248,14 @@ public class BaseClass {
 				capabilities3.setCapability("appTopLevelWindow", hexHandle);
 				driver = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities3);
 				applicationAttached = true;
-				desktopSession.quit();
 			} catch (Exception e) {
 				System.out.println("****Root attach failed, trying again****");
 				Thread.sleep(2000);
+			} finally {
+				if (desktopSession != null) {
+					desktopSession.quit();
+				}
 			}
-
 		}
 	}
 
@@ -263,6 +267,11 @@ public class BaseClass {
 		softAssert.assertTrue(SignIn.isloginFailureDisplayed(),
 				"Tried for 5 secs, Login failed message was not visible");
 		SignIn.okButtonOnLoginFailurePopup().click();
+	}
+
+	public static void validateRecoverPasswordButtonAvailability() throws Exception {
+		softAssert.assertTrue(SignIn.isRecoverPasswordButtonDisplayed(),
+				"Recover Password button is not displayed on the app login page");
 	}
 
 	public static void loginToApplication() throws Exception {
@@ -308,10 +317,10 @@ public class BaseClass {
 			SideMenu.aboutButton().click();
 			String appVersion = About.versionNumber().getText();
 			Assert.assertEquals(appVersion, TestData.expectedAppVersion, "Build version mismatch.");
-			String expectedTextInPortalLink = (TestData.testEnvironment.equals("Dev")
-					|| TestData.testEnvironment.equals("QA")) ? TestData.testEnvironment.toLowerCase()
-							: TestData.prodWebUrl;
-			softAssert.assertTrue(About.portalLink().getText().contains(expectedTextInPortalLink),
+			String expectedEnvironment = (TestData.testEnvironment.equals("Dev")
+					|| TestData.testEnvironment.equals("QA")) ? "-" + TestData.testEnvironment.toLowerCase() : "";
+			String expectedPortalLink = "https://www.ecqts" + expectedEnvironment + ".aflglobal.com";
+			softAssert.assertTrue(About.portalLink().getText().contains(expectedPortalLink),
 					"Environment specific portal link is not displayed in About page");
 			About.additionalInformationButton().click();
 			softAssert.assertTrue(
@@ -438,7 +447,7 @@ public class BaseClass {
 			softAssert.assertTrue(
 					ConnectionProfiles.ipAddressTextBox().getAttribute("Value.Value")
 							.contains(TestData.connectionProfile_Anritsu_9085_IP_Address),
-					"Ip address did not change when we changed instrument from Simulator to Anritsu 9085");
+					"Ip Address did not change when connection profile instrument type is changed");
 			ConnectionProfiles.ipAddressTextBox().clear();
 			ConnectionProfiles.ipAddressTextBox().sendKeys(TestData.connectionProfile_Anritsu_9085_IP_Address);
 			robot.mouseWheel(3);
@@ -520,26 +529,20 @@ public class BaseClass {
 
 	public static void importJob(String importType, String importFilesToUpload, String OTDR_Length, String helixFactor,
 			String JobNumberStartsWith) throws Exception {
-		while (!Dashboard.isImportDataModuleDisplayed()) {
-			Dashboard.openNavigationButton().click();
-			SideMenu.isDashboardButtonDisplayed();
-			SideMenu.dashboardButton().click();
-			Thread.sleep(1000);
-		}
-		Dashboard.importDataModule().click();
+		navigateToModule(TestData.importDataModuleName);
 
 		softAssert.assertTrue(Import.isSelectImportTextDisplayed(),
 				"Waited for 5 seconds, Select an import type from the left panel is not displayed");
 
 		Thread.sleep(1000);
 
-		if (importType.equalsIgnoreCase("Prysmian")) {
+		if (importType.equalsIgnoreCase(TestData.prysmianImportModuleName)) {
 			Import.prysmianType().click();
 
-		} else if (importType.equalsIgnoreCase("Swindon")) {
+		} else if (importType.equalsIgnoreCase(TestData.swindonImportModuleName)) {
 			Import.swindonType().click();
 
-		} else if (importType.equalsIgnoreCase("Taihan")) {
+		} else if (importType.equalsIgnoreCase(TestData.taihanImportModuleName)) {
 			Import.taihanType().click();
 		}
 
@@ -592,14 +595,15 @@ public class BaseClass {
 		Dashboard.isLoaderDisplayed();
 
 		boolean eitherImportCompletedOrGotError = false;
+		boolean isManualJobSearchNeeded = false;
 
 		while (!eitherImportCompletedOrGotError) {
 
 			if (Dashboard.isLoaderNotDisplayed() || Import.isImportSuccessfulPopupDisplayed()
 					|| Import.isWarningsErrorsPopupDisplayedOtherThanMissingFiberId()) {
 				eitherImportCompletedOrGotError = true;
-				Thread.sleep(2000);
 				if (Import.isImportSuccessfulPopupDisplayed()) {
+					isManualJobSearchNeeded = true;
 					String importJobNumber = Import.getJobNumberFromImportSuccessFulPopup();
 					System.out.println("* " + importType
 							+ " Import Complete popup displayed instead of navigating to job details page.");
@@ -613,19 +617,25 @@ public class BaseClass {
 					searchJobAndNavigationToJobDetailsPage(module, TestData.importOrg, importJobNumber,
 							TestData.importCutNumber, TestData.importcutNumberInfo);
 				} else if (Import.isWarningsErrorsPopupDisplayedOtherThanMissingFiberId()) {
-					System.out.println("****" + importType + " Import Failed, found warning/errors popup - "
-							+ Dashboard.getWarningMessage() + " ****");
+					softAssert.fail(importType + " Import Failed, found warning/errors popup - "
+							+ Dashboard.getWarningMessage());
 					Dashboard.okButton().click();
 					return;
 				} else if (Import.isPrysmianTypeDisplayed()) {
-					System.out.println("****" + importType
-							+ " Import Failed - loader is not displayed but still on the import page****");
+					String errorMessage = "";
+					try {
+						errorMessage = Import.getErrorDisplayedAboveSubmitButton();
+					} catch (Exception e) {
+						errorMessage = "Could not fetch the error message, script needs to be modified";
+					}
+					softAssert
+							.fail(importType + " Import Failed, found error message on import page - " + errorMessage);
 					return;
 				}
 			}
 		}
 
-		if (JobDetailsPage.isMissingFiberIdWarningPopupDisplayed()) {
+		if (!isManualJobSearchNeeded && JobDetailsPage.isMissingFiberIdWarningPopupDisplayed()) {
 			Dashboard.okButton().click();
 		}
 
@@ -646,7 +656,7 @@ public class BaseClass {
 				importType + " Import completed - Helix Factor mismatch.");
 
 		verifyJobDetailsHeader(TestData.importOrg, JobNumberStartsWith, TestData.importCutNumber,
-				TestData.importcutNumberInfo, importType);
+				TestData.importcutNumberInfo, "After " + importType + " Import");
 	}
 
 	public static void importPrysmianJob() {
@@ -655,7 +665,7 @@ public class BaseClass {
 			String prysmianFilePath = "\"" + TestData.prysmianAttenuationFilePath + "\" \""
 					+ TestData.prysmianJacketOdFilePath + "\"";
 
-			importJob("Prysmian", prysmianFilePath, TestData.prysmianExpectedOtdrLength,
+			importJob(TestData.prysmianImportModuleName, prysmianFilePath, TestData.prysmianExpectedOtdrLength,
 					TestData.prysmianExpectedHelixFactor, TestData.prysmianJobNumberStartsWith);
 
 			// Validating test results count
@@ -667,13 +677,11 @@ public class BaseClass {
 	}
 
 	public static void importSwindonJob() {
-
 		try {
-			// Multi-file string
 			String swindonFilePath = "\"" + TestData.swindonAttenuationFilePath + "\" \""
 					+ TestData.swindonJacketOdFilePath + "\"";
 
-			importJob("Swindon", swindonFilePath, TestData.swindonExpectedOtdrLength,
+			importJob(TestData.swindonImportModuleName, swindonFilePath, TestData.swindonExpectedOtdrLength,
 					TestData.swindonExpectedHelixFactor, TestData.swindonJobNumberStartsWith);
 
 			verifyTestResultsCount(TestData.swindonExpectedIncompleteTests, TestData.swindonExpectedPassedTests,
@@ -690,8 +698,8 @@ public class BaseClass {
 			// Multi-file string
 			String taihanFilePath = "\"" + TestData.taihanAttenuationFilePath + "\"";
 
-			importJob("Taihan", taihanFilePath, TestData.taihanExpectedOtdrLength, TestData.taihanExpectedHelixFactor,
-					TestData.taihanJobNumberStartsWith);
+			importJob(TestData.taihanImportModuleName, taihanFilePath, TestData.taihanExpectedOtdrLength,
+					TestData.taihanExpectedHelixFactor, TestData.taihanJobNumberStartsWith);
 
 			verifyTestResultsCount(TestData.taihanExpectedIncompleteTests, TestData.taihanExpectedPassedTests,
 					TestData.taihanExpectedFailedTests, "Taihan Import");
@@ -702,86 +710,160 @@ public class BaseClass {
 
 	}
 
-	public static void searchJobAndNavigationToJobDetailsPage(String module, String org, String jobNumber,
-			String cutNumber, String cutNumberInfo) throws Exception {
+	public static void navigateToModule(String module) throws Exception {
 		while (!Dashboard.isImportDataModuleDisplayed()) {
 			while (Dashboard.isOpenNavigationButtonDisplayed()) {
 				Dashboard.openNavigationButton().click();
 				Thread.sleep(1000);
 			}
-			SideMenu.isDashboardButtonDisplayed();
+			SideMenu.waitUntilDashboardButtonIsDisplayed();
 			SideMenu.dashboardButton().click();
 			Thread.sleep(1000);
 		}
-		if (module.equals(TestData.fiberTestModuleName)) {
+		switch (module) {
+		case TestData.fiberTestModuleName: {
 			Dashboard.fiberTestModule().click();
-		} else if (module.equals(TestData.wtcTestModuleName)) {
-			Dashboard.wtcTestModule().click();
+			break;
 		}
+		case TestData.wtcTestModuleName: {
+			Dashboard.wtcTestModule().click();
+			break;
+		}
+		case TestData.copyResultsModuleName: {
+			Dashboard.copyResultsModule().click();
+			break;
+		}
+		case TestData.importDataModuleName: {
+			Dashboard.importDataModule().click();
+			break;
+		}
+		}
+		Thread.sleep(1000);
+	}
+
+	public static void searchJobAndNavigationToJobDetailsPage(String module, String org, String jobNumber,
+			String cutNumber, String cutNumberInfo) throws Exception {
+		navigateToModule(module);
 		JobSearch.isJobNumberLabelDisplayed();
 		JobSearch.orgField().click();
 		JobSearch.orgField().sendKeys(org);
 		Thread.sleep(500);
-		actions.sendKeys(Keys.ENTER).perform();
-		JobSearch.jobNumber().sendKeys(jobNumber);
+		actions.sendKeys(Keys.TAB).build().perform();
 		Thread.sleep(500);
-		actions.sendKeys(Keys.ENTER).perform();
-		JobSearch.isJobWarningsPopupDisplayed();
+		JobSearch.locationField().click();
+		JobSearch.locationField().sendKeys(TestData.jobSearchLocation);
+		Thread.sleep(500);
+		actions.sendKeys(Keys.TAB).build().perform();
+		Thread.sleep(500);
+		JobSearch.operatorLine_Cell().click();
+		JobSearch.operatorLine_Cell().sendKeys(TestData.jobSearchOperator);
+		Thread.sleep(500);
+		actions.sendKeys(Keys.TAB).build().perform();
+		Thread.sleep(500);
+		do {
+			JobSearch.jobNumber().click();
+			JobSearch.jobNumber().clear();
+			JobSearch.jobNumber().sendKeys(jobNumber);
+			Thread.sleep(500);
+			actions.sendKeys(Keys.ENTER).perform();
+		} while (!Dashboard.isLoaderDisplayed());
 		Dashboard.waitUntilOkButtonIsDisplayed();
-		Dashboard.okButton().click();
-		wait = new WebDriverWait(driver, 120);
-		try {
-			wait.until(ExpectedConditions.elementToBeClickable(JobSearch.searchCutNumber()));
-		} catch (Exception e) {
-			System.out.println("**Cut number field is not clickable, possibly job load timed out after 110 seconds**");
+		while (true) {
+			if (JobSearch.isJobWarningsPopupDisplayed()) {
+				Dashboard.okButton().click();
+			} else {
+				Dashboard.okButton().click();
+				JobSearch.jobNumber().click();
+				Thread.sleep(500);
+				actions.sendKeys(Keys.ENTER).perform();
+				Dashboard.waitUntilOkButtonIsDisplayed();
+				continue;
+			}
+			wait = new WebDriverWait(driver, 120);
+			try {
+				wait.until(ExpectedConditions.elementToBeClickable(JobSearch.searchCutNumber()));
+				break;
+			} catch (Exception e) {
+				Dashboard.waitUntilOkButtonIsDisplayed();
+				Dashboard.okButton().click();
+				JobSearch.jobNumber().click();
+				Thread.sleep(500);
+				actions.sendKeys(Keys.ENTER).perform();
+				Dashboard.waitUntilOkButtonIsDisplayed();
+			}
 		}
 		while (!JobSearch.searchCutNumber().equals(driver.switchTo().activeElement())) {
 			JobSearch.searchCutNumber().click();
 			Thread.sleep(1000);
 		}
-		softAssert.assertTrue(JobSearch.cutNumberHeaderDisplayed(),
-				"Tried for 5 seconds, Cut Number Header in cut number table is not displayed ");
-		softAssert.assertTrue(JobSearch.userHeaderDisplayed(),
-				"Tried for 5 seconds, User Header in cut number table is not displayed ");
-		softAssert.assertTrue(JobSearch.dateHeaderDisplayed(),
-				"Tried for 5 seconds, Date Header in cut number table is not displayed ");
-		softAssert.assertTrue(JobSearch.processHeaderDisplayed(),
-				"Tried for 5 seconds, Process Header in cut number table is not displayed ");
-		softAssert.assertTrue(JobSearch.listOfRowsInCutNumber().size() > 0, "No rows present in Cut number table");
+		softAssert.assertTrue(JobSearch.isCutNumberHeaderDisplayed(),
+				"Cut Number header in cut number field table is not displayed ");
+		softAssert.assertTrue(JobSearch.isUserHeaderDisplayed(),
+				"User header in cut number field table is not displayed ");
+		softAssert.assertTrue(JobSearch.isDateHeaderDisplayed(),
+				"Date Header in cut number field table is not displayed ");
+		softAssert.assertTrue(JobSearch.isProcessHeaderDisplayed(),
+				"Process Header in cut number field table is not displayed ");
+		softAssert.assertTrue(JobSearch.listOfRowsInCutNumberFieldTable().size() > 0,
+				"No rows present in Cut number field table");
 		JobSearch.searchCutNumber().sendKeys(cutNumber);
 		actions.sendKeys(Keys.ENTER).perform();
 		JobSearch.searchCutNumberInfo().clear();
-		softAssert.assertTrue(JobSearch.cutNumberInfoHeader(),
-				"Tried for 5 seconds, Cut Number Info header  in cut number info table is not displayed ");
-		softAssert.assertTrue(JobSearch.dateHeaderDisplayed(),
-				"Tried for 5 seconds, Date Header in cut number info table is not displayed ");
-		softAssert.assertTrue(JobSearch.listOfRowsInCutNumberInfo().size() > 0,
-				"No rows present in Cut Number Info table");
+		Dashboard.waitUntilLoaderIsNotDisplayed();
+		softAssert.assertTrue(JobSearch.isCutNumberInfoHeaderDisplayed(),
+				"Cut Number Info header in cut number info field table is not displayed ");
+		softAssert.assertTrue(JobSearch.isDateHeaderDisplayed(),
+				"Date Header in cut number info field table is not displayed ");
+		softAssert.assertTrue(JobSearch.listOfRowsInCutNumberInfoFieldTable().size() > 0,
+				"No rows present in Cut Number Info field table");
 		JobSearch.searchCutNumberInfo().sendKeys(cutNumberInfo);
 		actions.sendKeys(Keys.ENTER).perform();
-		JobSearch.goButton().click();
-		Dashboard.isLoaderDisplayed();
-		Dashboard.waitUntilLoaderIsNotDisplayed();
-		if (Dashboard.isLoaderDisplayed()) {
-			Dashboard.waitUntilLoaderIsNotDisplayed();
+		Thread.sleep(1000);
+		while (!JobSearch.searchCutNumberInfo().getText().contains(cutNumberInfo)) {
+			JobSearch.searchCutNumberInfo().click();
+			JobSearch.searchCutNumberInfo().clear();
+			JobSearch.searchCutNumberInfo().sendKeys(cutNumberInfo);
+			actions.sendKeys(Keys.ENTER).perform();
+			Thread.sleep(1000);
 		}
+		JobSearch.goButton().click();
+		while (!JobSearch.isGoButtonNotDisplayed()) {
+			Dashboard.waitUntilOkButtonIsDisplayed();
+			Dashboard.okButton().click();
+			if (JobSearch.isGoButtonDisplayed()) {
+				JobSearch.goButton().click();
+			}
+		}
+		Thread.sleep(2000);
 		dismissSyncStatusPopupIfDisplayed();
+		if (JobDetailsPage.isLoadingLargeJobPopupDisplayed()) {
+			JobDetailsPage.downloadAllFibersDataButton().click();
+			Thread.sleep(1000);
+		}
+		if (JobDetailsPage.isMissingFiberIdWarningPopupDisplayed()) {
+			Dashboard.okButton().click();
+		}
+		Dashboard.waitUntilLoaderIsNotDisplayed();
 	}
 
 	public static void verifyJobDetailsHeader(String org, String jobNumber, String cutNumber, String cutNumberInfo,
 			String whichTestBeingPerformed) {
 
-		Assert.assertEquals(JobDetailsPage.org().getText().trim(), org,
-				whichTestBeingPerformed + " Import completed - Org mismatch.");
+		Assert.assertEquals(JobDetailsPage.org().getText().trim(), org, whichTestBeingPerformed + " - Org mismatch.");
 
-		Assert.assertEquals(JobDetailsPage.jobNumber().getText().trim().split("-")[0], jobNumber,
-				whichTestBeingPerformed + " Import completed - Job number mismatch.");
+		if (jobNumber.contains("-")) {
+			Assert.assertEquals(JobDetailsPage.jobNumber().getText().trim(), jobNumber,
+					whichTestBeingPerformed + " - Job number mismatch.");
+		} else {
+			Assert.assertEquals(JobDetailsPage.jobNumber().getText().trim().split("-")[0], jobNumber,
+					whichTestBeingPerformed + " - Job number mismatch.");
+		}
 
 		Assert.assertEquals(JobDetailsPage.cutNumber().getText().trim(), cutNumber,
-				whichTestBeingPerformed + " Import completed - Cut number mismatch.");
+				whichTestBeingPerformed + " - Cut number mismatch.");
 
 		Assert.assertEquals(JobDetailsPage.cutNumberInfo().getText().trim(), cutNumberInfo,
-				whichTestBeingPerformed + " Import completed - Cut number info mismatch.");
+				whichTestBeingPerformed + " - Cut number info mismatch.");
 
 	}
 
@@ -821,7 +903,6 @@ public class BaseClass {
 		dismissSyncStatusPopupIfDisplayed();
 		JobDetailsPage.isOtdrSettingsTabDisplayed();
 		wait = new WebDriverWait(driver, 20);
-//		wait.until(ExpectedConditions.elementToBeClickable(JobDetailsPage.OTDR_Settings()));
 		JobDetailsPage.OTDR_Settings().click();
 		dismissSyncStatusPopupIfDisplayed();
 		softAssert.assertTrue(OTDR_Settings.isConnectionProfileDropDownDisplayed(),
@@ -859,9 +940,19 @@ public class BaseClass {
 		Thread.sleep(1000);
 		JobDetailsPage.adjLengthInputField().click();
 		JobDetailsPage.adjLengthInputField().clear();
-		JobDetailsPage.adjLengthInputField().sendKeys("9836");
+		JobDetailsPage.adjLengthInputField().sendKeys(TestData.editAdjLengthValue);
 		JobDetailsPage.adjLengthSaveIcon().click();
 		Thread.sleep(1000);
+		softAssert.assertEquals(JobDetailsPage.getAdjLengthValue(), TestData.editAdjLengthValue + " m",
+				"Adj length did not get updated.");
+	}
+
+	public static void verifyOpticsPage() throws Exception {
+		JobDetailsPage.opticsTab().click();
+		Optics.waitUntilColorFieldIsDisplayed();
+		softAssert.assertEquals(Optics.countOfBufferTubesInOpticsPage(),
+				JobDetailsPage.countOfBufferTubesListedInJobDetailsPage(),
+				"Mismatch in buffer tubes count between optics page and job details page");
 	}
 
 	public static void runFiberTest(int numberOfFibersToTest) throws Exception {
@@ -922,7 +1013,7 @@ public class BaseClass {
 	}
 
 	public static void downloadSorFile(String attnNumber) throws Exception {
-
+		Dashboard.waitUntilLoaderIsNotDisplayed();
 		if (attnNumber.equals("1550")) {
 			FiberResults.SOR_1550_Attn_DownloadIcon().click();
 		} else if (attnNumber.equals("1310")) {
@@ -935,10 +1026,6 @@ public class BaseClass {
 
 		actions.keyDown(Keys.ALT).sendKeys("d").keyUp(Keys.ALT).build().perform();
 		Thread.sleep(500);
-//		robot.keyPress(KeyEvent.VK_ALT);
-//		robot.keyPress(KeyEvent.VK_D);
-//		robot.keyRelease(KeyEvent.VK_D);
-//		robot.keyRelease(KeyEvent.VK_ALT);
 		copyPasteAndClickEnter(TestData.SOR_Files_Path);
 		Thread.sleep(500);
 
@@ -947,9 +1034,103 @@ public class BaseClass {
 
 		robot.keyRelease(KeyEvent.VK_S);
 		robot.keyRelease(KeyEvent.VK_ALT);
+	}
 
-		if (Dashboard.isLoaderDisplayed()) {
+	public static void verifyCopyResults() throws Exception {
+
+		do {
+			navigateToModule(TestData.copyResultsModuleName);
+			CopyResults.waitUntilCopyJobPopupIsDisplayed();
+
+			CopyResults.orgDropDown().click();
+			CopyResults.orgDropDown().sendKeys(TestData.copyJobOrg);
+			actions.sendKeys(Keys.TAB).build().perform();
+
+			CopyResults.sourceJobNumber().click();
+			CopyResults.sourceJobNumber().clear();
+			CopyResults.sourceJobNumber().sendKeys(TestData.copyJobSourceJobNumber);
+			Thread.sleep(1000);
+			actions.sendKeys(Keys.TAB).build().perform();
+			Dashboard.isLoaderDisplayed();
 			Dashboard.waitUntilLoaderIsNotDisplayed();
+
+			CopyResults.sourceCutNumber().click();
+			CopyResults.sourceCutNumber().clear();
+			CopyResults.sourceCutNumber().sendKeys(TestData.copyJobSourceCutNumber);
+			Thread.sleep(500);
+			actions.sendKeys(Keys.TAB).build().perform();
+			Dashboard.isLoaderDisplayed();
+			Dashboard.waitUntilLoaderIsNotDisplayed();
+			Thread.sleep(1000);
+
+			CopyResults.sourceCutNumberInfo().sendKeys(TestData.copyJobSourceCutNumberInfo);
+			actions.sendKeys(Keys.TAB).build().perform();
+
+			CopyResults.destinationJobNumber().click();
+			CopyResults.destinationJobNumber().clear();
+			CopyResults.destinationJobNumber().sendKeys(TestData.copyJobDestinationJobNumber);
+			Thread.sleep(1000);
+			actions.sendKeys(Keys.TAB).build().perform();
+			Dashboard.isLoaderDisplayed();
+			Dashboard.waitUntilLoaderIsNotDisplayed();
+
+			CopyResults.destinationCutNumber().click();
+			CopyResults.destinationCutNumber().clear();
+			CopyResults.destinationCutNumber().sendKeys(TestData.copyJobDestinationCutNumber);
+			Thread.sleep(500);
+			actions.sendKeys(Keys.TAB).build().perform();
+			Dashboard.isLoaderDisplayed();
+			Dashboard.waitUntilLoaderIsNotDisplayed();
+			Thread.sleep(1000);
+
+			CopyResults.destinationCutNumberInfo().sendKeys(TestData.copyJobDestinationCutNumberInfo);
+			actions.sendKeys(Keys.TAB).build().perform();
+
+			if (!CopyResults.destinationCutNumberInfo().getText().contains(TestData.copyJobDestinationCutNumberInfo)
+					|| !CopyResults.processButton().isEnabled()) {
+				Dashboard.cancelButton().click();
+				Thread.sleep(1000);
+			} else {
+				while (CopyResults.isProcessButtonDisplayed()) {
+					if (CopyResults.processButton().isEnabled()) {
+						CopyResults.processButton().click();
+					} else {
+						Dashboard.cancelButton().click();
+					}
+					Thread.sleep(1000);
+				}
+			}
+		} while (!Dashboard.isLoaderDisplayed());
+
+		Dashboard.waitUntilOkButtonIsDisplayed();
+
+		boolean isJobCopied = CopyResults.isJobCopySuccessfullPopupDisplayed();
+		softAssert.assertTrue(isJobCopied, "Issue in copy job, Did not find Copy Job successfull popup");
+		Dashboard.okButton().click();
+
+		if (isJobCopied) {
+			searchJobAndNavigationToJobDetailsPage(TestData.copyJobModule, TestData.copyJobOrg,
+					TestData.copyJobDestinationJobNumber, TestData.copyJobDestinationCutNumber,
+					TestData.copyJobDestinationCutNumberInfo);
+
+			verifyJobDetailsHeader(TestData.copyJobOrg, TestData.copyJobDestinationJobNumber,
+					TestData.copyJobDestinationCutNumber, TestData.copyJobDestinationCutNumberInfo,
+					"After copy results, On destination Job");
+
+			verifyTestResultsCount(TestData.copyJobDestinationJobExpectedIncompleteTests,
+					TestData.copyJobDestinationJobExpectedPassedTests,
+					TestData.copyJobDestinationJobExpectedFailedTests,
+					"destination Job after copying from source Job # " + TestData.copyJobSourceJobNumber);
+
+			softAssert.assertEquals(JobDetailsPage.OTDR_Length().getText(),
+					TestData.copyJobDestinationJobExpectedOtdrLength,
+					"After copying job, On destination job - OTDR Length mismatch.");
+
+			softAssert.assertEquals(JobDetailsPage.helixFactor().getText().trim(),
+					TestData.copyJobDestinationJobExpectedHelixFactor,
+					"After copying job, On destination job - Helix Factor mismatch.");
+		} else {
+			Dashboard.cancelButton().click();
 		}
 	}
 
@@ -1067,7 +1248,7 @@ public class BaseClass {
 						System.out.println("  - Clicked on Stop test button");
 					} else {
 						Dashboard.waitUntilOkButtonIsDisplayed();
-						FiberResults.cancelButton().click();
+						Dashboard.cancelButton().click();
 						System.out.println("  - Clicked on Cancel button to stop tests");
 					}
 					break;
@@ -1093,7 +1274,7 @@ public class BaseClass {
 					System.out.println(
 							"**Clicking on Open Navigation failed, moving ahead to test next fiber without navigating to settings**");
 				}
-				if (SideMenu.isDashboardButtonDisplayed()) {
+				if (SideMenu.isSettingsButtonDisplayed()) {
 					SideMenu.settingsButton().click();
 					try {
 						Dashboard.backArrow().click();
@@ -1125,10 +1306,9 @@ public class BaseClass {
 
 	public static void enterCompletionLayerValues() {
 		try {
+			Dashboard.waitUntilLoaderIsNotDisplayed();
 			softAssert.assertTrue(JobDetailsPage.isCompletionTabDisplayed(),
 					"Waited for 10 seconds, completion tab is not displayed");
-			wait = new WebDriverWait(driver, 10);
-			wait.until(ExpectedConditions.elementToBeClickable(JobDetailsPage.completionTab()));
 			JobDetailsPage.completionTab().click();
 			softAssert.assertTrue(Completion.isSeqNumberTestDisplayed(),
 					"Waited for 10 seconds, ISE Sequence test is not displayed ");
@@ -1238,29 +1418,31 @@ public class BaseClass {
 		for (int i = 1; numberOfRibbonsTested < 72; i++) {
 			dismissSyncStatusPopupIfDisplayed();
 			String nextWorkerToSelect = "JGR-" + i + "-" + i + "-" + i;
-			if (numberOfRibbonsTested >= 5) {
-				WTC.waitUntilTestIsCompletedForSelectedWorker(nextWorkerToSelect);
-			}
-			do {
-				try {
-					WTC.checkButton().click();
-					WTC.selectWorkerField().click();
-					WTC.selectWorkerField().sendKeys(nextWorkerToSelect);
-					actions.sendKeys(Keys.TAB).build().perform();
-				} catch (Exception e) {
+//			if (numberOfRibbonsTested >= 5) {
+//				WTC.waitUntilTestIsCompletedForSelectedWorker(nextWorkerToSelect);
+//			}
+//			do {
+			try {
+				WTC.incompleteStatus().click();
+				robot.mouseWheel(-1);
+				WTC.selectWorkerField().click();
+				actions.sendKeys(nextWorkerToSelect).build().perform();
+				actions.sendKeys(Keys.TAB).build().perform();
+			} catch (Exception e) {
 
-				}
-			} while (!WTC.selectWorkerField().getText().contains(nextWorkerToSelect));
+			}
+//			} while (!WTC.selectWorkerField().getText().contains(nextWorkerToSelect));
 			while (true) {
 				try {
 					WTC.checkButton().click();
 					Dashboard.waitUntilOkButtonIsDisplayed();
 					while (Dashboard.isOkButtonDisplayed()) {
 						try {
-							FiberResults.cancelButton().click();
+							Thread.sleep(1000);
+							Dashboard.cancelButton().click();
+							Thread.sleep(1000);
 						} catch (Exception e) {
 						}
-						Thread.sleep(2000);
 					}
 					break;
 				} catch (Exception e) {
@@ -1269,21 +1451,20 @@ public class BaseClass {
 					}
 				}
 			}
-			Thread.sleep(1000);
 			while (true) {
 				try {
-					actions.moveToElement(WTC.runTestsButton()).click().build().perform();
+					WTC.runTestsButton().click();
 					break;
 				} catch (Exception e) {
+					System.out.println("*Unable to click on Run Test button, trying again.");
 					Thread.sleep(1000);
 				}
 			}
 			numberOfRibbonsTested++;
+			robot.mouseWheel(3);
 			System.out.println("Ribbons Tested - " + numberOfRibbonsTested);
 			JobDetailsPage.ribbonPosition(numberOfRibbonsTested).click();
-//			if (numberOfRibbonsTested == 1) {
-//				FiberResults.showTracesButton().click();
-//			}
+			robot.mouseWheel(1);
 			if (numberOfRibbonsTested % numberOfRibbonsToTestBeforeTakingDump == 0) {
 				int additionalDelay = (numberOfRibbonsTested / 50) * 5;
 				takeDump("dump_After_" + numberOfRibbonsTested + "_Ribbon_Tests",
