@@ -79,6 +79,9 @@ public class RegressionTests extends BaseClass {
 					"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumber);
 
 			verify_SOR_OCR_Files_Downloaded();
+			
+			TestData.useOfficeOtdr = false;
+			updateTestSettings();
 
 			searchJobAndNavigationToJobDetailsPage(TestData.tightBufferModuleName, TestData.jobSearchOrg,
 					TestData.tightBufferJobNumber, TestData.tightBufferTestJobSearchCutNumber,

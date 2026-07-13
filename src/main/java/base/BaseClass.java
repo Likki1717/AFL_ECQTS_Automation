@@ -1016,6 +1016,7 @@ public class BaseClass {
 		Thread.sleep(500);
 
 		DownTime.reasonComboBox().click();
+		DownTime.reasonComboBox().sendKeys(TestData.expectedDownTimeReason);
 		DownTime.selectReason(TestData.expectedDownTimeReason).click();
 
 		DownTime.commentTextBox().sendKeys("Creating record for Testing purpose from veltris side");
@@ -1052,6 +1053,7 @@ public class BaseClass {
 		selectTime(defaultSelectedEndTime, 12, 00, "AM");
 		Thread.sleep(500);
 		DownTime.reasonComboBox().click();
+		DownTime.reasonComboBox().sendKeys(TestData.newExpectedDownTimeReason);
 		DownTime.selectReason(TestData.newExpectedDownTimeReason).click();
 		DownTime.saveButton().click();
 		Dashboard.waitUntilLoaderIsNotDisplayed();

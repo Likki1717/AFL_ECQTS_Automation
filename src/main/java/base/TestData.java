@@ -4,7 +4,7 @@ import java.io.File;
 
 public class TestData {
 	public static String systemUsername = "sumeeth"; // veltris // LikhithaR
-	public static String testEnvironment = "QA"; // Dev/QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
+	public static String testEnvironment = "Second Prod"; // Dev/QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
 	public static String expectedAppVersion = "Version: 7.7.0.0";
 	public static boolean useOfficeOtdr = true;
 	public static boolean useExternalCamera = true;
@@ -202,7 +202,7 @@ public class TestData {
 			profileName = useOfficeOtdr ? connectionProfileName_Office_OTDR : connectionProfileName_Simulator;
 		} else if (module.equals(wtcTestModuleName)) {
 			profileName = connectionProfileName_JGR_One;
-		} else if (module.equals(fiberTestModuleName)) {
+		} else if (module.equals(tightBufferModuleName)) {
 			profileName = connectionProfileName_Simulator;
 		}
 		return profileName;
@@ -212,7 +212,7 @@ public class TestData {
 		String launchLength = "";
 		if (module.equals(fiberTestModuleName)) {
 			launchLength = useOfficeOtdr ? "55" : "1000";
-		} else if (module.equals(wtcTestModuleName) || module.equals(fiberTestModuleName)) {
+		} else if (module.equals(wtcTestModuleName) || module.equals(tightBufferModuleName)) {
 			launchLength = "1000";
 		}
 		return launchLength;
@@ -222,7 +222,7 @@ public class TestData {
 		String cutLength = "";
 		if (module.equals(fiberTestModuleName)) {
 			cutLength = useOfficeOtdr ? "10000" : "1000";
-		} else if (module.equals(wtcTestModuleName) || module.equals(fiberTestModuleName)) {
+		} else if (module.equals(wtcTestModuleName) || module.equals(tightBufferModuleName)) {
 			cutLength = "1000";
 		}
 		return cutLength;
