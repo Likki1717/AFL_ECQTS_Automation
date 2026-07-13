@@ -39,14 +39,11 @@ public class JobDetailsPage extends BaseClass {
 	}
 
 	public static boolean isBufferTubeDisplayed() {
-		return isElementDisplayed(By.xpath("//ListItem/Text[contains(@Name, '" + TestData.fiberTestBufferTube + "')]"),
-				3);
+		return isElementDisplayed(By.xpath("//ListItem/Text"), 3);
 	}
 
-	public static WebElement bufferTubeTab() {
-		return driver
-				.findElement(By.xpath("//Text[@AutomationId='OpticsButton']/../following-sibling::ListItem/Text[@Name='"
-						+ TestData.fiberTestBufferTube + "']"));
+	public static WebElement firstBufferTubeTab() {
+		return driver.findElement(By.xpath("//Text[@AutomationId='OpticsButton']/../following-sibling::ListItem/Text"));
 	}
 
 	public static WebElement reportsTab() {
@@ -113,9 +110,8 @@ public class JobDetailsPage extends BaseClass {
 	public static WebElement adjLengthSaveIcon() {
 		return driver.findElementByAccessibilityId("SaveAdjustedLengthButton");
 	}
-	
-	public static String getAdjLengthValue()
-	{
+
+	public static String getAdjLengthValue() {
 		return driver.findElementByAccessibilityId("AdjustedLengthValueLabel").getAttribute("Name");
 	}
 
@@ -125,16 +121,16 @@ public class JobDetailsPage extends BaseClass {
 	}
 
 	public static int countOfBufferTubesListedInJobDetailsPage() {
-		return driver.findElements(By.xpath("//Text[@AutomationId='OpticsButton']/../following-sibling::ListItem/Text/following-sibling::Text[contains(@Name, '%')]")).size();
+		return driver.findElements(By.xpath(
+				"//Text[@AutomationId='OpticsButton']/../following-sibling::ListItem/Text/following-sibling::Text[contains(@Name, '%')]"))
+				.size();
 	}
-	
-	public static boolean isLoadingLargeJobPopupDisplayed()
-	{
+
+	public static boolean isLoadingLargeJobPopupDisplayed() {
 		return isElementDisplayed(ByAccessibilityId.AccessibilityId("Download All Fibers DataButton"), 2);
 	}
-	
-	public static WebElement downloadAllFibersDataButton()
-	{
+
+	public static WebElement downloadAllFibersDataButton() {
 		return driver.findElementByAccessibilityId("Download All Fibers DataButton");
 	}
 

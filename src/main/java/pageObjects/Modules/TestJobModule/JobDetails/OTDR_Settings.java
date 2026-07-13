@@ -20,24 +20,24 @@ public class OTDR_Settings extends BaseClass {
 	public static WebElement connectionProfile() {
 		return driver.findElementByAccessibilityId("ConnectionProfileDropdown");
 	}
-	
-	public static boolean isConnectionProfileDropDownDisplayed() {
-		return isElementDisplayed(ByAccessibilityId.AccessibilityId("ConnectionProfileDropdown"), 50);
+
+	public static void waitUntilConnectionProfileDropDownIsDisplayed() {
+		while (!isElementDisplayed(ByAccessibilityId.AccessibilityId("ConnectionProfileDropdown"), 50)) {
+		}
 	}
-	
+
 	public static WebElement launchLength() {
 		return driver.findElementByAccessibilityId("LaunchLengthEntry");
 	}
-	
-	public static WebElement launchLength2()
-	{
+
+	public static WebElement launchLength2() {
 		return driver.findElementByAccessibilityId("LaunchLengthWtcEntry");
 	}
 
 	public static WebElement cutLength() {
 		return driver.findElementByAccessibilityId("CutLengthEntry");
 	}
-	
+
 	public static WebElement manufactureLength() {
 		return driver.findElementByAccessibilityId("ManufacturedLengthEntry");
 	}
@@ -49,7 +49,7 @@ public class OTDR_Settings extends BaseClass {
 	public static WebElement vertical() {
 		return driver.findElementByAccessibilityId("VerticalEntry");
 	}
-	
+
 	public static WebElement getLengthButton() {
 		return driver.findElementByAccessibilityId("GetLengthButton");
 	}
@@ -57,7 +57,7 @@ public class OTDR_Settings extends BaseClass {
 	public static WebElement okButton() {
 		return driver.findElementByAccessibilityId("AcceptButton");
 	}
-	
+
 	public static boolean isOkButtonDisplayed() {
 		return isElementDisplayed(ByAccessibilityId.AccessibilityId("AcceptButton"), 50);
 	}
@@ -65,7 +65,7 @@ public class OTDR_Settings extends BaseClass {
 	public static WebElement getLengthHistory() {
 		return driver.findElement(By.xpath("//Custom[@AutomationId='SalesOrderPicker']/Custom/Text"));
 	}
-	
+
 	public static boolean isGetLengthHistoryDropDownFieldDisplayed() {
 		return isElementDisplayed(ByAccessibilityId.AccessibilityId("OtdrSettingsHistoryPicker"), 50);
 	}

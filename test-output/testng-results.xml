@@ -2,23 +2,31 @@
 <testng-results ignored="0" total="1" passed="0" failed="1" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2026-06-30T17:31:56 IST" name="Default suite" finished-at="2026-06-30T17:51:19 IST" duration-ms="1163297">
+  <suite started-at="2026-07-13T12:56:46 IST" name="Default suite" finished-at="2026-07-13T12:58:03 IST" duration-ms="77079">
     <groups>
     </groups>
-    <test started-at="2026-06-30T17:31:56 IST" name="Default test" finished-at="2026-06-30T17:51:19 IST" duration-ms="1163297">
+    <test started-at="2026-07-13T12:56:46 IST" name="Default test" finished-at="2026-07-13T12:58:03 IST" duration-ms="77079">
       <class name="DesktopApplicationTests.RegressionTests">
-        <test-method signature="runRegressionTestSuite()[pri:0, instance:DesktopApplicationTests.RegressionTests@41d477ed]" started-at="2026-06-30T17:31:56 IST" name="runRegressionTestSuite" finished-at="2026-06-30T17:51:18 IST" duration-ms="1162740" status="FAIL">
+        <test-method signature="runRegressionTestSuite()[pri:0, instance:DesktopApplicationTests.RegressionTests@33d512c1]" started-at="2026-07-13T12:56:46 IST" name="runRegressionTestSuite" finished-at="2026-07-13T12:58:02 IST" duration-ms="76506" status="FAIL">
           <exception class="java.lang.AssertionError">
             <message>
               <![CDATA[The following asserts failed:
-Ip Address did not change when connection profile instrument type is changed expected [true] but found [false]]]>
+Cut Number header in cut number field table is not displayed  expected [true] but found [false],
+User header in cut number field table is not displayed  expected [true] but found [false],
+Date Header in cut number field table is not displayed  expected [true] but found [false],
+Process Header in cut number field table is not displayed  expected [true] but found [false],
+No rows present in Cut number field table expected [true] but found [false]]]>
             </message>
             <full-stacktrace>
               <![CDATA[java.lang.AssertionError: The following asserts failed:
-Ip Address did not change when connection profile instrument type is changed expected [true] but found [false]
+Cut Number header in cut number field table is not displayed  expected [true] but found [false],
+User header in cut number field table is not displayed  expected [true] but found [false],
+Date Header in cut number field table is not displayed  expected [true] but found [false],
+Process Header in cut number field table is not displayed  expected [true] but found [false],
+No rows present in Cut number field table expected [true] but found [false]
 at org.testng.asserts.SoftAssert.assertAll(SoftAssert.java:46)
 at org.testng.asserts.SoftAssert.assertAll(SoftAssert.java:30)
-at DesktopApplicationTests.RegressionTests.runRegressionTestSuite(RegressionTests.java:75)
+at DesktopApplicationTests.RegressionTests.runRegressionTestSuite(RegressionTests.java:88)
 at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 at org.testng.internal.invokers.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:141)

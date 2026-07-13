@@ -84,4 +84,17 @@ public class JobSearch extends BaseClass {
 		return isElementDisplayed(
 				By.xpath("//Edit[@Name='Search Cut Number Info']/following-sibling::Text[@Name='Cut Number Info']"), 1);
 	}
+
+	public static WebElement createNewJobCheckBox() {
+		return driver.findElement(By.xpath("//CheckBox[@AutomationId='IsCreateNewJobBox']"));
+	}
+
+	public static WebElement itemNumberTextBox() {
+		return driver.findElement(By.xpath("//Edit[@Name='Item Number']"));
+	}
+
+	public static WebElement createButton() {
+		return driver.findElement(By.xpath("//Button[@Name='Create']"));
+	}
+
 }

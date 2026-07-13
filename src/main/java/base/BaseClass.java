@@ -25,6 +25,7 @@ import pageObjects.CommonPages.Dashboard;
 import pageObjects.CommonPages.SideMenu;
 import pageObjects.CommonPages.SignIn;
 import pageObjects.Modules.CopyResults;
+import pageObjects.Modules.DownTime;
 import pageObjects.Modules.ImportData.Import;
 import pageObjects.Modules.TestJobModule.JobDetailsPage;
 import pageObjects.Modules.TestJobModule.JobSearch;
@@ -144,7 +145,6 @@ public class BaseClass {
 			Thread.sleep(1000);
 			copyPasteAndClickEnter(TestData.vpnAppPassword());
 			Thread.sleep(2000);
-			dismissSyncStatusPopupIfDisplayed();
 		}
 	}
 
@@ -224,6 +224,7 @@ public class BaseClass {
 			capabilities.setCapability("deviceName", "WindowsPC");
 			capabilities.setCapability("automationName", "Windows");
 			driver = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities);
+			dismissSyncStatusPopupIfDisplayed();
 		} catch (Exception e) {
 			System.out.println("****Normal launch of ECQTS application failed, Trying Root attach****");
 			attachExistingApplication();
@@ -248,6 +249,7 @@ public class BaseClass {
 				capabilities3.setCapability("appTopLevelWindow", hexHandle);
 				driver = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities3);
 				applicationAttached = true;
+				dismissSyncStatusPopupIfDisplayed();
 			} catch (Exception e) {
 				System.out.println("****Root attach failed, trying again****");
 				Thread.sleep(2000);
@@ -721,22 +723,33 @@ public class BaseClass {
 			Thread.sleep(1000);
 		}
 		switch (module) {
-		case TestData.fiberTestModuleName: {
+		case TestData.fiberTestModuleName: 
 			Dashboard.fiberTestModule().click();
 			break;
-		}
-		case TestData.wtcTestModuleName: {
+		
+		case TestData.wtcTestModuleName: 
 			Dashboard.wtcTestModule().click();
 			break;
-		}
-		case TestData.copyResultsModuleName: {
+		
+		case TestData.copyResultsModuleName: 
 			Dashboard.copyResultsModule().click();
 			break;
-		}
-		case TestData.importDataModuleName: {
+		
+		case TestData.importDataModuleName: 
 			Dashboard.importDataModule().click();
 			break;
-		}
+		
+		case TestData.downTimeModuleName: 
+			Dashboard.downTimeModule().click();
+			break;
+		
+		case TestData.tightBufferModuleName: 
+			Dashboard.tightBufferModule().click();
+			break;
+		
+		default: 
+			Assert.fail("** Modify switch case in navigateToModule method to include " + module + " module");
+			break;
 		}
 		Thread.sleep(1000);
 	}
@@ -760,10 +773,33 @@ public class BaseClass {
 		Thread.sleep(500);
 		actions.sendKeys(Keys.TAB).build().perform();
 		Thread.sleep(500);
+
+		if (TestData.tightBufferModuleName.equals(module)) {
+			JobSearch.createNewJobCheckBox().click();
+			JobSearch.itemNumberTextBox().sendKeys(TestData.tightBufferItemNumber);
+			while (true) {
+				JobSearch.createButton().click();
+				Dashboard.waitUntilLoaderIsNotDisplayed();
+				if (Dashboard.isOkButtonDisplayed()) {
+					Dashboard.okButton().click();
+				} else {
+					break;
+				}
+			}
+		}
+
+		TestData.tightBufferJobNumber = JobSearch.jobNumber().getText();
+
+		softAssert.assertTrue(TestData.tightBufferJobNumber.startsWith(TestData.expectedTightBufferJobNumberStartsWith),
+				"Expected Tight Buffer Job Number to start with: " + TestData.expectedTightBufferJobNumberStartsWith
+						+ " but found: " + TestData.tightBufferJobNumber);
+
 		do {
 			JobSearch.jobNumber().click();
-			JobSearch.jobNumber().clear();
-			JobSearch.jobNumber().sendKeys(jobNumber);
+			if (!TestData.tightBufferModuleName.equals(module)) {
+				JobSearch.jobNumber().clear();
+				JobSearch.jobNumber().sendKeys(jobNumber);
+			}
 			Thread.sleep(500);
 			actions.sendKeys(Keys.ENTER).perform();
 		} while (!Dashboard.isLoaderDisplayed());
@@ -796,16 +832,21 @@ public class BaseClass {
 			JobSearch.searchCutNumber().click();
 			Thread.sleep(1000);
 		}
-		softAssert.assertTrue(JobSearch.isCutNumberHeaderDisplayed(),
-				"Cut Number header in cut number field table is not displayed ");
-		softAssert.assertTrue(JobSearch.isUserHeaderDisplayed(),
-				"User header in cut number field table is not displayed ");
-		softAssert.assertTrue(JobSearch.isDateHeaderDisplayed(),
-				"Date Header in cut number field table is not displayed ");
-		softAssert.assertTrue(JobSearch.isProcessHeaderDisplayed(),
-				"Process Header in cut number field table is not displayed ");
-		softAssert.assertTrue(JobSearch.listOfRowsInCutNumberFieldTable().size() > 0,
-				"No rows present in Cut number field table");
+		
+		if(!module.equals(TestData.tightBufferModuleName))
+		{
+			softAssert.assertTrue(JobSearch.isCutNumberHeaderDisplayed(),
+					"Cut Number header in cut number field table is not displayed ");
+			softAssert.assertTrue(JobSearch.isUserHeaderDisplayed(),
+					"User header in cut number field table is not displayed ");
+			softAssert.assertTrue(JobSearch.isDateHeaderDisplayed(),
+					"Date Header in cut number field table is not displayed ");
+			softAssert.assertTrue(JobSearch.isProcessHeaderDisplayed(),
+					"Process Header in cut number field table is not displayed ");
+			softAssert.assertTrue(JobSearch.listOfRowsInCutNumberFieldTable().size() > 0,
+					"No rows present in Cut number field table");
+		}
+		
 		JobSearch.searchCutNumber().sendKeys(cutNumber);
 		actions.sendKeys(Keys.ENTER).perform();
 		JobSearch.searchCutNumberInfo().clear();
@@ -905,8 +946,7 @@ public class BaseClass {
 		wait = new WebDriverWait(driver, 20);
 		JobDetailsPage.OTDR_Settings().click();
 		dismissSyncStatusPopupIfDisplayed();
-		softAssert.assertTrue(OTDR_Settings.isConnectionProfileDropDownDisplayed(),
-				"Waited for 50 seconds, connection profiles drop down on OTDR settings page is not displayed");
+		OTDR_Settings.waitUntilConnectionProfileDropDownIsDisplayed();
 		OTDR_Settings.connectionProfile().sendKeys(TestData.OTDR_Settings_ConnectionProfile_Name(module));
 		OTDR_Settings.launchLength().clear();
 		OTDR_Settings.launchLength().sendKeys(TestData.OTDR_Settings_LaunchLength(module));
@@ -955,6 +995,150 @@ public class BaseClass {
 				"Mismatch in buffer tubes count between optics page and job details page");
 	}
 
+	public static void verifyDownTime() throws Exception {
+		navigateToModule(TestData.downTimeModuleName);
+		Dashboard.waitUntilLoaderIsNotDisplayed();
+		DownTime.startTimePicker().click();
+		Thread.sleep(500);
+		String defaultSelectedStartTime = DownTime.startTimePicker().getText();
+		selectTime(defaultSelectedStartTime, 11, 59, "PM");
+		Thread.sleep(500);
+
+		DownTime.endTimePicker().click();
+		Thread.sleep(500);
+		String defaultSelectedEndTime = DownTime.endTimePicker().getAttribute("Name");
+		selectTime(defaultSelectedEndTime, 12, 01, "AM");
+		Thread.sleep(500);
+
+		DownTime.endDateSelection().click();
+		DownTime.todayDate().click();
+		actions.sendKeys(Keys.ARROW_RIGHT).build().perform();
+		actions.sendKeys(Keys.ENTER).build().perform();
+		Thread.sleep(500);
+
+		DownTime.reasonComboBox().click();
+		DownTime.selectReason(TestData.expectedDownTimeReason).click();
+
+		DownTime.commentTextBox().sendKeys("Creating record for Testing purpose from veltris side");
+
+		DownTime.saveButton().click();
+		Dashboard.waitUntilLoaderIsNotDisplayed();
+
+		if (DownTime.isWarningMessageDisplayed()) {
+			softAssert.fail("Unable to create down time record, got some warning pop up");
+			Dashboard.okButton().click();
+			return;
+		}
+
+		softAssert.assertEquals(DownTime.getTotalDownTime(), TestData.expectedTotalDownTime,
+				"Before editing, total down time mismatch.");
+
+		softAssert.assertEquals(DownTime.getSavedStartTime(), TestData.expectedStartDateTime,
+				"Before editing, down time Start Date Time mismatch.");
+
+		softAssert.assertEquals(DownTime.getSavedEndTime(), TestData.expectedEndDateTime,
+				"Before editing, down time End Date Time mismatch.");
+
+		softAssert.assertEquals(DownTime.getSavedReason(), TestData.expectedDownTimeReason,
+				"Before editing, down time Reason mismatch.");
+	}
+
+	public static void editDownTime() throws Exception {
+
+		DownTime.editButton().click();
+
+		DownTime.endTimePicker().click();
+		Thread.sleep(500);
+		String defaultSelectedEndTime = DownTime.endTimePicker().getAttribute("Name");
+		selectTime(defaultSelectedEndTime, 12, 00, "AM");
+		Thread.sleep(500);
+		DownTime.reasonComboBox().click();
+		DownTime.selectReason(TestData.newExpectedDownTimeReason).click();
+		DownTime.saveButton().click();
+		Dashboard.waitUntilLoaderIsNotDisplayed();
+
+		if (DownTime.isWarningMessageDisplayed()) {
+			softAssert.fail("Unable to update down time record, got some warning pop up");
+			Dashboard.okButton().click();
+			return;
+		}
+
+		softAssert.assertEquals(DownTime.getTotalDownTime(), TestData.newExpectedTotalDownTime,
+				"After editing down time, total down time mismatch.");
+
+		softAssert.assertEquals(DownTime.getSavedStartTime(), TestData.expectedStartDateTime,
+				"After editing, down time Start Date Time mismatch.");
+
+		softAssert.assertEquals(DownTime.getSavedEndTime(), TestData.newExpectedEndDateTime,
+				"After editing, down time End Date Time mismatch.");
+
+		softAssert.assertEquals(DownTime.getSavedReason(), TestData.newExpectedDownTimeReason,
+				"After editing, down time Reason mismatch.");
+
+		DownTime.cancelButton().click();
+	}
+
+	public static void selectTime(String defaultSelectedTime, int targetHour, int targetMinute, String targetMeridian)
+			throws Exception {
+
+		defaultSelectedTime = defaultSelectedTime.replaceAll("\\p{Cf}", "");
+
+		int defaultSelectedHour = Integer.parseInt(defaultSelectedTime.split(":")[0].trim());
+		int defaultSelectedMinute = Integer.parseInt(defaultSelectedTime.split(":")[1].split(" ")[0].trim());
+
+		// Hour
+		int differenceBetweenTargetHourAndDefaultSelectedHour = targetHour - defaultSelectedHour;
+		Keys direction = Keys.ARROW_DOWN;
+		int keyboardScrollsCount = differenceBetweenTargetHourAndDefaultSelectedHour;
+		if (keyboardScrollsCount > 5) {
+			direction = Keys.ARROW_UP;
+			keyboardScrollsCount = 12 - keyboardScrollsCount;
+		} else if (keyboardScrollsCount < 0) {
+			direction = Keys.ARROW_UP;
+			keyboardScrollsCount = 0 - keyboardScrollsCount;
+		}
+		for (int i = 0; i < keyboardScrollsCount; i++) {
+			actions.sendKeys(direction).build().perform();
+		}
+
+		actions.sendKeys(Keys.TAB).build().perform();
+
+		// Miniute
+		Thread.sleep(500);
+		if (defaultSelectedMinute == 0) {
+			defaultSelectedMinute = 60;
+		}
+		int differenceBetweenTargetMinuteAndDefaultSelectedMinute = targetMinute - defaultSelectedMinute;
+		direction = Keys.ARROW_DOWN;
+		keyboardScrollsCount = differenceBetweenTargetMinuteAndDefaultSelectedMinute;
+		if (keyboardScrollsCount > 30) {
+			direction = Keys.ARROW_UP;
+			keyboardScrollsCount = 60 - keyboardScrollsCount;
+		} else if (keyboardScrollsCount < 0) {
+			direction = Keys.ARROW_UP;
+			keyboardScrollsCount = 0 - keyboardScrollsCount;
+		}
+		for (int i = 0; i < keyboardScrollsCount; i++) {
+			actions.sendKeys(direction).build().perform();
+		}
+
+		actions.sendKeys(Keys.TAB).build().perform();
+
+		// AM PM
+		Thread.sleep(500);
+		if (targetMeridian.equals("AM")) {
+			actions.sendKeys(Keys.ARROW_UP).build().perform();
+		} else {
+			actions.sendKeys(Keys.ARROW_DOWN).build().perform();
+		}
+
+		// Tick Icon
+		Thread.sleep(500);
+		actions.sendKeys(Keys.TAB).build().perform();
+		Thread.sleep(500);
+		actions.sendKeys(Keys.ENTER).build().perform();
+	}
+
 	public static void runFiberTest(int numberOfFibersToTest) throws Exception {
 		wait = new WebDriverWait(driver, 30);
 		int fibersTested = 0;
@@ -966,8 +1150,8 @@ public class BaseClass {
 			Dashboard.waitUntilLoaderIsNotDisplayed();
 			if (startTestFromFirstBufferTube) {
 				JobDetailsPage.isBufferTubeDisplayed();
-				wait.until(ExpectedConditions.elementToBeClickable(JobDetailsPage.bufferTubeTab()));
-				JobDetailsPage.bufferTubeTab().click();
+				wait.until(ExpectedConditions.elementToBeClickable(JobDetailsPage.firstBufferTubeTab()));
+				JobDetailsPage.firstBufferTubeTab().click();
 				startTestFromFirstBufferTube = false;
 			}
 // Below if blocked is needed to click on Show more info button and to click on Run Test button of first fiber,

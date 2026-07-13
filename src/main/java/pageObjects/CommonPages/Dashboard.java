@@ -56,6 +56,14 @@ public class Dashboard extends BaseClass {
 		return driver.findElementByAccessibilityId("Copy ResultsButton");
 	}
 
+	public static WebElement downTimeModule() {
+		return driver.findElement(By.xpath("//Text[@Name='Down Time']"));
+	}
+	
+	public static WebElement tightBufferModule() {
+		return driver.findElement(By.xpath("//Text[@Name='Tight Buffer']"));
+	}
+
 	public static WebElement backArrow() {
 		return driver.findElementByAccessibilityId("NavigationViewBackButton");
 	}

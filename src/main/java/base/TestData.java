@@ -4,8 +4,7 @@ import java.io.File;
 
 public class TestData {
 	public static String systemUsername = "sumeeth"; // veltris // LikhithaR
-	public static String testEnvironment = "Soft Release Second Prod"; // Dev /QA/Soft Release Prod/Soft Release Second
-																		// Prod/Prod/Second Prod
+	public static String testEnvironment = "Dev"; // Dev/QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
 	public static String expectedAppVersion = "Version: 7.7.0.0";
 	public static boolean useOfficeOtdr = true;
 	public static boolean useExternalCamera = true;
@@ -83,12 +82,9 @@ public class TestData {
 	public static String fiberTestJobSearchJobNumber = "25305754"; // Large Job - 15811448
 	public static String fiberTestJobSearchCutNumber = getCurrentDateTimeStamp();
 	public static String fiberTestJobSearchCutNumberInfo = "ZTEST01";
-	public static String fiberTestBufferTube = "10-BLUE";
-	public static String fiberTestExpectedIncompleteTestsCount = fiberTestJobSearchJobNumber.equals("25305754") ? "66"
-			: "883";
-	public static String fiberTestExpectedPassedTestsCount = fiberTestJobSearchJobNumber.equals("25305754") ? "20"
-			: "17";
-	public static String fiberTestExpectedFailedTestsCount = fiberTestJobSearchJobNumber.equals("25305754") ? "5" : "6";
+	public static String fiberTestExpectedIncompleteTestsCount = "66";
+	public static String fiberTestExpectedPassedTestsCount = "20";
+	public static String fiberTestExpectedFailedTestsCount = "5";
 	public static String editAdjLengthValue = "9836";
 	public static String fiberTestCompletionTabIseSeqValue = "9886";
 
@@ -116,6 +112,22 @@ public class TestData {
 	public static String copyJobDestinationJobExpectedFailedTests = "3";
 	public static String copyJobDestinationJobExpectedHelixFactor = "1.0";
 	public static String copyJobDestinationJobExpectedOtdrLength = "5765 m";
+	
+	public static final String downTimeModuleName = "Down Time";
+	public static String expectedStartDateTime =java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("dd MMMM yyyy"))+ " 11:59 PM";
+	public static String expectedEndDateTime = java.time.LocalDate.now().plusDays(1).format(java.time.format.DateTimeFormatter.ofPattern("dd MMMM yyyy"))+ " 12:01 AM";
+	public static String expectedTotalDownTime = "Total Down Time : 00:02 hrs";
+	public static String expectedDownTimeReason = "Internet Down";
+	public static String newExpectedEndDateTime = java.time.LocalDate.now().plusDays(1).format(java.time.format.DateTimeFormatter.ofPattern("dd MMMM yyyy"))+ " 12:00 AM";
+	public static String newExpectedTotalDownTime = "Total Down Time : 00:01 hrs";
+	public static String newExpectedDownTimeReason = "Connectivity issue";
+	
+	public static final String tightBufferModuleName  = "Tight Buffer";
+	public static String tightBufferJobNumber = ""; // Overriding the job number during Job search
+	public static String expectedTightBufferJobNumberStartsWith = "TB" +java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
+	public static String tightBufferItemNumber = "PT04136-07";
+	public static String tightBufferTestJobSearchCutNumber = getCurrentDateTimeStamp();
+	public static String tightBufferTestJobSearchCutNumberInfo = "ZTEST01";
 
 	public static String ecqtsAppUsername() {
 		String username = null;
