@@ -783,16 +783,15 @@ public class BaseClass {
 				if (Dashboard.isOkButtonDisplayed()) {
 					Dashboard.okButton().click();
 				} else {
+					String actualJobNumber = JobSearch.jobNumber().getText();
+
+					softAssert.assertTrue(actualJobNumber.startsWith(TestData.expectedTightBufferJobNumberStartsWith),
+							"Expected Tight Buffer Job Number to start with: " + TestData.expectedTightBufferJobNumberStartsWith
+									+ " but found: " + actualJobNumber);
 					break;
 				}
 			}
 		}
-
-		TestData.tightBufferJobNumber = JobSearch.jobNumber().getText();
-
-		softAssert.assertTrue(TestData.tightBufferJobNumber.startsWith(TestData.expectedTightBufferJobNumberStartsWith),
-				"Expected Tight Buffer Job Number to start with: " + TestData.expectedTightBufferJobNumberStartsWith
-						+ " but found: " + TestData.tightBufferJobNumber);
 
 		do {
 			JobSearch.jobNumber().click();
@@ -1565,8 +1564,8 @@ public class BaseClass {
 	}
 
 	public static void verify_SOR_OCR_Files_Downloaded() {
-		softAssert.assertEquals(getFilesCount(TestData.OCR_Report_Path), 1, "Mismatch in downloaded OCR report count.");
-		softAssert.assertEquals(getFilesCount(TestData.SOR_Files_Path), 2, "Mismatch in downloaded SOR files count.");
+		softAssert.assertEquals(getFilesCount(TestData.OCR_Report_Path), 2, "Mismatch in downloaded OCR report count.");
+		softAssert.assertEquals(getFilesCount(TestData.SOR_Files_Path), 4, "Mismatch in downloaded SOR files count.");
 	}
 
 	public static int getFilesCount(String folderPath) {

@@ -2,31 +2,37 @@
 <testng-results ignored="0" total="1" passed="0" failed="1" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2026-07-13T12:56:46 IST" name="Default suite" finished-at="2026-07-13T12:58:03 IST" duration-ms="77079">
+  <suite started-at="2026-07-13T14:22:08 IST" name="Default suite" finished-at="2026-07-13T14:47:28 IST" duration-ms="1520846">
     <groups>
     </groups>
-    <test started-at="2026-07-13T12:56:46 IST" name="Default test" finished-at="2026-07-13T12:58:03 IST" duration-ms="77079">
+    <test started-at="2026-07-13T14:22:08 IST" name="Default test" finished-at="2026-07-13T14:47:28 IST" duration-ms="1520846">
       <class name="DesktopApplicationTests.RegressionTests">
-        <test-method signature="runRegressionTestSuite()[pri:0, instance:DesktopApplicationTests.RegressionTests@33d512c1]" started-at="2026-07-13T12:56:46 IST" name="runRegressionTestSuite" finished-at="2026-07-13T12:58:02 IST" duration-ms="76506" status="FAIL">
+        <test-method signature="runRegressionTestSuite()[pri:0, instance:DesktopApplicationTests.RegressionTests@33d512c1]" started-at="2026-07-13T14:22:08 IST" name="runRegressionTestSuite" finished-at="2026-07-13T14:47:28 IST" duration-ms="1520282" status="FAIL">
           <exception class="java.lang.AssertionError">
             <message>
               <![CDATA[The following asserts failed:
-Cut Number header in cut number field table is not displayed  expected [true] but found [false],
-User header in cut number field table is not displayed  expected [true] but found [false],
-Date Header in cut number field table is not displayed  expected [true] but found [false],
-Process Header in cut number field table is not displayed  expected [true] but found [false],
-No rows present in Cut number field table expected [true] but found [false]]]>
+Expected Tight Buffer Job Number to start with: TB20260713 but found:  expected [true] but found [false],
+Unable to create down time record, got some warning pop up,
+Expected Tight Buffer Job Number to start with: TB20260713 but found:  expected [true] but found [false],
+Expected Tight Buffer Job Number to start with: TB20260713 but found:  expected [true] but found [false],
+Expected Tight Buffer Job Number to start with: TB20260713 but found:  expected [true] but found [false],
+Ip Address did not change when connection profile instrument type is changed expected [true] but found [false],
+Expected Tight Buffer Job Number to start with: TB20260713 but found:  expected [true] but found [false],
+Waited for 50 seconds, Get Length history drop down field is not displayed expected [true] but found [false]]]>
             </message>
             <full-stacktrace>
               <![CDATA[java.lang.AssertionError: The following asserts failed:
-Cut Number header in cut number field table is not displayed  expected [true] but found [false],
-User header in cut number field table is not displayed  expected [true] but found [false],
-Date Header in cut number field table is not displayed  expected [true] but found [false],
-Process Header in cut number field table is not displayed  expected [true] but found [false],
-No rows present in Cut number field table expected [true] but found [false]
+Expected Tight Buffer Job Number to start with: TB20260713 but found:  expected [true] but found [false],
+Unable to create down time record, got some warning pop up,
+Expected Tight Buffer Job Number to start with: TB20260713 but found:  expected [true] but found [false],
+Expected Tight Buffer Job Number to start with: TB20260713 but found:  expected [true] but found [false],
+Expected Tight Buffer Job Number to start with: TB20260713 but found:  expected [true] but found [false],
+Ip Address did not change when connection profile instrument type is changed expected [true] but found [false],
+Expected Tight Buffer Job Number to start with: TB20260713 but found:  expected [true] but found [false],
+Waited for 50 seconds, Get Length history drop down field is not displayed expected [true] but found [false]
 at org.testng.asserts.SoftAssert.assertAll(SoftAssert.java:46)
 at org.testng.asserts.SoftAssert.assertAll(SoftAssert.java:30)
-at DesktopApplicationTests.RegressionTests.runRegressionTestSuite(RegressionTests.java:88)
+at DesktopApplicationTests.RegressionTests.runRegressionTestSuite(RegressionTests.java:110)
 at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 at org.testng.internal.invokers.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:141)
