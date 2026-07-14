@@ -1,7 +1,5 @@
 package pageObjects.Modules;
 
-import java.util.List;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -12,13 +10,21 @@ public class DownTime extends BaseClass {
 	public static WebElement startTimePicker() {
 		return driver.findElements(By.xpath("//Button[@AutomationId='FlyoutButton']")).get(0);
 	}
+	
+	public static WebElement startDateSelectionCalendar() {
+		return driver.findElements(By.className("CalendarDatePicker")).get(0);
+	}
 
-	public static WebElement endDateSelection() {
+	public static WebElement endDateSelectionCalendar() {
 		return driver.findElements(By.className("CalendarDatePicker")).get(1);
 	}
 
-	public static WebElement todayDate() {
+	public static WebElement todaysDate() {
 		return driver.findElement(By.xpath("//DataItem[contains(@Name,'today')]"));
+	}
+	
+	public static WebElement tomorrowsDate() {
+		return driver.findElement(By.xpath("//DataItem[contains(@Name,'today')]/following-sibling::DataItem"));
 	}
 
 	public static WebElement endTimePicker() {
@@ -44,13 +50,18 @@ public class DownTime extends BaseClass {
 	public static WebElement editButton() {
 		return driver.findElement(By.xpath("//*[@ClassName='ListView']//Button"));
 	}
+	
+	public static boolean isEditButtonDisplayed()
+	{
+		return isElementDisplayed(By.xpath("//*[@ClassName='ListView']//Button"), 1);
+	}
 
 	public static String getTotalDownTime() {
 		return driver.findElement(By.xpath("//Text[contains(@Name,'Total Down Time')]")).getText();
 	}
 
 	public static boolean isWarningMessageDisplayed() {
-		return isElementDisplayed(By.name("Warning"), 2);
+		return isElementDisplayed(By.name("Warning"), 1);
 	}
 
 	public static String getSavedReason() {

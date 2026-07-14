@@ -7,6 +7,8 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.Socket;
 import java.net.URI;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -1001,28 +1003,49 @@ public class BaseClass {
 	public static void verifyDownTime() throws Exception {
 		navigateToModule(TestData.downTimeModuleName);
 		Dashboard.waitUntilLoaderIsNotDisplayed();
+		String defaultSelectedStartTime = "";
+		String defaultSelectedEndTime = "";
+		boolean isEditButtonDisplayed = DownTime.isEditButtonDisplayed();
+
+		if (isEditButtonDisplayed) {
+			defaultSelectedStartTime = DownTime.getSavedStartTime();
+			defaultSelectedStartTime = defaultSelectedStartTime.substring(defaultSelectedStartTime.length() - 8);
+			defaultSelectedEndTime = DownTime.getSavedEndTime();
+			defaultSelectedEndTime = defaultSelectedEndTime.substring(defaultSelectedEndTime.length() - 8);
+			DownTime.editButton().click();
+			Thread.sleep(500);
+		} else {
+			defaultSelectedStartTime = DownTime.startTimePicker().getText();
+			defaultSelectedEndTime = DownTime.endTimePicker().getText();
+		}
+
+		if (!DownTime.startDateSelectionCalendar().getAttribute("Value.Value").replaceAll("\\p{Cf}", "").trim()
+				.equals(LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))) {
+			DownTime.startDateSelectionCalendar().click();
+			DownTime.todaysDate().click();
+			Thread.sleep(500);
+		}
+
 		DownTime.startTimePicker().click();
-		Thread.sleep(500);
-		String defaultSelectedStartTime = DownTime.startTimePicker().getText();
+		Thread.sleep(1000);
 		selectTime(defaultSelectedStartTime, 11, 59, "PM");
-		Thread.sleep(500);
 
+		if (!DownTime.endDateSelectionCalendar().getAttribute("Value.Value").replaceAll("\\p{Cf}", "").trim()
+				.equals(LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))) {
+			DownTime.endDateSelectionCalendar().click();
+			DownTime.tomorrowsDate().click();
+			Thread.sleep(500);
+			}
+		
 		DownTime.endTimePicker().click();
-		Thread.sleep(500);
-		String defaultSelectedEndTime = DownTime.endTimePicker().getText();
+		Thread.sleep(1000);
 		selectTime(defaultSelectedEndTime, 12, 01, "AM");
-		Thread.sleep(500);
-
-		DownTime.endDateSelection().click();
-		DownTime.todayDate().click();
-		actions.sendKeys(Keys.ARROW_RIGHT).build().perform();
-		actions.sendKeys(Keys.ENTER).build().perform();
-		Thread.sleep(500);
 
 		DownTime.reasonComboBox().click();
 		DownTime.reasonComboBox().sendKeys(TestData.expectedDownTimeReason);
 		DownTime.selectReason(TestData.expectedDownTimeReason).click();
 
+		DownTime.commentTextBox().clear();
 		DownTime.commentTextBox().sendKeys("Creating record for Testing purpose from veltris side");
 
 		DownTime.saveButton().click();
@@ -1050,11 +1073,11 @@ public class BaseClass {
 
 	public static void editDownTime() throws Exception {
 		DownTime.editButton().click();
-		DownTime.endTimePicker().click();
 		String defaultSelectedEndTime = DownTime.getSavedEndTime();
 		defaultSelectedEndTime = defaultSelectedEndTime.substring(defaultSelectedEndTime.length() - 8);
+		DownTime.endTimePicker().click();
+		Thread.sleep(1000);
 		selectTime(defaultSelectedEndTime, 12, 00, "AM");
-		Thread.sleep(500);
 		DownTime.reasonComboBox().click();
 		DownTime.reasonComboBox().sendKeys(TestData.newExpectedDownTimeReason);
 		DownTime.selectReason(TestData.newExpectedDownTimeReason).click();
@@ -1096,16 +1119,16 @@ public class BaseClass {
 //		System.out.println("Target Hour -> " + targetHour);
 //		System.out.println("Default Selected Hour -> " + defaultSelectedHour);
 //		System.out.println("Difference in Hrs -> " + differenceBetweenTargetHourAndDefaultSelectedHour);
-		Keys direction = Keys.ARROW_DOWN;
+		int direction = KeyEvent.VK_DOWN;
 		int keyboardScrollsCount = differenceBetweenTargetHourAndDefaultSelectedHour;
 		if (keyboardScrollsCount > 6) {
-			direction = Keys.ARROW_UP;
+			direction = KeyEvent.VK_UP;
 			keyboardScrollsCount = 12 - keyboardScrollsCount;
 		} else if (keyboardScrollsCount < 0) {
 			keyboardScrollsCount = 0 - keyboardScrollsCount;
-			direction = Keys.ARROW_UP;
+			direction = KeyEvent.VK_UP;
 			if (keyboardScrollsCount > 6) {
-				direction = Keys.ARROW_DOWN;
+				direction = KeyEvent.VK_DOWN;
 				keyboardScrollsCount = 12 - keyboardScrollsCount;
 			}
 		}
@@ -1119,13 +1142,19 @@ public class BaseClass {
 //			System.out.println("Direction to scroll -> Upwards");
 //		}
 		for (int i = 0; i < keyboardScrollsCount; i++) {
-			actions.sendKeys(direction).build().perform();
+//			actions.sendKeys(direction).build().perform();
+			robot.keyPress(direction);
+			robot.keyRelease(direction);
+			Thread.sleep(100);
 		}
 
-		actions.sendKeys(Keys.TAB).build().perform();
+		Thread.sleep(500);
+//		actions.sendKeys(Keys.TAB).build().perform();
+		robot.keyPress(KeyEvent.VK_TAB);
+		robot.keyRelease(KeyEvent.VK_TAB);
+		Thread.sleep(500);
 
 		// Miniute
-		Thread.sleep(500);
 		if (defaultSelectedMinute == 0) {
 			defaultSelectedMinute = 60;
 		}
@@ -1134,16 +1163,16 @@ public class BaseClass {
 //		System.out.println("Target Minute -> " + targetMinute);
 //		System.out.println("Default Selected Minute -> " + defaultSelectedMinute);
 //		System.out.println("Difference in Mins -> " + differenceBetweenTargetMinuteAndDefaultSelectedMinute);
-		direction = Keys.ARROW_DOWN;
+		direction = KeyEvent.VK_DOWN;
 		keyboardScrollsCount = differenceBetweenTargetMinuteAndDefaultSelectedMinute;
 		if (keyboardScrollsCount > 30) {
-			direction = Keys.ARROW_UP;
+			direction = KeyEvent.VK_UP;
 			keyboardScrollsCount = 60 - keyboardScrollsCount;
 		} else if (keyboardScrollsCount < 0) {
-			direction = Keys.ARROW_UP;
+			direction = KeyEvent.VK_UP;
 			keyboardScrollsCount = 0 - keyboardScrollsCount;
 			if (keyboardScrollsCount > 30) {
-				direction = Keys.ARROW_DOWN;
+				direction = KeyEvent.VK_DOWN;
 				keyboardScrollsCount = 60 - keyboardScrollsCount;
 			}
 		}
@@ -1157,24 +1186,40 @@ public class BaseClass {
 //			System.out.println("Direction to scroll -> Upwards");
 //		}
 		for (int i = 0; i < keyboardScrollsCount; i++) {
-			actions.sendKeys(direction).build().perform();
+//			actions.sendKeys(direction).build().perform();
+			robot.keyPress(direction);
+			robot.keyRelease(direction);
+			Thread.sleep(100);
 		}
 
-		actions.sendKeys(Keys.TAB).build().perform();
+		Thread.sleep(500);
+//		actions.sendKeys(Keys.TAB).build().perform();
+		robot.keyPress(KeyEvent.VK_TAB);
+		robot.keyRelease(KeyEvent.VK_TAB);
+		Thread.sleep(500);
 
 		// AM PM
-		Thread.sleep(500);
 		if (targetMeridian.equals("AM")) {
-			actions.sendKeys(Keys.ARROW_UP).build().perform();
+//			actions.sendKeys(Keys.ARROW_UP).build().perform();
+			robot.keyPress(KeyEvent.VK_UP);
+			robot.keyRelease(KeyEvent.VK_UP);
 		} else {
-			actions.sendKeys(Keys.ARROW_DOWN).build().perform();
+//			actions.sendKeys(Keys.ARROW_DOWN).build().perform();
+			robot.keyPress(KeyEvent.VK_DOWN);
+			robot.keyRelease(KeyEvent.VK_DOWN);
 		}
+		Thread.sleep(500);
 
 		// Tick Icon
+//		actions.sendKeys(Keys.TAB).build().perform();
+		robot.keyPress(KeyEvent.VK_TAB);
+		robot.keyRelease(KeyEvent.VK_TAB);
 		Thread.sleep(500);
-		actions.sendKeys(Keys.TAB).build().perform();
+		
+//		actions.sendKeys(Keys.ENTER).build().perform();
+		robot.keyPress(KeyEvent.VK_ENTER);
+		robot.keyRelease(KeyEvent.VK_ENTER);
 		Thread.sleep(500);
-		actions.sendKeys(Keys.ENTER).build().perform();
 	}
 
 	public static void runFiberTest(String module, int numberOfFibersToTest) throws Exception {
@@ -1213,8 +1258,7 @@ public class BaseClass {
 			FiberResults.isGoToFiberButtonVisible();
 			wait.until(ExpectedConditions.elementToBeClickable(FiberResults.goToFiberButton()));
 			FiberResults.goToFiberButton().click();
-			if(module.equals(TestData.tightBufferModuleName))
-			{
+			if (module.equals(TestData.tightBufferModuleName)) {
 				FiberResults.waitUntilTestsCompletedTextIsDisplayed();
 				return;
 			}
@@ -1249,7 +1293,7 @@ public class BaseClass {
 
 			robot.keyRelease(KeyEvent.VK_S);
 			robot.keyRelease(KeyEvent.VK_ALT);
-			i=i+2;
+			i = i + 2;
 		}
 	}
 

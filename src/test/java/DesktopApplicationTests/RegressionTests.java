@@ -12,7 +12,6 @@ public class RegressionTests extends BaseClass {
 		Exception exception = null;
 
 		try {
-
 			clearPreviousSessionData();
 
 			launchWinAppDriver();
@@ -110,7 +109,7 @@ public class RegressionTests extends BaseClass {
 					"Tight Buffer with Job # " + TestData.tightBufferJobNumber);
 
 			verify_SOR_OCR_Files_Downloaded();
-			
+
 		} catch (Exception e) {
 			exception = e;
 		} finally {
