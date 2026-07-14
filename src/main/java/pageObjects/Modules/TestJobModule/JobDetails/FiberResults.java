@@ -40,14 +40,12 @@ public class FiberResults extends BaseClass {
 	public static boolean isRunTestsButtonDisplayed() {
 		return isElementDisplayed(By.xpath("(//Button[@Name='Run Tests'])[1]"), 10);
 	}
-	
-	public static boolean isContinueTestsButtonDisplayed()
-	{
+
+	public static boolean isContinueTestsButtonDisplayed() {
 		return isElementDisplayed(ByAccessibilityId.AccessibilityId("ContinueButton"), 10);
 	}
-	
-	public static boolean isStopTestsButtonDisplayed()
-	{
+
+	public static boolean isStopTestsButtonDisplayed() {
 		return isElementDisplayed(ByAccessibilityId.AccessibilityId("StopButton"), 10);
 	}
 
@@ -59,6 +57,11 @@ public class FiberResults extends BaseClass {
 
 	public static boolean isTestsCompletedTextDisplayed() {
 		return isElementDisplayed(ByName.name("Tests Complete"), 5);
+	}
+
+	public static void waitUntilTestsCompletedTextIsDisplayed() {
+		while (!isElementDisplayed(ByName.name("Tests Complete"), 5)) {
+		}
 	}
 
 	public static WebElement stopButton() {
@@ -88,12 +91,10 @@ public class FiberResults extends BaseClass {
 	public static WebElement showMoreInfoButton() {
 		return driver.findElementByAccessibilityId("ShowMoreInfoFilter");
 	}
-	
-	public static WebElement SOR_1550_Attn_DownloadIcon() {
-		return driver.findElementByXPath("//*[@Name='1550:']/following-sibling::Image");
+
+	public static WebElement SOR_DownloadIcon(int sorToBeDownloaded) {
+		return driver.findElementByXPath(
+				"(//Text[contains(@Name, ':')]/following-sibling::Image)[" + sorToBeDownloaded + "]");
 	}
-	
-	public static WebElement SOR_1310_Attn_DownloadIcon() {
-		return driver.findElementByXPath("//*[@Name='1310:']/following-sibling::Image");
-	}
+
 }

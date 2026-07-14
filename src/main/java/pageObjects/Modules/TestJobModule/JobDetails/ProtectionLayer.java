@@ -6,7 +6,7 @@ import org.openqa.selenium.WebElement;
 import base.BaseClass;
 
 public class ProtectionLayer extends BaseClass {
-	
+
 	public static WebElement j1NomialODVertical() {
 		return driver.findElement(By.xpath("//*[@Name='J1 Nominal OD Vertical']/following::Edit[1]"));
 	}
@@ -41,5 +41,9 @@ public class ProtectionLayer extends BaseClass {
 
 	public static WebElement FRP_Nomial_OD() {
 		return driver.findElement(By.xpath("//*[@Name='FRP Nominal OD']/following::Edit[1]"));
+	}
+
+	public static WebElement TB_Jacket_Adhesion() {
+		return driver.findElement(By.xpath("//*[@Name='TB Jacket Adhesion']/following::ComboBox[1]"));
 	}
 }

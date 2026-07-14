@@ -12,6 +12,7 @@ public class RegressionTests extends BaseClass {
 		Exception exception = null;
 
 		try {
+
 			clearPreviousSessionData();
 
 			launchWinAppDriver();
@@ -58,7 +59,7 @@ public class RegressionTests extends BaseClass {
 					TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo,
 					"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumber);
 
-			enterProtectionLayerValues();
+			enterProtectionLayerValues(TestData.fiberTestModuleName);
 
 			runGetLengthTest(TestData.fiberTestModuleName);
 
@@ -66,11 +67,11 @@ public class RegressionTests extends BaseClass {
 
 			verifyOpticsPage();
 
-			runFiberTest(TestData.numberOfFibersToTest);
+			runFiberTest(TestData.fiberTestModuleName, TestData.numberOfFibersToTest);
 
-			download_1310_And_1550_SOR_Files();
+			downloadSorFiles();
 
-			enterCompletionLayerValues();
+			enterCompletionLayerValues(TestData.fiberTestModuleName);
 
 			download_OCR_Report();
 
@@ -78,9 +79,8 @@ public class RegressionTests extends BaseClass {
 					TestData.fiberTestExpectedPassedTestsCount, TestData.fiberTestExpectedFailedTestsCount,
 					"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumber);
 
-			verify_SOR_OCR_Files_Downloaded();
-			
 			TestData.useOfficeOtdr = false;
+
 			updateTestSettings();
 
 			searchJobAndNavigationToJobDetailsPage(TestData.tightBufferModuleName, TestData.jobSearchOrg,
@@ -91,25 +91,26 @@ public class RegressionTests extends BaseClass {
 					TestData.tightBufferTestJobSearchCutNumber, TestData.tightBufferTestJobSearchCutNumberInfo,
 					"Tight Buffer test with Job # " + TestData.tightBufferJobNumber);
 
-//		enterProtectionLayerValues();
-//
-			runGetLengthTest(TestData.fiberTestModuleName);
+			enterProtectionLayerValues(TestData.tightBufferModuleName);
+
+			runGetLengthTest(TestData.tightBufferModuleName);
 
 			verifyOpticsPage();
 
-			runFiberTest(TestData.numberOfFibersToTest);
+			runFiberTest(TestData.tightBufferModuleName, 1);
 
-			download_1310_And_1550_SOR_Files();
+			downloadSorFiles();
 
-//		enterCompletionLayerValues();
+			enterCompletionLayerValues(TestData.tightBufferModuleName);
 
 			download_OCR_Report();
 
-//			verifyTestResultsCount(TestData.fiberTestExpectedIncompleteTestsCount,
-//					TestData.fiberTestExpectedPassedTestsCount, TestData.fiberTestExpectedFailedTestsCount,
-//					"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumber);
-//
+			verifyTestResultsCount(TestData.tightBufferExpectedIncompleteTestsCount,
+					TestData.tightBufferExpectedPassedTestsCount, TestData.tightBufferExpectedFailedTestsCount,
+					"Tight Buffer with Job # " + TestData.tightBufferJobNumber);
+
 			verify_SOR_OCR_Files_Downloaded();
+			
 		} catch (Exception e) {
 			exception = e;
 		} finally {

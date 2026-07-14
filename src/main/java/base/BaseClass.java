@@ -716,38 +716,37 @@ public class BaseClass {
 		while (!Dashboard.isImportDataModuleDisplayed()) {
 			while (Dashboard.isOpenNavigationButtonDisplayed()) {
 				Dashboard.openNavigationButton().click();
-				Thread.sleep(1000);
 			}
 			SideMenu.waitUntilDashboardButtonIsDisplayed();
 			SideMenu.dashboardButton().click();
 			Thread.sleep(1000);
 		}
 		switch (module) {
-		case TestData.fiberTestModuleName: 
+		case TestData.fiberTestModuleName:
 			Dashboard.fiberTestModule().click();
 			break;
-		
-		case TestData.wtcTestModuleName: 
+
+		case TestData.wtcTestModuleName:
 			Dashboard.wtcTestModule().click();
 			break;
-		
-		case TestData.copyResultsModuleName: 
+
+		case TestData.copyResultsModuleName:
 			Dashboard.copyResultsModule().click();
 			break;
-		
-		case TestData.importDataModuleName: 
+
+		case TestData.importDataModuleName:
 			Dashboard.importDataModule().click();
 			break;
-		
-		case TestData.downTimeModuleName: 
+
+		case TestData.downTimeModuleName:
 			Dashboard.downTimeModule().click();
 			break;
-		
-		case TestData.tightBufferModuleName: 
+
+		case TestData.tightBufferModuleName:
 			Dashboard.tightBufferModule().click();
 			break;
-		
-		default: 
+
+		default:
 			Assert.fail("** Modify switch case in navigateToModule method to include " + module + " module");
 			break;
 		}
@@ -784,10 +783,12 @@ public class BaseClass {
 					Dashboard.okButton().click();
 				} else {
 					String actualJobNumber = JobSearch.jobNumber().getText();
+					TestData.tightBufferJobNumber = actualJobNumber;
 
 					softAssert.assertTrue(actualJobNumber.startsWith(TestData.expectedTightBufferJobNumberStartsWith),
-							"Expected Tight Buffer Job Number to start with: " + TestData.expectedTightBufferJobNumberStartsWith
-									+ " but found: " + actualJobNumber);
+							"Expected Tight Buffer Job Number to start with: "
+									+ TestData.expectedTightBufferJobNumberStartsWith + " but found: "
+									+ actualJobNumber);
 					break;
 				}
 			}
@@ -831,9 +832,8 @@ public class BaseClass {
 			JobSearch.searchCutNumber().click();
 			Thread.sleep(1000);
 		}
-		
-		if(!module.equals(TestData.tightBufferModuleName))
-		{
+
+		if (!module.equals(TestData.tightBufferModuleName)) {
 			softAssert.assertTrue(JobSearch.isCutNumberHeaderDisplayed(),
 					"Cut Number header in cut number field table is not displayed ");
 			softAssert.assertTrue(JobSearch.isUserHeaderDisplayed(),
@@ -845,7 +845,7 @@ public class BaseClass {
 			softAssert.assertTrue(JobSearch.listOfRowsInCutNumberFieldTable().size() > 0,
 					"No rows present in Cut number field table");
 		}
-		
+
 		JobSearch.searchCutNumber().sendKeys(cutNumber);
 		actions.sendKeys(Keys.ENTER).perform();
 		JobSearch.searchCutNumberInfo().clear();
@@ -919,10 +919,14 @@ public class BaseClass {
 				"Test results count mismatch in " + whichTestBeingPerformed);
 	}
 
-	public static void enterProtectionLayerValues() {
+	public static void enterProtectionLayerValues(String module) {
 		try {
 			JobDetailsPage.protectionLayer().click();
 			Thread.sleep(1000);
+			if (TestData.tightBufferModuleName.equals(module)) {
+				ProtectionLayer.TB_Jacket_Adhesion().sendKeys("2");
+				return;
+			}
 			ProtectionLayer.j1NomialODVertical().sendKeys("1000");
 			ProtectionLayer.j1NomialODHorizontal().sendKeys("1500");
 			ProtectionLayer.j1_1stRipcord().click();
@@ -1005,7 +1009,7 @@ public class BaseClass {
 
 		DownTime.endTimePicker().click();
 		Thread.sleep(500);
-		String defaultSelectedEndTime = DownTime.endTimePicker().getAttribute("Name");
+		String defaultSelectedEndTime = DownTime.endTimePicker().getText();
 		selectTime(defaultSelectedEndTime, 12, 01, "AM");
 		Thread.sleep(500);
 
@@ -1041,15 +1045,14 @@ public class BaseClass {
 
 		softAssert.assertEquals(DownTime.getSavedReason(), TestData.expectedDownTimeReason,
 				"Before editing, down time Reason mismatch.");
+
 	}
 
 	public static void editDownTime() throws Exception {
-
 		DownTime.editButton().click();
-
 		DownTime.endTimePicker().click();
-		Thread.sleep(500);
-		String defaultSelectedEndTime = DownTime.endTimePicker().getAttribute("Name");
+		String defaultSelectedEndTime = DownTime.getSavedEndTime();
+		defaultSelectedEndTime = defaultSelectedEndTime.substring(defaultSelectedEndTime.length() - 8);
 		selectTime(defaultSelectedEndTime, 12, 00, "AM");
 		Thread.sleep(500);
 		DownTime.reasonComboBox().click();
@@ -1061,6 +1064,7 @@ public class BaseClass {
 		if (DownTime.isWarningMessageDisplayed()) {
 			softAssert.fail("Unable to update down time record, got some warning pop up");
 			Dashboard.okButton().click();
+			Dashboard.cancelButton().click();
 			return;
 		}
 
@@ -1076,28 +1080,44 @@ public class BaseClass {
 		softAssert.assertEquals(DownTime.getSavedReason(), TestData.newExpectedDownTimeReason,
 				"After editing, down time Reason mismatch.");
 
-		DownTime.cancelButton().click();
+		Dashboard.cancelButton().click();
 	}
 
 	public static void selectTime(String defaultSelectedTime, int targetHour, int targetMinute, String targetMeridian)
 			throws Exception {
 
 		defaultSelectedTime = defaultSelectedTime.replaceAll("\\p{Cf}", "");
-
 		int defaultSelectedHour = Integer.parseInt(defaultSelectedTime.split(":")[0].trim());
 		int defaultSelectedMinute = Integer.parseInt(defaultSelectedTime.split(":")[1].split(" ")[0].trim());
 
 		// Hour
 		int differenceBetweenTargetHourAndDefaultSelectedHour = targetHour - defaultSelectedHour;
+//		System.out.println("Calculating hours..");
+//		System.out.println("Target Hour -> " + targetHour);
+//		System.out.println("Default Selected Hour -> " + defaultSelectedHour);
+//		System.out.println("Difference in Hrs -> " + differenceBetweenTargetHourAndDefaultSelectedHour);
 		Keys direction = Keys.ARROW_DOWN;
 		int keyboardScrollsCount = differenceBetweenTargetHourAndDefaultSelectedHour;
-		if (keyboardScrollsCount > 5) {
+		if (keyboardScrollsCount > 6) {
 			direction = Keys.ARROW_UP;
 			keyboardScrollsCount = 12 - keyboardScrollsCount;
 		} else if (keyboardScrollsCount < 0) {
-			direction = Keys.ARROW_UP;
 			keyboardScrollsCount = 0 - keyboardScrollsCount;
+			direction = Keys.ARROW_UP;
+			if (keyboardScrollsCount > 6) {
+				direction = Keys.ARROW_DOWN;
+				keyboardScrollsCount = 12 - keyboardScrollsCount;
+			}
 		}
+//		System.out.println("Keyboard scrolls to do -> " + keyboardScrollsCount);
+//		if(direction == Keys.ARROW_DOWN)
+//		{
+//			System.out.println("Direction to scroll -> Downwards");
+//		}
+//		else
+//		{
+//			System.out.println("Direction to scroll -> Upwards");
+//		}
 		for (int i = 0; i < keyboardScrollsCount; i++) {
 			actions.sendKeys(direction).build().perform();
 		}
@@ -1110,6 +1130,10 @@ public class BaseClass {
 			defaultSelectedMinute = 60;
 		}
 		int differenceBetweenTargetMinuteAndDefaultSelectedMinute = targetMinute - defaultSelectedMinute;
+//		System.out.println("Calculating minutes..");
+//		System.out.println("Target Minute -> " + targetMinute);
+//		System.out.println("Default Selected Minute -> " + defaultSelectedMinute);
+//		System.out.println("Difference in Mins -> " + differenceBetweenTargetMinuteAndDefaultSelectedMinute);
 		direction = Keys.ARROW_DOWN;
 		keyboardScrollsCount = differenceBetweenTargetMinuteAndDefaultSelectedMinute;
 		if (keyboardScrollsCount > 30) {
@@ -1118,7 +1142,20 @@ public class BaseClass {
 		} else if (keyboardScrollsCount < 0) {
 			direction = Keys.ARROW_UP;
 			keyboardScrollsCount = 0 - keyboardScrollsCount;
+			if (keyboardScrollsCount > 30) {
+				direction = Keys.ARROW_DOWN;
+				keyboardScrollsCount = 60 - keyboardScrollsCount;
+			}
 		}
+//		System.out.println("Keyboard scrolls to do -> " + keyboardScrollsCount);
+//		if(direction == Keys.ARROW_DOWN)
+//		{
+//			System.out.println("Direction to scroll -> Downwards");
+//		}
+//		else
+//		{
+//			System.out.println("Direction to scroll -> Upwards");
+//		}
 		for (int i = 0; i < keyboardScrollsCount; i++) {
 			actions.sendKeys(direction).build().perform();
 		}
@@ -1140,7 +1177,7 @@ public class BaseClass {
 		actions.sendKeys(Keys.ENTER).build().perform();
 	}
 
-	public static void runFiberTest(int numberOfFibersToTest) throws Exception {
+	public static void runFiberTest(String module, int numberOfFibersToTest) throws Exception {
 		wait = new WebDriverWait(driver, 30);
 		int fibersTested = 0;
 		boolean startTestFromFirstBufferTube = true;
@@ -1176,6 +1213,11 @@ public class BaseClass {
 			FiberResults.isGoToFiberButtonVisible();
 			wait.until(ExpectedConditions.elementToBeClickable(FiberResults.goToFiberButton()));
 			FiberResults.goToFiberButton().click();
+			if(module.equals(TestData.tightBufferModuleName))
+			{
+				FiberResults.waitUntilTestsCompletedTextIsDisplayed();
+				return;
+			}
 			FiberResults.waitUntilStopTestsButtonIsDisplayed();
 			if (numberOfFibersToTest == fibersTested) {
 				FiberResults.stopButton().click();
@@ -1192,33 +1234,23 @@ public class BaseClass {
 		}
 	}
 
-	public static void download_1310_And_1550_SOR_Files() throws Exception {
-		downloadSorFile("1550");
-		downloadSorFile("1310");
-	}
-
-	public static void downloadSorFile(String attnNumber) throws Exception {
+	public static void downloadSorFiles() throws Exception {
 		Dashboard.waitUntilLoaderIsNotDisplayed();
-		if (attnNumber.equals("1550")) {
-			FiberResults.SOR_1550_Attn_DownloadIcon().click();
-		} else if (attnNumber.equals("1310")) {
-			FiberResults.SOR_1310_Attn_DownloadIcon().click();
+		for (int i = 1; i <= 4; i++) {
+			FiberResults.SOR_DownloadIcon(i).click();
+			Dashboard.waitUntilFileNameTextBoxIsDisplayed();
+			actions.keyDown(Keys.ALT).sendKeys("d").keyUp(Keys.ALT).build().perform();
+			Thread.sleep(500);
+			copyPasteAndClickEnter(TestData.SOR_Files_Path);
+			Thread.sleep(500);
+
+			robot.keyPress(KeyEvent.VK_ALT);
+			robot.keyPress(KeyEvent.VK_S);
+
+			robot.keyRelease(KeyEvent.VK_S);
+			robot.keyRelease(KeyEvent.VK_ALT);
+			i=i+2;
 		}
-
-		Dashboard.waitUntilFileNameTextBoxIsDisplayed();
-
-		// TAB navigation to reach address/location field
-
-		actions.keyDown(Keys.ALT).sendKeys("d").keyUp(Keys.ALT).build().perform();
-		Thread.sleep(500);
-		copyPasteAndClickEnter(TestData.SOR_Files_Path);
-		Thread.sleep(500);
-
-		robot.keyPress(KeyEvent.VK_ALT);
-		robot.keyPress(KeyEvent.VK_S);
-
-		robot.keyRelease(KeyEvent.VK_S);
-		robot.keyRelease(KeyEvent.VK_ALT);
 	}
 
 	public static void verifyCopyResults() throws Exception {
@@ -1489,12 +1521,20 @@ public class BaseClass {
 		}
 	}
 
-	public static void enterCompletionLayerValues() {
+	public static void enterCompletionLayerValues(String module) {
 		try {
 			Dashboard.waitUntilLoaderIsNotDisplayed();
 			softAssert.assertTrue(JobDetailsPage.isCompletionTabDisplayed(),
 					"Waited for 10 seconds, completion tab is not displayed");
 			JobDetailsPage.completionTab().click();
+			if (TestData.tightBufferModuleName.equals(module)) {
+				softAssert.assertTrue(Completion.isReelSizeDisplayed(),
+						"Waited for 10 seconds, Reel Size is not displayed ");
+				Completion.reelSize().sendKeys("42in Wood Reel");
+				actions.sendKeys(Keys.ENTER).perform();
+				Completion.jacketColor().sendKeys("2");
+				return;
+			}
 			softAssert.assertTrue(Completion.isSeqNumberTestDisplayed(),
 					"Waited for 10 seconds, ISE Sequence test is not displayed ");
 

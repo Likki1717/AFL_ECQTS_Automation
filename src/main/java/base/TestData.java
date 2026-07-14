@@ -4,11 +4,11 @@ import java.io.File;
 
 public class TestData {
 	public static String systemUsername = "sumeeth"; // veltris // LikhithaR
-	public static String testEnvironment = "Second Prod"; // Dev/QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
+	public static String testEnvironment = "QA"; // Dev/QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
 	public static String expectedAppVersion = "Version: 7.7.0.0";
 	public static boolean useOfficeOtdr = true;
 	public static boolean useExternalCamera = true;
-	public static int numberOfFibersToTest = 1;
+	public static int numberOfFibersToTest = 12;
 
 	public static String vpnAppPassword() {
 		if (systemUsername.equals("sumeeth")) {
@@ -82,9 +82,9 @@ public class TestData {
 	public static String fiberTestJobSearchJobNumber = "25305754"; // Large Job - 15811448
 	public static String fiberTestJobSearchCutNumber = getCurrentDateTimeStamp();
 	public static String fiberTestJobSearchCutNumberInfo = "ZTEST01";
-	public static String fiberTestExpectedIncompleteTestsCount = "66";
-	public static String fiberTestExpectedPassedTestsCount = "20";
-	public static String fiberTestExpectedFailedTestsCount = "5";
+	public static String fiberTestExpectedIncompleteTestsCount = "0";
+	public static String fiberTestExpectedPassedTestsCount = "64";
+	public static String fiberTestExpectedFailedTestsCount = "27";
 	public static String editAdjLengthValue = "9836";
 	public static String fiberTestCompletionTabIseSeqValue = "9886";
 
@@ -132,6 +132,9 @@ public class TestData {
 	public static String tightBufferItemNumber = "PT04136-07";
 	public static String tightBufferTestJobSearchCutNumber = getCurrentDateTimeStamp();
 	public static String tightBufferTestJobSearchCutNumberInfo = "ZTEST01";
+	public static String tightBufferExpectedIncompleteTestsCount = "0";
+	public static String tightBufferExpectedPassedTestsCount = "6";
+	public static String tightBufferExpectedFailedTestsCount = "1";
 
 	public static String ecqtsAppUsername() {
 		String username = null;

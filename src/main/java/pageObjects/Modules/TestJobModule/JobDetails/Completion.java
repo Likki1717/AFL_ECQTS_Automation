@@ -59,12 +59,20 @@ public class Completion extends BaseClass {
 	public static boolean isInvalidMeterMarksPopupDisplayed() {
 		return isElementDisplayed(ByName.name("Invalid Meter Marks"), 30);
 	}
-	
+
 	public static WebElement completionTabIseTestResult() {
 		return driver.findElement(By.xpath("//Text[@Name='ISE Seq Mark']/following::ComboBox/following::Text"));
-		}
+	}
 
 	public static WebElement completionTabOseTestResult() {
 		return driver.findElement(By.xpath("//Text[@Name='OSE Seq Mark']/following::ComboBox/following::Text"));
-		}
+	}
+
+	public static WebElement reelSize() {
+		return driver.findElement(By.xpath("//Text[@Name='Reel Size']/following::ComboBox[1]"));
+	}
+	
+	public static boolean isReelSizeDisplayed() {
+		return isElementDisplayed(ByName.name("Reel Size"), 5);
+	}
 }

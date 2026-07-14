@@ -1,5 +1,7 @@
 package pageObjects.Modules;
 
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -47,19 +49,10 @@ public class DownTime extends BaseClass {
 		return driver.findElement(By.xpath("//Text[contains(@Name,'Total Down Time')]")).getText();
 	}
 
-	public static WebElement hourWheel(int currentHour) {
-		return driver.findElement(By.xpath("//ListItem[@Name='" + currentHour + "']"));
-	}
-
-	public static WebElement minuteWheel(int currentMinute) {
-		return driver.findElement(
-				By.xpath("//List[@Name='minute']//ListItem[@Name='" + String.format("%02d", currentMinute) + "']"));
-	}
-
 	public static boolean isWarningMessageDisplayed() {
 		return isElementDisplayed(By.name("Warning"), 2);
 	}
-	
+
 	public static String getSavedReason() {
 		return driver.findElement(By.xpath("//*[@ClassName='ListView']//ListItem//Text[1]")).getText();
 	}
@@ -72,8 +65,4 @@ public class DownTime extends BaseClass {
 		return driver.findElement(By.xpath("//*[@ClassName='ListView']//ListItem//Text[3]")).getText();
 	}
 
-	public static WebElement cancelButton() {
-		return driver.findElement(By.xpath("//Button[@AutomationId='CancelButton']"));
-	}
-	
 }
