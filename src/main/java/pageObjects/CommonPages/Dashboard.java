@@ -63,6 +63,10 @@ public class Dashboard extends BaseClass {
 	public static WebElement tightBufferModule() {
 		return driver.findElement(By.xpath("//Text[@Name='Tight Buffer']"));
 	}
+	
+	public static WebElement PK_FiberTestModule() {
+		return driver.findElement(By.xpath("//Text[@Name='PK Fiber Test']"));
+	}
 
 	public static WebElement backArrow() {
 		return driver.findElementByAccessibilityId("NavigationViewBackButton");

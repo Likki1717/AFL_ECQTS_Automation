@@ -532,7 +532,7 @@ public class BaseClass {
 	}
 
 	public static void importJob(String importType, String importFilesToUpload, String OTDR_Length, String helixFactor,
-			String JobNumberStartsWith) throws Exception {
+			String JobNumberStartsWith, String itemNumber) throws Exception {
 		navigateToModule(TestData.importDataModuleName);
 
 		softAssert.assertTrue(Import.isSelectImportTextDisplayed(),
@@ -660,7 +660,7 @@ public class BaseClass {
 				importType + " Import completed - Helix Factor mismatch.");
 
 		verifyJobDetailsHeader(TestData.importOrg, JobNumberStartsWith, TestData.importCutNumber,
-				TestData.importcutNumberInfo, "After " + importType + " Import");
+				TestData.importcutNumberInfo, "After " + importType + " Import", itemNumber);
 	}
 
 	public static void importPrysmianJob() {
@@ -670,7 +670,7 @@ public class BaseClass {
 					+ TestData.prysmianJacketOdFilePath + "\"";
 
 			importJob(TestData.prysmianImportModuleName, prysmianFilePath, TestData.prysmianExpectedOtdrLength,
-					TestData.prysmianExpectedHelixFactor, TestData.prysmianJobNumberStartsWith);
+					TestData.prysmianExpectedHelixFactor, TestData.prysmianJobNumberStartsWith, TestData.prysmianItemNumber);
 
 			// Validating test results count
 			verifyTestResultsCount(TestData.prysmianExpectedIncompleteTests, TestData.prysmianExpectedPassedTests,
@@ -686,7 +686,7 @@ public class BaseClass {
 					+ TestData.swindonJacketOdFilePath + "\"";
 
 			importJob(TestData.swindonImportModuleName, swindonFilePath, TestData.swindonExpectedOtdrLength,
-					TestData.swindonExpectedHelixFactor, TestData.swindonJobNumberStartsWith);
+					TestData.swindonExpectedHelixFactor, TestData.swindonJobNumberStartsWith, TestData.swindonItemNumber);
 
 			verifyTestResultsCount(TestData.swindonExpectedIncompleteTests, TestData.swindonExpectedPassedTests,
 					TestData.swindonExpectedFailedTests, "Swindon Import");
@@ -703,7 +703,7 @@ public class BaseClass {
 			String taihanFilePath = "\"" + TestData.taihanAttenuationFilePath + "\"";
 
 			importJob(TestData.taihanImportModuleName, taihanFilePath, TestData.taihanExpectedOtdrLength,
-					TestData.taihanExpectedHelixFactor, TestData.taihanJobNumberStartsWith);
+					TestData.taihanExpectedHelixFactor, TestData.taihanJobNumberStartsWith, TestData.taihanItemNumber);
 
 			verifyTestResultsCount(TestData.taihanExpectedIncompleteTests, TestData.taihanExpectedPassedTests,
 					TestData.taihanExpectedFailedTests, "Taihan Import");
@@ -746,6 +746,10 @@ public class BaseClass {
 
 		case TestData.tightBufferModuleName:
 			Dashboard.tightBufferModule().click();
+			break;
+			
+		case TestData.PK_FiberTestModuleName:
+			Dashboard.PK_FiberTestModule().click();
 			break;
 
 		default:
@@ -889,7 +893,7 @@ public class BaseClass {
 	}
 
 	public static void verifyJobDetailsHeader(String org, String jobNumber, String cutNumber, String cutNumberInfo,
-			String whichTestBeingPerformed) {
+			String whichTestBeingPerformed, String itemNumber) {
 
 		Assert.assertEquals(JobDetailsPage.org().getText().trim(), org, whichTestBeingPerformed + " - Org mismatch.");
 
@@ -906,7 +910,9 @@ public class BaseClass {
 
 		Assert.assertEquals(JobDetailsPage.cutNumberInfo().getText().trim(), cutNumberInfo,
 				whichTestBeingPerformed + " - Cut number info mismatch.");
-
+		
+		Assert.assertEquals(JobDetailsPage.itemNumber().getText().trim(), itemNumber,
+		        whichTestBeingPerformed + " - Item Number mismatch.");
 	}
 
 	public static void verifyTestResultsCount(String expectedIncompleteTestsCount, String expectedPassedTestsCount,
@@ -985,10 +991,10 @@ public class BaseClass {
 		Thread.sleep(1000);
 		JobDetailsPage.adjLengthInputField().click();
 		JobDetailsPage.adjLengthInputField().clear();
-		JobDetailsPage.adjLengthInputField().sendKeys(TestData.editAdjLengthValue);
+		JobDetailsPage.adjLengthInputField().sendKeys(TestData.fiberTestEditAdjLengthValue);
 		JobDetailsPage.adjLengthSaveIcon().click();
 		Thread.sleep(1000);
-		softAssert.assertEquals(JobDetailsPage.getAdjLengthValue(), TestData.editAdjLengthValue + " m",
+		softAssert.assertEquals(JobDetailsPage.getAdjLengthValue(), TestData.fiberTestEditAdjLengthValue + " m",
 				"Adj length did not get updated.");
 	}
 
@@ -1376,7 +1382,7 @@ public class BaseClass {
 
 			verifyJobDetailsHeader(TestData.copyJobOrg, TestData.copyJobDestinationJobNumber,
 					TestData.copyJobDestinationCutNumber, TestData.copyJobDestinationCutNumberInfo,
-					"After copy results, On destination Job");
+					"After copy results, On destination Job", TestData.copyJobDestinationJobItemNumber);
 
 			verifyTestResultsCount(TestData.copyJobDestinationJobExpectedIncompleteTests,
 					TestData.copyJobDestinationJobExpectedPassedTests,
@@ -1568,8 +1574,6 @@ public class BaseClass {
 	public static void enterCompletionLayerValues(String module) {
 		try {
 			Dashboard.waitUntilLoaderIsNotDisplayed();
-			softAssert.assertTrue(JobDetailsPage.isCompletionTabDisplayed(),
-					"Waited for 10 seconds, completion tab is not displayed");
 			JobDetailsPage.completionTab().click();
 			if (TestData.tightBufferModuleName.equals(module)) {
 				softAssert.assertTrue(Completion.isReelSizeDisplayed(),
@@ -1581,51 +1585,52 @@ public class BaseClass {
 			}
 			softAssert.assertTrue(Completion.isSeqNumberTestDisplayed(),
 					"Waited for 10 seconds, ISE Sequence test is not displayed ");
-
-			Completion.ISE_Seq_Number().sendKeys(TestData.fiberTestCompletionTabIseSeqValue);
-			Completion.ISE_Seq_Number_uoM().sendKeys("m");
-
+			
 			Completion.OSE_Seq_Number().sendKeys("1");
 			Completion.OSE_Seq_Number_uoM().sendKeys("m");
-
-			Dashboard.isLoaderDisplayed();
-			Dashboard.waitUntilLoaderIsNotDisplayed();
-
-			Thread.sleep(1000);
-
-			softAssert.assertEquals(Completion.completionTabIseTestResult().getText().trim(), "PASS",
-					"Mismatch in Completion tab ISE Seq test result.");
-			softAssert.assertEquals(Completion.completionTabOseTestResult().getText().trim(), "PASS",
-					"Mismatch in Completion tab OSE Seq test result.");
-
+			
+			Completion.ISE_Seq_Number_uoM().sendKeys("m");
+			if(TestData.fiberTestModuleName.equals(module)) {
+				Completion.ISE_Seq_Number().sendKeys(TestData.fiberTestCompletionTabIseSeqValue);
+				
+				Dashboard.isLoaderDisplayed();
+				Dashboard.waitUntilLoaderIsNotDisplayed();
+ 
+				Thread.sleep(1000);
+				softAssert.assertEquals(Completion.completionTabIseTestResult().getText().trim(), "PASS",
+						"Mismatch in Completion tab ISE Seq test result.");
+				softAssert.assertEquals(Completion.completionTabOseTestResult().getText().trim(), "PASS",
+						"Mismatch in Completion tab OSE Seq test result.");
+				
+				Completion.OSE_Print_Spacing().sendKeys("2");
+				Completion.ISE_Print_Spacing().sendKeys("2");
+			}		
 			Completion.ISE_Seq_Number().clear();
 			Completion.ISE_Seq_Number()
 					.sendKeys(String.valueOf(Integer.parseInt(TestData.fiberTestCompletionTabIseSeqValue) + 1));
-
+ 
 			Dashboard.isLoaderDisplayed();
-
+ 
 			softAssert.assertTrue(Completion.isInvalidMeterMarksPopupDisplayed(),
 					"Waited for 30 seconds, Invalid Meter Marks popup is not visible");
-
+ 
 			if (Completion.isInvalidMeterMarksPopupDisplayed()) {
 				Completion.okButton().click();
 				Thread.sleep(2000);
 			}
-
+ 
 			softAssert.assertEquals(Completion.completionTabIseTestResult().getText().trim(), "FAIL",
 					"Mismatch in Completion tab ISE Seq test result.");
 			softAssert.assertEquals(Completion.completionTabOseTestResult().getText().trim(), "FAIL",
 					"Mismatch in Completion tab OSE Seq test result.");
-
+ 
 			Completion.ISE_Print_Verified().sendKeys("2");
 			Completion.OSE_Print_Verified().sendKeys("2");
-
+ 
 			Completion.reelItem().sendKeys("REL00235");
 			Completion.jacketColor().sendKeys("2");
-
-			Completion.OSE_Print_Spacing().sendKeys("2");
-			Completion.ISE_Print_Spacing().sendKeys("2");
-
+ 
+			
 		} catch (Exception e) {
 			System.out.println(
 					"****Could not enter all the values in Completion tab, possibly this job does not have all fields****");

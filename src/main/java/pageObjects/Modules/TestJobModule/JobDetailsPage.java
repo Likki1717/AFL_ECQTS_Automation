@@ -5,7 +5,6 @@ import org.openqa.selenium.By.ByName;
 import org.openqa.selenium.WebElement;
 
 import base.BaseClass;
-import base.TestData;
 import io.appium.java_client.MobileBy.ByAccessibilityId;
 
 public class JobDetailsPage extends BaseClass {
@@ -132,6 +131,10 @@ public class JobDetailsPage extends BaseClass {
 
 	public static WebElement downloadAllFibersDataButton() {
 		return driver.findElementByAccessibilityId("Download All Fibers DataButton");
+	}
+	
+	public static WebElement itemNumber() {
+		return driver.findElement(By.xpath("//Text[@AutomationId='ItemNumberValueLabel']"));
 	}
 
 }
