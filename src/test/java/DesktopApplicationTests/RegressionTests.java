@@ -56,7 +56,7 @@ public class RegressionTests extends BaseClass {
 
 			verifyJobDetailsHeader(TestData.jobSearchOrg, TestData.fiberTestJobSearchJobNumber,
 					TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo,
-					"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumber, TestData.fiberTestItemNumber);
+					"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumber, TestData.fiberTestExpectedItemNumber);
 
 			enterProtectionLayerValues(TestData.fiberTestModuleName);
 
@@ -88,7 +88,7 @@ public class RegressionTests extends BaseClass {
 
 			verifyJobDetailsHeader(TestData.jobSearchOrg, TestData.tightBufferJobNumber,
 					TestData.tightBufferTestJobSearchCutNumber, TestData.tightBufferTestJobSearchCutNumberInfo,
-					"Tight Buffer test with Job # " + TestData.tightBufferJobNumber, TestData.tightBufferItemNumber);
+					"Tight Buffer test with Job # " + TestData.tightBufferJobNumber, TestData.tightBufferExpectedItemNumber);
 
 			enterProtectionLayerValues(TestData.tightBufferModuleName);
 
@@ -114,7 +114,7 @@ public class RegressionTests extends BaseClass {
  
 			verifyJobDetailsHeader(TestData.jobSearchOrg, TestData.PK_FiberTestJobSearchJobNumber,
 					TestData.PK_FiberTestJobSearchCutNumber, TestData.PK_FiberTestJobSearchCutNumberInfo,
-					"PK Fiber test with Job # " + TestData.PK_FiberTestJobSearchJobNumber , TestData.PK_FiberTestItemNumber);
+					"PK Fiber test with Job # " + TestData.PK_FiberTestJobSearchJobNumber , TestData.PK_FiberTestExpectedItemNumber);
 			
 			enterProtectionLayerValues(TestData.PK_FiberTestModuleName);
 			

@@ -37,7 +37,7 @@ public class Completion extends BaseClass {
 	}
 
 	public static WebElement reelItem() {
-		return driver.findElement(By.xpath("//Text[@Name='Reel Item']/following::Edit[1]"));
+		return driver.findElement(By.xpath("//Text[@Name='Reel Item']/following-sibling::Text[3]"));
 	}
 
 	public static WebElement jacketColor() {

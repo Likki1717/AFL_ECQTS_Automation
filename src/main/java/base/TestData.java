@@ -61,7 +61,7 @@ public class TestData {
 	public static String prysmianExpectedHelixFactor = "1.0233";
 	public static String prysmianExpectedOtdrLength = "7879 m";
 	public static String prysmianJobNumberStartsWith = "90043053";
-	public static String prysmianItemNumber = "DNA-31683-01";
+	public static String prysmianJobExpectedItemNumber = "DNA-31683-01";
  
 	public static String swindonImportModuleName = "Swindon";
 	public static String swindonExpectedIncompleteTests = "159";
@@ -70,7 +70,7 @@ public class TestData {
 	public static String swindonExpectedHelixFactor = "1.02";
 	public static String swindonExpectedOtdrLength = "6353 m";
 	public static String swindonJobNumberStartsWith = "250592";
-	public static String swindonItemNumber = "DNL-6169-01";
+	public static String swindonJobExpectedItemNumber = "DNL-6169-01";
  
 	public static String taihanImportModuleName = "Taihan";
 	public static String taihanExpectedIncompleteTests = "51";
@@ -79,7 +79,7 @@ public class TestData {
 	public static String taihanExpectedHelixFactor = "1.02";
 	public static String taihanExpectedOtdrLength = "6181 m";
 	public static String taihanJobNumberStartsWith = "7887";
-	public static String taihanItemNumber = "DNL-6536-01";
+	public static String taihanJobExpectedItemNumber = "DNL-6536-01";
  
 	public static final String fiberTestModuleName = "Fiber Test";
 	public static String fiberTestJobSearchJobNumber = "25305754"; // Large Job - 15811448
@@ -89,8 +89,9 @@ public class TestData {
 	public static String fiberTestExpectedPassedTestsCount = "64";
 	public static String fiberTestExpectedFailedTestsCount = "27";
 	public static String fiberTestEditAdjLengthValue = "9836";
-	public static String fiberTestItemNumber = "DNA-32673-02";
+	public static String fiberTestExpectedItemNumber = "DNA-32673-02";
 	public static String fiberTestCompletionTabIseSeqValue = "9886";
+	public static String fiberTestExpectedReelItem = "REL00235";
 	
 	public static final String PK_FiberTestModuleName = "PK Fiber Test";
 	public static String PK_FiberTestJobSearchJobNumber = "15811448"; // Large Job - 15811448
@@ -101,7 +102,7 @@ public class TestData {
 	public static String PK_FiberTestExpectedFailedTestsCount = "5";
 //	public static String PK_FiberTestAdjLengthValue = "9836";
 //	public static String PK_FiberTestCompletionTabIseSeqValue = "9886";
-	public static String PK_FiberTestItemNumber = "DNL-5356-01";
+	public static String PK_FiberTestExpectedItemNumber = "DNL-5356-01";
 	public static String PK_FiberTestCutLength="10015";
  
 	public static final String wtcTestModuleName = "WTC Test";
@@ -113,7 +114,7 @@ public class TestData {
 	public static String wtcTestExpectedPassedTestsCount = "20";
 	public static String wtcTestExpectedFailedTestsCount = "6";
 	public static String wtcTestCompletionTabIseSeqValue = "9886";
-	public static String wtcTestItemNumber = "PR02264-01";
+	public static String wtcTestExpectedItemNumber = "PR02264-01";
  
 	public static final String copyResultsModuleName = "Copy Results";
 	public static String copyJobModule = wtcTestModuleName; // fiberTestModuleName
@@ -129,7 +130,7 @@ public class TestData {
 	public static String copyJobDestinationJobExpectedFailedTests = "3";
 	public static String copyJobDestinationJobExpectedHelixFactor = "1.0";
 	public static String copyJobDestinationJobExpectedOtdrLength = "5765 m";
-	public static String copyJobDestinationJobItemNumber = "PR01872-01";
+	public static String copyJobDestinationJobExpectedItemNumber = "PR01872-01";
  
 	public static final String downTimeModuleName = "Down Time";
 	public static String expectedStartDateTime = java.time.LocalDate.now()
@@ -147,7 +148,7 @@ public class TestData {
 	public static String tightBufferJobNumber = ""; // Overriding the job number during Job search
 	public static String expectedTightBufferJobNumberStartsWith = "TB"
 			+ java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
-	public static String tightBufferItemNumber = "PT04136-07";
+	public static String tightBufferExpectedItemNumber = "PT04136-07";
 	public static String tightBufferTestJobSearchCutNumber = getCurrentDateTimeStamp();
 	public static String tightBufferTestJobSearchCutNumberInfo = "ZTEST01";
 	public static String tightBufferExpectedIncompleteTestsCount = "0";
