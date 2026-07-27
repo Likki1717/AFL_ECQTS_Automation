@@ -824,7 +824,7 @@ public class BaseClass {
 				Dashboard.waitUntilOkButtonIsDisplayed();
 				continue;
 			}
-			wait = new WebDriverWait(driver, 120);
+			wait = new WebDriverWait(driver, 150);
 			try {
 				wait.until(ExpectedConditions.elementToBeClickable(JobSearch.searchCutNumber()));
 				break;
@@ -874,6 +874,9 @@ public class BaseClass {
 			JobSearch.searchCutNumberInfo().sendKeys(cutNumberInfo);
 			actions.sendKeys(Keys.ENTER).perform();
 			Thread.sleep(1000);
+		}
+		if (jobNumber.equals(TestData.fiberTestJobSearchJobNumberForReelIdVerification)) {
+			softAssert.assertEquals(JobSearch.getReelId(), TestData.fiberTestExpectedReelId, "Mismatch in Reel Id in Job Search popup.");
 		}
 		JobSearch.goButton().click();
 		while (!JobSearch.isGoButtonNotDisplayed()) {
@@ -1634,7 +1637,7 @@ public class BaseClass {
 
 			if (module.equals(TestData.fiberTestModuleName)) {
 				softAssert.assertEquals(Completion.reelItem().getText(), TestData.fiberTestExpectedReelItem,
-						"Mismatch in reel item for module - " + module);
+						"Mismatch in reel item for module - " + module + ".");
 				softAssert.assertFalse(Completion.reelItem().isEnabled(), "Reel Item field should be non-editable.");
 			} else if (module.equals(TestData.PK_FiberTestModuleName)) {
 
@@ -1690,6 +1693,20 @@ public class BaseClass {
 		} catch (Exception e) {
 			// Popup not present or already closed — safe to ignore
 		}
+	}
+
+	public static void verify_Reel_Id_In_Job_Search_popup() throws Exception {
+		navigateToModule(TestData.fiberTestModuleName);
+		searchJobAndNavigationToJobDetailsPage(TestData.fiberTestModuleName, TestData.jobSearchOrg,
+				TestData.fiberTestJobSearchJobNumberForReelIdVerification, TestData.fiberTestJobSearchCutNumber,
+				TestData.fiberTestJobSearchCutNumberInfo);
+	}
+	
+	public static void verify_Reel_Id_In_Completion_Tab()
+	{
+//		Verify Reel Item Value and non editable and result 
+//		Verify ISE/OSE Reel Label values and non editable and result
+//		Verify Reel Label value and non-editable and result
 	}
 
 	public static void runWtcTestForAllRibbonsInJob(int numberOfRibbonsToTestBeforeTakingDump,

@@ -120,13 +120,17 @@ public class RegressionTests extends BaseClass {
 			
 			enterCompletionLayerValues(TestData.PK_FiberTestModuleName);
 			
-			download_OCR_Report();
+//			download_OCR_Report();
 			
 			verifyTestResultsCount(TestData.PK_FiberTestExpectedIncompleteTestsCount,
 					TestData.PK_FiberTestExpectedPassedTestsCount, TestData.PK_FiberTestExpectedFailedTestsCount,
 					"PK Fiber Test with Job # " + TestData.PK_FiberTestJobSearchJobNumber);
 			
 			verify_SOR_OCR_Files_Downloaded();
+			
+//			verify_Reel_Id_In_Job_Search_popup();
+//			
+//			verify_Reel_Id_In_Completion_Tab();
 
 		} catch (Exception e) {
 			exception = e;

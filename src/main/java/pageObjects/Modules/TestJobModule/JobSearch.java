@@ -96,5 +96,10 @@ public class JobSearch extends BaseClass {
 	public static WebElement createButton() {
 		return driver.findElement(By.xpath("//Button[@Name='Create']"));
 	}
+	
+	public static String getReelId()
+	{
+		return driver.findElement(By.xpath("//Text[@Name='Reel ID:']/following-sibling::div[@AutomationId='DropShipFlagValue']")).getAttribute("Value.Value");
+	}
 
 }

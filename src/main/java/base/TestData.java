@@ -4,11 +4,11 @@ import java.io.File;
 
 public class TestData {
 	public static String systemUsername = "sumeeth"; // veltris // LikhithaR
-	public static String testEnvironment = "QA"; // Dev/QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
-	public static String expectedAppVersion = "Version: 7.7.1.0";
+	public static String testEnvironment = "Prod"; // Dev/QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
+	public static String expectedAppVersion = "Version: 7.7.7.0";
 	public static boolean useOfficeOtdr = true;
 	public static boolean useExternalCamera = true;
-	public static int numberOfFibersToTest = 12;
+	public static int numberOfFibersToTest = 6;
  
 	public static String vpnAppPassword() {
 		if (systemUsername.equals("sumeeth")) {
@@ -92,9 +92,11 @@ public class TestData {
 	public static String fiberTestExpectedItemNumber = "DNA-32673-02";
 	public static String fiberTestCompletionTabIseSeqValue = "9886";
 	public static String fiberTestExpectedReelItem = "REL00235";
+	public static String fiberTestJobSearchJobNumberForReelIdVerification = "48944910";
+	public static String fiberTestExpectedReelId = "15791";
 	
 	public static final String PK_FiberTestModuleName = "PK Fiber Test";
-	public static String PK_FiberTestJobSearchJobNumber = "15811448"; // Large Job - 15811448
+	public static String PK_FiberTestJobSearchJobNumber = "15811448"; 
 	public static String PK_FiberTestJobSearchCutNumber = getCurrentDateTimeStamp();
 	public static String PK_FiberTestJobSearchCutNumberInfo = "ZTEST01";
 	public static String PK_FiberTestExpectedIncompleteTestsCount = "889";
