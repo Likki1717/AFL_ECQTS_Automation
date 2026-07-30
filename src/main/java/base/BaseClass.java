@@ -876,7 +876,8 @@ public class BaseClass {
 			Thread.sleep(1000);
 		}
 		if (jobNumber.equals(TestData.fiberTestJobSearchJobNumberForReelIdVerification)) {
-			softAssert.assertEquals(JobSearch.getReelId(), TestData.fiberTestExpectedReelId, "Mismatch in Reel Id in Job Search popup.");
+			softAssert.assertEquals(JobSearch.getReelId(), TestData.fiberTestExpectedReelId,
+					"Mismatch in Reel Id in Job Search popup.");
 		}
 		JobSearch.goButton().click();
 		while (!JobSearch.isGoButtonNotDisplayed()) {
@@ -1270,7 +1271,8 @@ public class BaseClass {
 			FiberResults.isGoToFiberButtonVisible();
 			wait.until(ExpectedConditions.elementToBeClickable(FiberResults.goToFiberButton()));
 			FiberResults.goToFiberButton().click();
-			if (module.equals(TestData.tightBufferModuleName)) {
+			if (module.equals(TestData.tightBufferModuleName)
+					&& (TestData.testEnvironment.equals("Dev") || TestData.testEnvironment.equals("QA"))) {
 				FiberResults.waitUntilTestsCompletedTextIsDisplayed();
 				return;
 			}
@@ -1306,6 +1308,8 @@ public class BaseClass {
 			robot.keyRelease(KeyEvent.VK_S);
 			robot.keyRelease(KeyEvent.VK_ALT);
 			i = i + 2;
+			Dashboard.waitUntilLoaderIsNotDisplayed();
+			Thread.sleep(1000);
 		}
 	}
 
@@ -1375,6 +1379,8 @@ public class BaseClass {
 			}
 		} while (!Dashboard.isLoaderDisplayed());
 
+		Dashboard.waitUntilOkButtonIsDisplayed();
+		dismissSyncStatusPopupIfDisplayed();
 		Dashboard.waitUntilOkButtonIsDisplayed();
 
 		boolean isJobCopied = CopyResults.isJobCopySuccessfullPopupDisplayed();
@@ -1635,15 +1641,6 @@ public class BaseClass {
 
 //			Completion.reelItem().sendKeys("REL00235");
 
-			if (module.equals(TestData.fiberTestModuleName)) {
-				softAssert.assertEquals(Completion.reelItem().getText(), TestData.fiberTestExpectedReelItem,
-						"Mismatch in reel item for module - " + module + ".");
-				softAssert.assertFalse(Completion.reelItem().isEnabled(), "Reel Item field should be non-editable.");
-			} else if (module.equals(TestData.PK_FiberTestModuleName)) {
-
-			} else {
-				System.out.println("*Verify if reel item is available in Completion tab for this module - " + module);
-			}
 			Completion.jacketColor().sendKeys("2");
 
 		} catch (Exception e) {
@@ -1655,7 +1652,8 @@ public class BaseClass {
 	public static void download_OCR_Report() throws Exception {
 
 		JobDetailsPage.reportsTab().click();
-		Reports.isJobWarnings_ErrorsPopupDisplayed();
+//		Reports.isJobWarnings_ErrorsPopupDisplayed();
+		Dashboard.waitUntilOkButtonIsDisplayed();
 		Reports.okButton().click();
 		Reports.isDownloadOCR_ReportDisplayed();
 		Reports.opticalCharacteristics().click();
@@ -1701,12 +1699,37 @@ public class BaseClass {
 				TestData.fiberTestJobSearchJobNumberForReelIdVerification, TestData.fiberTestJobSearchCutNumber,
 				TestData.fiberTestJobSearchCutNumberInfo);
 	}
-	
-	public static void verify_Reel_Id_In_Completion_Tab()
-	{
-//		Verify Reel Item Value and non editable and result 
-//		Verify ISE/OSE Reel Label values and non editable and result
-//		Verify Reel Label value and non-editable and result
+
+	public static void verify_Reel_Id_In_Completion_Tab() throws Exception {
+		JobDetailsPage.completionTab().click();
+		Dashboard.waitUntilLoaderIsNotDisplayed();
+
+		softAssert.assertEquals(Completion.reelItem().getText(), TestData.fiberTestExpectedReelItem,
+				"Reel item mismatch in Completion Tab.");
+		softAssert.assertEquals(Completion.reelItem().getAttribute("IsKeyboardFocusable"), "False",
+				"Reel Item field should be non-editable.");
+		softAssert.assertEquals(Completion.getReelItemResult(), "PASS", "Reel Item result was supposed to be Pass.");
+
+		softAssert.assertEquals(Completion.iseReelLabel().getText(), TestData.fiberTestExpectedIseReelLabel,
+				"ISE Reel Label mismatch in Completion Tab.");
+		softAssert.assertEquals(Completion.iseReelLabel().getAttribute("IsKeyboardFocusable"), "False",
+				"ISE Reel Label field should be non-editable.");
+		softAssert.assertEquals(Completion.getIseReelLabelResult(), "PASS",
+				"ISE Reel Label result was supposed to be Pass.");
+
+		softAssert.assertEquals(Completion.oseReelLabel().getText(), TestData.fiberTestExpectedOseReelLabel,
+				"OSE Reel Label mismatch in Completion Tab.");
+		softAssert.assertEquals(Completion.oseReelLabel().getAttribute("IsKeyboardFocusable"), "False",
+				"OSE Reel Label field should be non-editable.");
+		softAssert.assertEquals(Completion.getOseReelLabelResult(), "PASS",
+				"OSE Reel Label result was supposed to be Pass.");
+
+		softAssert.assertEquals(Completion.reelLabel().getText(), TestData.fiberTestExpectedReelLabel,
+				"Reel Label mismatch in Completion Tab.");
+		softAssert.assertEquals(Completion.reelLabel().getAttribute("IsKeyboardFocusable"), "False",
+				"Reel Label field should be non-editable.");
+		softAssert.assertEquals(Completion.getReelLabelResult(), "PASS", "Reel Label result was supposed to be Pass.");
+
 	}
 
 	public static void runWtcTestForAllRibbonsInJob(int numberOfRibbonsToTestBeforeTakingDump,

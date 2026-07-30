@@ -40,6 +40,38 @@ public class Completion extends BaseClass {
 		return driver.findElement(By.xpath("//Text[@Name='Reel Item']/following-sibling::Text[3]"));
 	}
 
+	public static String getReelItemResult() {
+		return driver.findElement(By.xpath("//Text[@Name='Reel Item']/following-sibling::Text[5]"))
+				.getAttribute("Name");
+	}
+
+	public static WebElement iseReelLabel() {
+		return driver.findElement(By.xpath("//Text[@Name='ISE Reel Label']/following-sibling::Text[3]"));
+	}
+
+	public static String getIseReelLabelResult() {
+		return driver.findElement(By.xpath("//Text[@Name='ISE Reel Label']/following-sibling::Text[5]"))
+				.getAttribute("Name");
+	}
+
+	public static WebElement oseReelLabel() {
+		return driver.findElement(By.xpath("//Text[@Name='OSE Reel Label']/following-sibling::Text[3]"));
+	}
+
+	public static String getOseReelLabelResult() {
+		return driver.findElement(By.xpath("//Text[@Name='OSE Reel Label']/following-sibling::Text[5]"))
+				.getAttribute("Name");
+	}
+
+	public static WebElement reelLabel() {
+		return driver.findElement(By.xpath("//Text[@Name='Reel Label']/following-sibling::Text[3]"));
+	}
+
+	public static String getReelLabelResult() {
+		return driver.findElement(By.xpath("//Text[@Name='Reel Label']/following-sibling::Text[5]"))
+				.getAttribute("Name");
+	}
+
 	public static WebElement jacketColor() {
 		return driver.findElement(By.xpath("//Text[@Name='Jacket Color']/following::ComboBox[1]"));
 	}
@@ -71,7 +103,7 @@ public class Completion extends BaseClass {
 	public static WebElement reelSize() {
 		return driver.findElement(By.xpath("//Text[@Name='Reel Size']/following::ComboBox[1]"));
 	}
-	
+
 	public static boolean isReelSizeDisplayed() {
 		return isElementDisplayed(ByName.name("Reel Size"), 5);
 	}

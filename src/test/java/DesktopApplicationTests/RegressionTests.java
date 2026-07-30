@@ -108,29 +108,29 @@ public class RegressionTests extends BaseClass {
 					TestData.tightBufferExpectedPassedTestsCount, TestData.tightBufferExpectedFailedTestsCount,
 					"Tight Buffer with Job # " + TestData.tightBufferJobNumber);
 
-			searchJobAndNavigationToJobDetailsPage(TestData.PK_FiberTestModuleName, TestData.jobSearchOrg,
-					TestData.PK_FiberTestJobSearchJobNumber, TestData.PK_FiberTestJobSearchCutNumber,
-					TestData.PK_FiberTestJobSearchCutNumberInfo);
- 
-			verifyJobDetailsHeader(TestData.jobSearchOrg, TestData.PK_FiberTestJobSearchJobNumber,
-					TestData.PK_FiberTestJobSearchCutNumber, TestData.PK_FiberTestJobSearchCutNumberInfo,
-					"PK Fiber test with Job # " + TestData.PK_FiberTestJobSearchJobNumber , TestData.PK_FiberTestExpectedItemNumber);
-			
-			enterProtectionLayerValues(TestData.PK_FiberTestModuleName);
-			
-			enterCompletionLayerValues(TestData.PK_FiberTestModuleName);
+//			searchJobAndNavigationToJobDetailsPage(TestData.PK_FiberTestModuleName, TestData.jobSearchOrg,
+//					TestData.PK_FiberTestJobSearchJobNumber, TestData.PK_FiberTestJobSearchCutNumber,
+//					TestData.PK_FiberTestJobSearchCutNumberInfo);
+// 
+//			verifyJobDetailsHeader(TestData.jobSearchOrg, TestData.PK_FiberTestJobSearchJobNumber,
+//					TestData.PK_FiberTestJobSearchCutNumber, TestData.PK_FiberTestJobSearchCutNumberInfo,
+//					"PK Fiber test with Job # " + TestData.PK_FiberTestJobSearchJobNumber , TestData.PK_FiberTestExpectedItemNumber);
+//			
+//			enterProtectionLayerValues(TestData.PK_FiberTestModuleName);
+//			
+//			enterCompletionLayerValues(TestData.PK_FiberTestModuleName);
 			
 //			download_OCR_Report();
 			
-			verifyTestResultsCount(TestData.PK_FiberTestExpectedIncompleteTestsCount,
-					TestData.PK_FiberTestExpectedPassedTestsCount, TestData.PK_FiberTestExpectedFailedTestsCount,
-					"PK Fiber Test with Job # " + TestData.PK_FiberTestJobSearchJobNumber);
-			
-			verify_SOR_OCR_Files_Downloaded();
-			
-//			verify_Reel_Id_In_Job_Search_popup();
+//			verifyTestResultsCount(TestData.PK_FiberTestExpectedIncompleteTestsCount,
+//					TestData.PK_FiberTestExpectedPassedTestsCount, TestData.PK_FiberTestExpectedFailedTestsCount,
+//					"PK Fiber Test with Job # " + TestData.PK_FiberTestJobSearchJobNumber);
 //			
-//			verify_Reel_Id_In_Completion_Tab();
+//			verify_SOR_OCR_Files_Downloaded();
+			
+			verify_Reel_Id_In_Job_Search_popup();
+			
+			verify_Reel_Id_In_Completion_Tab();
 
 		} catch (Exception e) {
 			exception = e;

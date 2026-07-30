@@ -4,11 +4,11 @@ import java.io.File;
 
 public class TestData {
 	public static String systemUsername = "sumeeth"; // veltris // LikhithaR
-	public static String testEnvironment = "Prod"; // Dev/QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
-	public static String expectedAppVersion = "Version: 7.7.7.0";
+	public static String testEnvironment = "QA"; // Dev/QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
+	public static String expectedAppVersion = "Version: 7.7.3.0";
 	public static boolean useOfficeOtdr = true;
 	public static boolean useExternalCamera = true;
-	public static int numberOfFibersToTest = 6;
+	public static int numberOfFibersToTest = 12;
  
 	public static String vpnAppPassword() {
 		if (systemUsername.equals("sumeeth")) {
@@ -83,6 +83,7 @@ public class TestData {
  
 	public static final String fiberTestModuleName = "Fiber Test";
 	public static String fiberTestJobSearchJobNumber = "25305754"; // Large Job - 15811448
+	public static String fiberTestJobSearchJobNumberForReelIdVerification = "48944910";
 	public static String fiberTestJobSearchCutNumber = getCurrentDateTimeStamp();
 	public static String fiberTestJobSearchCutNumberInfo = "ZTEST01";
 	public static String fiberTestExpectedIncompleteTestsCount = "0";
@@ -91,8 +92,10 @@ public class TestData {
 	public static String fiberTestEditAdjLengthValue = "9836";
 	public static String fiberTestExpectedItemNumber = "DNA-32673-02";
 	public static String fiberTestCompletionTabIseSeqValue = "9886";
-	public static String fiberTestExpectedReelItem = "REL00235";
-	public static String fiberTestJobSearchJobNumberForReelIdVerification = "48944910";
+	public static String fiberTestExpectedReelItem = "REL00291";
+	public static String fiberTestExpectedIseReelLabel = "15791";
+	public static String fiberTestExpectedOseReelLabel = "15791";
+	public static String fiberTestExpectedReelLabel = "YES";
 	public static String fiberTestExpectedReelId = "15791";
 	
 	public static final String PK_FiberTestModuleName = "PK Fiber Test";

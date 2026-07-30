@@ -54,7 +54,7 @@ public class CopyResults extends BaseClass {
 	
 	public static boolean isJobCopySuccessfullPopupDisplayed()
 	{
-		return isElementDisplayed(ByAccessibilityId.AccessibilityId("JobSuccessAlertMessage"), 1);
+		return isElementDisplayed(ByAccessibilityId.AccessibilityId("JobSuccessAlertMessage"), 2);
 	}	
 
 }
