@@ -64,6 +64,8 @@ public class RegressionTests extends BaseClass {
 			verify_Reel_Id_And_Sales_Order_In_Job_Search_popup();
 			
 			verify_Reel_Id_And_Sales_Order_In_Completion_Tab();
+			
+			verify_Remove_Sales_Order_Flow();
 
 //			logOutAndCloseApplication();
 

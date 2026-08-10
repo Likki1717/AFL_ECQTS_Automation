@@ -56,6 +56,7 @@ public class BaseClass {
 	public static SoftAssert softAssert = new SoftAssert();
 	public static boolean isAppLaunched = false;
 	public static boolean isAppLoggedIn = false;
+	public static boolean verifyRemoveSalesOrder = false;
 
 	@BeforeClass
 	public static void applicationSetupAndLaunch() throws Exception {
@@ -928,6 +929,11 @@ public class BaseClass {
 		if (jobNumber.equals(TestData.fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification)) {
 			softAssert.assertEquals(JobSearch.getReelId(), TestData.fiberTestExpectedReelId,
 					"Mismatch in Reel Id in Job Search popup.");
+		}
+		
+		if(verifyRemoveSalesOrder)
+		{
+			// remove, verify if its removed
 		}
 		JobSearch.goButton().click();
 		while (!JobSearch.isGoButtonNotDisplayed()) {
@@ -1929,6 +1935,17 @@ public class BaseClass {
 				TestData.fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification, TestData.fiberTestJobSearchCutNumber,
 				TestData.fiberTestJobSearchCutNumberInfo);
 	}
+	
+	public static void verify_Remove_Sales_Order_Flow() throws Exception
+	{
+		verifyRemoveSalesOrder = true;
+		navigateToModule(TestData.fiberTestModuleName);
+		searchJobAndNavigationToJobDetailsPage(TestData.fiberTestModuleName, TestData.jobSearchOrg,
+				TestData.fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification, TestData.fiberTestJobSearchCutNumber,
+				TestData.fiberTestJobSearchCutNumberInfo);
+		verify_Reel_Id_And_Sales_Order_In_Completion_Tab();
+		// SHould not be able to download shipping label 
+	}
 
 	public static void verify_Reel_Id_And_Sales_Order_In_Completion_Tab() throws Exception {
 		JobDetailsPage.completionTab().click();
@@ -1961,6 +1978,7 @@ public class BaseClass {
 				"Reel Label field should be non-editable.");
 		softAssert.assertEquals(Completion.getReelLabelResult(), "PASS", "Reel Label result was supposed to be Pass.");
 
+		// COunt and header for sales order 
 	}
 
 	public static void runWtcTestForAllRibbonsInJob(int numberOfRibbonsToTestBeforeTakingDump,
