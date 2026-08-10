@@ -8,16 +8,14 @@ import io.appium.java_client.MobileBy.ByAccessibilityId;
 
 public class SignIn extends BaseClass {
 
-	public static void waitUntilUsernameFieldIsDisplayed() throws Exception
-	{
-		while(!isElementDisplayed(ByAccessibilityId.AccessibilityId("LoginIdEntry"), 1))
-		{
+	public static void waitUntilUsernameFieldIsDisplayed() throws Exception {
+		while (!isElementDisplayed(ByAccessibilityId.AccessibilityId("LoginIdEntry"), 1)) {
 			Thread.sleep(1000);
 		}
 	}
-	
+
 	public static boolean isUsernameFieldDisplayed() {
-		return isElementDisplayed(ByAccessibilityId.AccessibilityId("LoginIdEntry"), 5);
+		return isElementDisplayed(ByAccessibilityId.AccessibilityId("LoginIdEntry"), 10);
 	}
 
 	public static WebElement usernameField() {
@@ -43,14 +41,20 @@ public class SignIn extends BaseClass {
 	public static WebElement appWindow() {
 		return desktopSession.findElementByName("Non Client Input Sink Window");
 	}
-	
-	public static WebElement recoverPasswordButton()
-	{
+
+	public static WebElement recoverPasswordButton() {
 		return driver.findElement(By.xpath("//*[@AutomationId='RecoverPasswordButton']"));
 	}
-	
+
 	public static boolean isRecoverPasswordButtonDisplayed() {
-		return isElementDisplayed(By.xpath("//*[@AutomationId='RecoverPasswordButton']"),1);
+		return isElementDisplayed(By.xpath("//*[@AutomationId='RecoverPasswordButton']"), 1);
 	}
 
+	public static String getLoggedOutText() {
+		return driver.findElementByAccessibilityId("LoggedOutLabel").getAttribute("Name");
+	}
+
+	public static WebElement closeAppIcon() {
+		return driver.findElementByAccessibilityId("Close");
+	}
 }

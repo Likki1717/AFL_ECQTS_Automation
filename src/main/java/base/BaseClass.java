@@ -18,6 +18,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Listeners;
 import org.testng.asserts.SoftAssert;
 
@@ -53,8 +54,33 @@ public class BaseClass {
 	public static Robot robot;
 	public static DesiredCapabilities capabilities;
 	public static SoftAssert softAssert = new SoftAssert();
+	public static boolean isAppLaunched = false;
+	public static boolean isAppLoggedIn = false;
+
+	@BeforeClass
+	public static void applicationSetupAndLaunch() throws Exception {
+		clearPreviousSessionData();
+
+		launchWinAppDriver();
+
+		launchOpenVpnAppAndConnect();
+
+		launch_ECQTS_Application();
+
+		verifyIncorrectCredentials();
+
+		validateRecoverPasswordButtonAvailability();
+
+		loginToApplication();
+
+		verifyBuildVersion();
+	}
 
 	public static void clearPreviousSessionData() throws Exception {
+
+		if (!TestData.shouldClearPreviousSessionData) {
+			return;
+		}
 
 		File systemUsernameFolder = new File("C:\\Users\\" + TestData.systemUsername + "");
 
@@ -226,12 +252,16 @@ public class BaseClass {
 			capabilities.setCapability("deviceName", "WindowsPC");
 			capabilities.setCapability("automationName", "Windows");
 			driver = new WindowsDriver<>(URI.create("http://127.0.0.1:4723").toURL(), capabilities);
-			dismissSyncStatusPopupIfDisplayed();
 		} catch (Exception e) {
 			System.out.println("****Normal launch of ECQTS application failed, Trying Root attach****");
 			attachExistingApplication();
 		}
+		if (!TestData.shouldClearPreviousSessionData) {
+			isAppLoggedIn = true;
+		}
+		dismissSyncStatusPopupIfDisplayed();
 		actions = new Actions(driver);
+		isAppLaunched = true;
 	}
 
 	public static void attachExistingApplication() throws Exception {
@@ -264,7 +294,12 @@ public class BaseClass {
 	}
 
 	public static void verifyIncorrectCredentials() throws Exception {
-		SignIn.waitUntilUsernameFieldIsDisplayed();
+		if (isAppLoggedIn) {
+			softAssert.fail("As app is in logged in state, cannot verify incorrect credentials scenario");
+			return;
+		}
+		SignIn.isUsernameFieldDisplayed();
+		SignIn.usernameField().clear();
 		SignIn.usernameField().sendKeys(TestData.ecqtsAppUsername());
 		SignIn.passwordField().sendKeys("Invalid password");
 		SignIn.signInButton().click();
@@ -274,13 +309,21 @@ public class BaseClass {
 	}
 
 	public static void validateRecoverPasswordButtonAvailability() throws Exception {
+		if (isAppLoggedIn) {
+			softAssert.fail("As app is in logged in state, cannot verify recover password button availability");
+			return;
+		}
 		softAssert.assertTrue(SignIn.isRecoverPasswordButtonDisplayed(),
 				"Recover Password button is not displayed on the app login page");
 	}
 
 	public static void loginToApplication() throws Exception {
 		try {
-			SignIn.waitUntilUsernameFieldIsDisplayed();
+			if (isAppLoggedIn) {
+				softAssert.fail("As app is in logged in state, cannot verify login scenario");
+				return;
+			}
+			SignIn.isUsernameFieldDisplayed();
 			SignIn.usernameField().clear();
 			SignIn.usernameField().sendKeys(TestData.ecqtsAppUsername());
 			SignIn.passwordField().clear();
@@ -289,6 +332,7 @@ public class BaseClass {
 			Dashboard.waitUntilLoaderIsNotDisplayed();
 			softAssert.assertTrue(Dashboard.isFiberTestModuleDisplayed(),
 					"Tried for 10 secs, Fiber Test module was not visible after login");
+			isAppLoggedIn = true;
 		} catch (Exception e) {
 			Assert.fail("****Exception in loginToApplication()****");
 		}
@@ -480,14 +524,16 @@ public class BaseClass {
 
 	public static void updateTestSettings() {
 		try {
-			if (!Settings.isTestSettingsButtonDisplayed()) {
-				Dashboard.openNavigationButton().click();
+			if (!TestSettings.isDisplayRealTimePlotToogleDisplayed()) {
+				if (Dashboard.isOpenNavigationButtonDisplayed()) {
+					Dashboard.openNavigationButton().click();
+					Thread.sleep(1000);
+				}
 				SideMenu.settingsButton().click();
+				Settings.isTestSettingsButtonDisplayed();
+				Settings.testSettingsButton().click();
 			}
-			Settings.isTestSettingsButtonDisplayed();
-			Settings.testSettingsButton().click();
-			softAssert.assertTrue(TestSettings.isDisplayRealTimePlotToogleDisplayed(),
-					"Waited for 3 secs, Display real time plot settings toggle is not displayed ");
+
 			if (TestData.useOfficeOtdr != TestSettings.displayRealTimetoggle().isSelected()) {
 				TestSettings.displayRealTimetoggle().click();
 			}
@@ -719,10 +765,13 @@ public class BaseClass {
 
 	public static void navigateToModule(String module) throws Exception {
 		while (!Dashboard.isImportDataModuleDisplayed()) {
-			while (Dashboard.isOpenNavigationButtonDisplayed()) {
+			if (Dashboard.isOpenNavigationButtonDisplayed()) {
+				Dashboard.openNavigationButton().click();
+				Thread.sleep(1000);
+			}
+			if (!SideMenu.isDashboardButtonDisplayed()) {
 				Dashboard.openNavigationButton().click();
 			}
-			SideMenu.waitUntilDashboardButtonIsDisplayed();
 			SideMenu.dashboardButton().click();
 			Thread.sleep(1000);
 		}
@@ -765,7 +814,8 @@ public class BaseClass {
 	public static void searchJobAndNavigationToJobDetailsPage(String module, String org, String jobNumber,
 			String cutNumber, String cutNumberInfo) throws Exception {
 		navigateToModule(module);
-		JobSearch.isJobNumberLabelDisplayed();
+		softAssert.assertTrue(JobSearch.isJobNumberLabelDisplayed(),
+				"Job Number field in not displayed, probably Job search popup did not open");
 		JobSearch.orgField().click();
 		JobSearch.orgField().sendKeys(org);
 		Thread.sleep(500);
@@ -875,7 +925,7 @@ public class BaseClass {
 			actions.sendKeys(Keys.ENTER).perform();
 			Thread.sleep(1000);
 		}
-		if (jobNumber.equals(TestData.fiberTestJobSearchJobNumberForReelIdVerification)) {
+		if (jobNumber.equals(TestData.fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification)) {
 			softAssert.assertEquals(JobSearch.getReelId(), TestData.fiberTestExpectedReelId,
 					"Mismatch in Reel Id in Job Search popup.");
 		}
@@ -960,7 +1010,7 @@ public class BaseClass {
 
 	public static void runGetLengthTest(String module) throws Exception {
 		dismissSyncStatusPopupIfDisplayed();
-		JobDetailsPage.isOtdrSettingsTabDisplayed();
+		JobDetailsPage.waitUntilOtdrSettingsTabIsDisplayed();
 		wait = new WebDriverWait(driver, 20);
 		JobDetailsPage.OTDR_Settings().click();
 		dismissSyncStatusPopupIfDisplayed();
@@ -1276,11 +1326,27 @@ public class BaseClass {
 				FiberResults.waitUntilTestsCompletedTextIsDisplayed();
 				return;
 			}
-			FiberResults.waitUntilStopTestsButtonIsDisplayed();
-			if (numberOfFibersToTest == fibersTested) {
-				FiberResults.stopButton().click();
+			if (TestData.useOfficeOtdr) {
+				FiberResults.waitUntilStopTestsButtonIsDisplayed();
 			} else {
-				FiberResults.continueButton().click();
+				Dashboard.waitUntilOkButtonIsDisplayed();
+				Dashboard.okButton().click(); // Ok button on Max Attenutation Popup
+				Dashboard.waitUntilOkButtonIsDisplayed();
+			}
+//			System.out.println("Number of fiberes to test - " + numberOfFibersToTest);
+//			System.out.println("Number of FIber TESTED - " + fibersTested);
+			if (numberOfFibersToTest == fibersTested) {
+//				System.out.println("Expected number of fibers are TESTED");
+				if (TestData.useOfficeOtdr) {
+					FiberResults.stopButton().click();
+				} else {
+//					System.out.println("Need to click on CANCEL button to stop further fibers testing");
+					Dashboard.cancelButton().click();
+				}
+			} else {
+				if (TestData.useOfficeOtdr) {
+					FiberResults.continueButton().click();
+				}
 				if (FiberResults.isTestsCompletedTextDisplayed()) {
 					FiberResults.continueButton().click();
 					startTestingInNewBufferTube = true;
@@ -1586,6 +1652,8 @@ public class BaseClass {
 	public static void enterCompletionLayerValues(String module) {
 		try {
 			Dashboard.waitUntilLoaderIsNotDisplayed();
+			JobDetailsPage.wait_Until_OSE_Button_Is_Enabled();
+//			JobDetailsPage.isCompletionTabDisplayed();
 			JobDetailsPage.completionTab().click();
 			if (TestData.tightBufferModuleName.equals(module)) {
 				softAssert.assertTrue(Completion.isReelSizeDisplayed(),
@@ -1649,17 +1717,179 @@ public class BaseClass {
 		}
 	}
 
+	public static void logOutAndCloseApplication() throws Exception {
+		if (Dashboard.isOpenNavigationButtonDisplayed()) {
+			Dashboard.openNavigationButton().click();
+			Thread.sleep(1000);
+		}
+		if (!SideMenu.isDashboardButtonDisplayed()) {
+			Dashboard.openNavigationButton().click();
+		}
+		SideMenu.logOutButton().click();
+		Dashboard.waitUntilOkButtonIsDisplayed();
+		Dashboard.okButton().click();
+		Dashboard.waitUntilLoaderIsNotDisplayed();
+		Thread.sleep(2000);
+		softAssert.assertEquals(SignIn.getLoggedOutText(), "You are now logged out. Restart the app to log in again.",
+				"Mismatch in logged out page text.");
+		SignIn.closeAppIcon().click();
+		isAppLaunched = false;
+		isAppLoggedIn = false;
+	}
+
+	public static void verifyAnomalyStatus() throws Exception {
+
+		if (isAppLoggedIn) {
+			logOutAndCloseApplication();
+		}
+
+		if (!isAppLaunched) {
+			launch_ECQTS_Application();
+		}
+
+		TestData.testEnvironment += " Global";
+
+		loginToApplication();
+
+		TestData.useOfficeOtdr = true;
+
+		updateTestSettings();
+
+		searchJobAndNavigationToJobDetailsPage(TestData.fiberTestModuleName, TestData.jobSearchOrg,
+				TestData.fiberTestJobSearchJobNumber, TestData.fiberTestJobSearchCutNumber,
+				TestData.fiberTestJobSearchCutNumberInfo);
+
+		verifyJobDetailsHeader(TestData.jobSearchOrg, TestData.fiberTestJobSearchJobNumber,
+				TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo,
+				"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumber, TestData.fiberTestExpectedItemNumber);
+
+		runGetLengthTest(TestData.fiberTestModuleName);
+
+		runFiberTest(TestData.fiberTestModuleName, TestData.numberOfFibersToTestForAnomalyVerification);
+
+		FiberResults.enterSpliceGainValues();
+
+		Dashboard.waitUntilLoaderIsNotDisplayed();
+		JobDetailsPage.wait_Until_OSE_Button_Is_Enabled();
+		JobDetailsPage.completionTab().click();
+
+		softAssert.assertEquals(JobDetailsPage.getAnomalyStatus(), "Pending",
+				"Before clicking on Reports tab, Anomaly status is not as expected.");
+		JobDetailsPage.anomalyInfoIcon().click();
+		JobDetailsPage.waitUntilAnomalyDetailsPopupIsDisplayed();
+		softAssert.assertEquals(JobDetailsPage.getAnomalyDetailsMessage(), "No fibers with detected anomalies.",
+				"Before clicking on Reports tab, Anomaly Details popup message is not as expected.");
+		Dashboard.okButton().click();
+		JobDetailsPage.reportsTab().click();
+		Dashboard.waitUntilOkButtonIsDisplayed();
+		String holdForApprovalMessage = Reports.getHoldForApprovalMessage();
+//		System.out.println(holdForApprovalMessage);
+		int incompleteOrFailedTestsCountFromHoldForApprovalPopup = holdForApprovalMessage
+				.split("Incomplete or Failed").length - 1;
+		int anomalyFibersCountFromHoldForApprovalPopup = holdForApprovalMessage.split("Anomaly -").length - 1;
+//		System.out.println("Failed Count : " + incompleteOrFailedTestsCountFromHoldForApprovalPopup);
+//		System.out.println("Anomaly Count" + anomalyFibersCountFromHoldForApprovalPopup);
+		softAssert.assertEquals(incompleteOrFailedTestsCountFromHoldForApprovalPopup,
+				TestData.expectedIncompleteOrFailedTestsOnHoldForApprovalPopup,
+				"Mismatch in Incomplete or Failed tests count displayed on hold for approval popup.");
+		softAssert.assertEquals(anomalyFibersCountFromHoldForApprovalPopup,
+				TestData.numberOfFibersToTestForAnomalyVerification,
+				"Mismatch in Anomaly detected fibers count displayed on hold for approval popup.");
+		Dashboard.okButton().click();
+		Dashboard.waitUntilLoaderIsNotDisplayed();
+		Reports.waitUntilDownloadOCR_ReportIsDisplayed();
+		softAssert.assertEquals(JobDetailsPage.getAnomalyStatus(), "Likely",
+				"After clicking on Reports tab, Anomaly status is not as expected.");
+		JobDetailsPage.anomalyInfoIcon().click();
+		JobDetailsPage.waitUntilAnomalyDetailsPopupIsDisplayed();
+		String anomalyDetailsMessage = JobDetailsPage.getAnomalyDetailsMessage();
+//		System.out.println("After clicking on Reports Tab, Anomaly Details Message - " + anomalyDetailsMessage);
+		softAssert.assertTrue(anomalyDetailsMessage.contains("The following fibers have detected anomalies:"),
+				"After clicking on Reports tab, Anomaly Details popup message is not as expected.");
+		int anomalyFibersCountFromAnomalyDetailsMessage = anomalyDetailsMessage.contains(":")
+				? anomalyDetailsMessage.split(":", 2)[1].trim().split("\\R").length
+				: 0;
+//		System.out.println(
+//				"anomalyFibersCountFromAnomalyDetailsMessage - " + anomalyFibersCountFromAnomalyDetailsMessage);
+		softAssert.assertEquals(anomalyFibersCountFromAnomalyDetailsMessage,
+				TestData.numberOfFibersToTestForAnomalyVerification,
+				"Mismatch in anomalies detected fibers count in anomaly details popup.");
+		Dashboard.okButton().click();
+		Reports.overrideTypeDropdown().sendKeys("Other");
+		Reports.overrideCheckbox().click();
+		Thread.sleep(1000);
+		Reports.overrideComment().sendKeys("Testing Overriding Other Failure Reasons");
+		Reports.overrideSaveButton().click();
+		Dashboard.waitUntilOkButtonIsDisplayed();
+		Dashboard.okButton().click();
+		softAssert.assertEquals(JobDetailsPage.getAnomalyStatus(), "Likely",
+				"Anomaly status after overriding others should not change.");
+		JobDetailsPage.completionTab().click();
+		Completion.isSeqNumberTestDisplayed();
+		JobDetailsPage.reportsTab().click();
+		Dashboard.waitUntilOkButtonIsDisplayed();
+		holdForApprovalMessage = Reports.getHoldForApprovalMessage();
+//		System.out.println(holdForApprovalMessage);
+		incompleteOrFailedTestsCountFromHoldForApprovalPopup = holdForApprovalMessage
+				.split("Incomplete or Failed").length - 1;
+		anomalyFibersCountFromHoldForApprovalPopup = holdForApprovalMessage.split("Anomaly -").length - 1;
+//		System.out.println("Failed Count : " + incompleteOrFailedTestsCountFromHoldForApprovalPopup);
+//		System.out.println("Anomaly Count" + anomalyFibersCountFromHoldForApprovalPopup);
+		softAssert.assertEquals(incompleteOrFailedTestsCountFromHoldForApprovalPopup, 0,
+				"After overriding others, Mismatch in Incomplete or Failed tests count displayed on hold for approval popup.");
+		softAssert.assertEquals(anomalyFibersCountFromHoldForApprovalPopup,
+				TestData.numberOfFibersToTestForAnomalyVerification,
+				"After overriding others, Mismatch in Anomaly detected fibers count displayed on hold for approval popup.");
+		Dashboard.okButton().click();
+		Dashboard.waitUntilLoaderIsNotDisplayed();
+		Reports.waitUntilDownloadOCR_ReportIsDisplayed();
+		Reports.overrideTypeDropdown().sendKeys("Anomaly");
+		Reports.overrideCheckbox().click();
+		Thread.sleep(1000);
+		Reports.overrideComment().sendKeys("Testing Overriding Anomaly");
+		Reports.overrideSaveButton().click();
+		Dashboard.waitUntilOkButtonIsDisplayed();
+		Dashboard.okButton().click();
+		softAssert.assertEquals(JobDetailsPage.getAnomalyStatus(), "Overridden",
+				"Anomaly status after overriding anomaly has not changed");
+		JobDetailsPage.completionTab().click();
+		Completion.isSeqNumberTestDisplayed();
+		JobDetailsPage.reportsTab().click();
+		Dashboard.waitUntilLoaderIsNotDisplayed();
+		softAssert.assertTrue(Reports.isDownloadOCR_ReportDisplayed(),
+				"Download OCR Report is not displayed after overriding others and anomaly and navigating back to completion and reports");
+		softAssert.assertTrue(Reports.isJobWarnings_ErrorsPopupNotDisplayed(),
+				"Job warning error popup is displayed even after overriding other and anomaly");
+		JobDetailsPage.anomalyInfoIcon().click();
+		JobDetailsPage.waitUntilAnomalyDetailsPopupIsDisplayed();
+		anomalyDetailsMessage = JobDetailsPage.getAnomalyDetailsMessage();
+//		System.out.println("After clicking on Reports Tab, Anomaly Details Message - " + anomalyDetailsMessage);
+		softAssert.assertTrue(anomalyDetailsMessage.contains("The following fibers have detected anomalies:"),
+				"After clicking on Reports tab, Anomaly Details popup message is not as expected.");
+		anomalyFibersCountFromAnomalyDetailsMessage = anomalyDetailsMessage.contains(":")
+				? anomalyDetailsMessage.split(":", 2)[1].trim().split("\\R").length
+				: 0;
+//		System.out.println(
+//				"anomalyFibersCountFromAnomalyDetailsMessage - " + anomalyFibersCountFromAnomalyDetailsMessage);
+		softAssert.assertEquals(anomalyFibersCountFromAnomalyDetailsMessage,
+				TestData.numberOfFibersToTestForAnomalyVerification,
+				"After overriding anomaly, Mismatch in anomalies detected fibers count in anomaly details popup.");
+		Dashboard.okButton().click();
+	}
+
 	public static void download_OCR_Report() throws Exception {
 
-		JobDetailsPage.reportsTab().click();
-//		Reports.isJobWarnings_ErrorsPopupDisplayed();
-		Dashboard.waitUntilOkButtonIsDisplayed();
-		Reports.okButton().click();
-		Reports.isDownloadOCR_ReportDisplayed();
+		if (!Reports.isDownloadOCR_ReportDisplayed()) {
+			JobDetailsPage.reportsTab().click();
+//			Reports.isJobWarnings_ErrorsPopupDisplayed();
+			Dashboard.waitUntilOkButtonIsDisplayed();
+			Dashboard.okButton().click();
+		}
+		Reports.waitUntilDownloadOCR_ReportIsDisplayed();
 		Reports.opticalCharacteristics().click();
 		softAssert.assertTrue(Reports.isGeneratingReportsInBackgroundTextDisplayed(),
 				"Waited for 10 seconds, Generating Reports in background text is not displayed  ");
-		Reports.okButton().click();
+		Dashboard.okButton().click();
 		Dashboard.isLoaderDisplayed();
 		Dashboard.waitUntilLoaderIsNotDisplayed();
 		Dashboard.isLoaderDisplayed();
@@ -1693,16 +1923,17 @@ public class BaseClass {
 		}
 	}
 
-	public static void verify_Reel_Id_In_Job_Search_popup() throws Exception {
+	public static void verify_Reel_Id_And_Sales_Order_In_Job_Search_popup() throws Exception {
 		navigateToModule(TestData.fiberTestModuleName);
 		searchJobAndNavigationToJobDetailsPage(TestData.fiberTestModuleName, TestData.jobSearchOrg,
-				TestData.fiberTestJobSearchJobNumberForReelIdVerification, TestData.fiberTestJobSearchCutNumber,
+				TestData.fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification, TestData.fiberTestJobSearchCutNumber,
 				TestData.fiberTestJobSearchCutNumberInfo);
 	}
 
-	public static void verify_Reel_Id_In_Completion_Tab() throws Exception {
+	public static void verify_Reel_Id_And_Sales_Order_In_Completion_Tab() throws Exception {
 		JobDetailsPage.completionTab().click();
 		Dashboard.waitUntilLoaderIsNotDisplayed();
+		Thread.sleep(2000);
 
 		softAssert.assertEquals(Completion.reelItem().getText(), TestData.fiberTestExpectedReelItem,
 				"Reel item mismatch in Completion Tab.");
@@ -1803,5 +2034,73 @@ public class BaseClass {
 		}
 		WTC.waitUntilStopButtonIsNotDisplayed();
 	}
+
+	public static void verifyFiberTestModule() throws Exception {
+		
+		updateTestSettings();
+
+		searchJobAndNavigationToJobDetailsPage(TestData.fiberTestModuleName, TestData.jobSearchOrg,
+				TestData.fiberTestJobSearchJobNumber, TestData.fiberTestJobSearchCutNumber,
+				TestData.fiberTestJobSearchCutNumberInfo);
+
+		verifyJobDetailsHeader(TestData.jobSearchOrg, TestData.fiberTestJobSearchJobNumber,
+				TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo,
+				"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumber, TestData.fiberTestExpectedItemNumber);
+
+		enterProtectionLayerValues(TestData.fiberTestModuleName);
+
+		runGetLengthTest(TestData.fiberTestModuleName);
+
+		editAdjLength();
+
+		verifyOpticsPage();
+
+		runFiberTest(TestData.fiberTestModuleName, TestData.numberOfFibersToTest);
+
+		downloadSorFiles();
+
+		enterCompletionLayerValues(TestData.fiberTestModuleName);
+
+		download_OCR_Report();
+
+		verifyTestResultsCount(TestData.fiberTestExpectedIncompleteTestsCount,
+				TestData.fiberTestExpectedPassedTestsCount, TestData.fiberTestExpectedFailedTestsCount,
+				"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumber);
+	}
+	
+	public static void verifyTightBufferModule() throws Exception
+	{
+		TestData.useOfficeOtdr = false;
+
+		updateTestSettings();
+
+		searchJobAndNavigationToJobDetailsPage(TestData.tightBufferModuleName, TestData.jobSearchOrg,
+				TestData.tightBufferJobNumber, TestData.tightBufferTestJobSearchCutNumber,
+				TestData.tightBufferTestJobSearchCutNumberInfo);
+
+		verifyJobDetailsHeader(TestData.jobSearchOrg, TestData.tightBufferJobNumber,
+				TestData.tightBufferTestJobSearchCutNumber, TestData.tightBufferTestJobSearchCutNumberInfo,
+				"Tight Buffer test with Job # " + TestData.tightBufferJobNumber, TestData.tightBufferExpectedItemNumber);
+
+		enterProtectionLayerValues(TestData.tightBufferModuleName);
+
+		runGetLengthTest(TestData.tightBufferModuleName);
+
+		verifyOpticsPage();
+
+		runFiberTest(TestData.tightBufferModuleName, 1);
+
+		downloadSorFiles();
+
+		enterCompletionLayerValues(TestData.tightBufferModuleName);
+
+		download_OCR_Report();
+
+		verifyTestResultsCount(TestData.tightBufferExpectedIncompleteTestsCount,
+				TestData.tightBufferExpectedPassedTestsCount, TestData.tightBufferExpectedFailedTestsCount,
+				"Tight Buffer with Job # " + TestData.tightBufferJobNumber);
+	}
+	
+	
 
 }

@@ -1,10 +1,13 @@
 package pageObjects.Modules.TestJobModule.JobDetails;
 
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.By.ByName;
 import org.openqa.selenium.WebElement;
 
 import base.BaseClass;
+import base.TestData;
 import io.appium.java_client.MobileBy.ByAccessibilityId;
 
 public class FiberResults extends BaseClass {
@@ -38,7 +41,7 @@ public class FiberResults extends BaseClass {
 	}
 
 	public static boolean isRunTestsButtonDisplayed() {
-		return isElementDisplayed(By.xpath("(//Button[@Name='Run Tests'])[1]"), 10);
+		return isElementDisplayed(By.xpath("(//Button[@Name='Run Tests'])[1]"), 5);
 	}
 
 	public static boolean isContinueTestsButtonDisplayed() {
@@ -74,6 +77,16 @@ public class FiberResults extends BaseClass {
 
 	public static WebElement goToFiberButton() {
 		return driver.findElementByAccessibilityId("GoToFiberButton");
+	}
+	
+	public static void enterSpliceGainValues()
+	{
+		for(int i=0; i<(2*TestData.numberOfFibersToTestForAnomalyVerification); i++)
+		{
+			WebElement spliceGainElement = driver.findElement(By.xpath("(//Text[contains(@Name, 'Splice Gain')]/following-sibling::Edit[1])[("+i+"+1)]"));
+			spliceGainElement.clear();
+			spliceGainElement.sendKeys("1");
+		}
 	}
 
 	public static boolean isGoToFiberButtonVisible() {

@@ -21,8 +21,10 @@ public class JobDetailsPage extends BaseClass {
 		return driver.findElementByName("OTDR Settings");
 	}
 
-	public static boolean isOtdrSettingsTabDisplayed() {
-		return isElementDisplayed(ByName.name("OTDR Settings"), 5);
+	public static void waitUntilOtdrSettingsTabIsDisplayed() throws Exception {
+		while(!isElementDisplayed(ByName.name("OTDR Settings"), 5)) {
+			Thread.sleep(1000);
+		}
 	}
 
 	public static boolean isWtcTabDisplayed() {
@@ -132,9 +134,33 @@ public class JobDetailsPage extends BaseClass {
 	public static WebElement downloadAllFibersDataButton() {
 		return driver.findElementByAccessibilityId("Download All Fibers DataButton");
 	}
-	
+
 	public static WebElement itemNumber() {
 		return driver.findElement(By.xpath("//Text[@AutomationId='ItemNumberValueLabel']"));
+	}
+
+	public static String getAnomalyStatus() {
+		return driver.findElementByAccessibilityId("AnomalyStatusValueLabel").getAttribute("Name");
+	}
+
+	public static WebElement anomalyInfoIcon() {
+		return driver.findElementByAccessibilityId("AnmonalyInfo");
+	}
+
+	public static String getAnomalyDetailsMessage() {
+		return driver.findElementByAccessibilityId("AnomalyDetailsMessage").getAttribute("Name");
+	}
+
+	public static void waitUntilAnomalyDetailsPopupIsDisplayed() throws Exception {
+		while (!isElementDisplayed(ByName.name("Anomaly Details"), 5)) {
+			Thread.sleep(1000);
+		}
+	}
+
+	public static void wait_Until_OSE_Button_Is_Enabled() throws Exception {
+		while (!driver.findElementByAccessibilityId("OSEButton").isEnabled()) {
+			Thread.sleep(1000);
+		}
 	}
 
 }

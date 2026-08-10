@@ -6,6 +6,7 @@
       <class name="DesktopApplicationTests.RegressionTests">
         <methods>
           <include name="runRegressionTestSuite"/>
+          <include name="applicationSetupAndLaunch"/>
         </methods>
       </class> <!-- DesktopApplicationTests.RegressionTests -->
     </classes>

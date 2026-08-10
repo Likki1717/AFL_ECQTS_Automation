@@ -29,7 +29,7 @@ public class Dashboard extends BaseClass {
 	}
 
 	public static boolean isOpenNavigationButtonDisplayed() {
-		return isElementDisplayed(ByName.name("Open Navigation"), 1);
+		return isElementDisplayed(ByName.name("Open Navigation"), 3);
 	}
 
 	public static boolean isFiberTestModuleDisplayed() {
@@ -49,7 +49,7 @@ public class Dashboard extends BaseClass {
 	}
 
 	public static boolean isImportDataModuleDisplayed() {
-		return isElementDisplayed(ByAccessibilityId.AccessibilityId("Import DataButton"), 1);
+		return isElementDisplayed(ByAccessibilityId.AccessibilityId("Import DataButton"), 3);
 	}
 
 	public static WebElement copyResultsModule() {

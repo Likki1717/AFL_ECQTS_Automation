@@ -4,12 +4,15 @@ import java.io.File;
 
 public class TestData {
 	public static String systemUsername = "sumeeth"; // veltris // LikhithaR
-	public static String testEnvironment = "QA"; // Dev/QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
-	public static String expectedAppVersion = "Version: 7.7.3.0";
+	public static String testEnvironment = "Prod"; // Dev/QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
+	public static String expectedAppVersion = "Version: 7.7.7.0";
+	public static boolean shouldClearPreviousSessionData = true;
 	public static boolean useOfficeOtdr = true;
-	public static boolean useExternalCamera = true;
+	public static boolean useExternalCamera = false;
 	public static int numberOfFibersToTest = 12;
- 
+	public static int numberOfFibersToTestForAnomalyVerification = 3;
+	public static int expectedIncompleteOrFailedTestsOnHoldForApprovalPopup = 12;
+
 	public static String vpnAppPassword() {
 		if (systemUsername.equals("sumeeth")) {
 			return "kumar@123";
@@ -21,11 +24,11 @@ public class TestData {
 			return "kumar@1234"; // Update below if other user is using automation script
 		}
 	}
- 
+
 	public static String jobSearchOrg = "CAB";
 	public static String jobSearchLocation = "Hillside";
 	public static String jobSearchOperator = "QE1";
- 
+
 	public static String OCR_Report_Path = "C:\\Users\\" + systemUsername + "\\AppData\\Local\\Packages\\"
 			+ packageName(testEnvironment) + "\\LocalState\\Downloads\\" + jobSearchOrg + "";
 	// Deleting this SecureStorage folder will have app in logged out state
@@ -46,14 +49,14 @@ public class TestData {
 			.getAbsolutePath();
 	public static String taihanAttenuationFilePath = new File(
 			"src/test/Resources/ImportFiles/TaihanFiles/attenuation.csv").getAbsolutePath();
- 
+
 	public static final String importDataModuleName = "Import Data";
 	public static String importOrg = "CAB";
 	public static String importCutNumber = "11";
 	public static String importItemOrgCode = "SPC";
 	public static String importcutNumberInfo = "ZTEST01";
 	public static String importType = "Fiber";
- 
+
 	public static String prysmianImportModuleName = "Prysmian";
 	public static String prysmianExpectedIncompleteTests = "56";
 	public static String prysmianExpectedPassedTests = "103";
@@ -62,7 +65,7 @@ public class TestData {
 	public static String prysmianExpectedOtdrLength = "7879 m";
 	public static String prysmianJobNumberStartsWith = "90043053";
 	public static String prysmianJobExpectedItemNumber = "DNA-31683-01";
- 
+
 	public static String swindonImportModuleName = "Swindon";
 	public static String swindonExpectedIncompleteTests = "159";
 	public static String swindonExpectedPassedTests = "295";
@@ -71,7 +74,7 @@ public class TestData {
 	public static String swindonExpectedOtdrLength = "6353 m";
 	public static String swindonJobNumberStartsWith = "250592";
 	public static String swindonJobExpectedItemNumber = "DNL-6169-01";
- 
+
 	public static String taihanImportModuleName = "Taihan";
 	public static String taihanExpectedIncompleteTests = "51";
 	public static String taihanExpectedPassedTests = "96";
@@ -80,10 +83,10 @@ public class TestData {
 	public static String taihanExpectedOtdrLength = "6181 m";
 	public static String taihanJobNumberStartsWith = "7887";
 	public static String taihanJobExpectedItemNumber = "DNL-6536-01";
- 
+
 	public static final String fiberTestModuleName = "Fiber Test";
 	public static String fiberTestJobSearchJobNumber = "25305754"; // Large Job - 15811448
-	public static String fiberTestJobSearchJobNumberForReelIdVerification = "48944910";
+	public static String fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification = "48944910";
 	public static String fiberTestJobSearchCutNumber = getCurrentDateTimeStamp();
 	public static String fiberTestJobSearchCutNumberInfo = "ZTEST01";
 	public static String fiberTestExpectedIncompleteTestsCount = "0";
@@ -97,9 +100,9 @@ public class TestData {
 	public static String fiberTestExpectedOseReelLabel = "15791";
 	public static String fiberTestExpectedReelLabel = "YES";
 	public static String fiberTestExpectedReelId = "15791";
-	
+
 	public static final String PK_FiberTestModuleName = "PK Fiber Test";
-	public static String PK_FiberTestJobSearchJobNumber = "15811448"; 
+	public static String PK_FiberTestJobSearchJobNumber = "15811448";
 	public static String PK_FiberTestJobSearchCutNumber = getCurrentDateTimeStamp();
 	public static String PK_FiberTestJobSearchCutNumberInfo = "ZTEST01";
 	public static String PK_FiberTestExpectedIncompleteTestsCount = "889";
@@ -108,8 +111,8 @@ public class TestData {
 //	public static String PK_FiberTestAdjLengthValue = "9836";
 //	public static String PK_FiberTestCompletionTabIseSeqValue = "9886";
 	public static String PK_FiberTestExpectedItemNumber = "DNL-5356-01";
-	public static String PK_FiberTestCutLength="10015";
- 
+	public static String PK_FiberTestCutLength = "10015";
+
 	public static final String wtcTestModuleName = "WTC Test";
 	public static String wtcTestJobSearchJobNumber = "51022495-3028378";
 	public static String wtcTestJobSearchCutNumber = getCurrentDateTimeStamp();
@@ -120,7 +123,7 @@ public class TestData {
 	public static String wtcTestExpectedFailedTestsCount = "6";
 	public static String wtcTestCompletionTabIseSeqValue = "9886";
 	public static String wtcTestExpectedItemNumber = "PR02264-01";
- 
+
 	public static final String copyResultsModuleName = "Copy Results";
 	public static String copyJobModule = wtcTestModuleName; // fiberTestModuleName
 	public static String copyJobOrg = "CAB";
@@ -136,7 +139,7 @@ public class TestData {
 	public static String copyJobDestinationJobExpectedHelixFactor = "1.0";
 	public static String copyJobDestinationJobExpectedOtdrLength = "5765 m";
 	public static String copyJobDestinationJobExpectedItemNumber = "PR01872-01";
- 
+
 	public static final String downTimeModuleName = "Down Time";
 	public static String expectedStartDateTime = java.time.LocalDate.now()
 			.format(java.time.format.DateTimeFormatter.ofPattern("dd MMMM yyyy")) + " 11:59 PM";
@@ -148,7 +151,7 @@ public class TestData {
 			.format(java.time.format.DateTimeFormatter.ofPattern("dd MMMM yyyy")) + " 12:00 AM";
 	public static String newExpectedTotalDownTime = "Total Down Time : 00:01 hrs";
 	public static String newExpectedDownTimeReason = "Connectivity issue";
- 
+
 	public static final String tightBufferModuleName = "Tight Buffer";
 	public static String tightBufferJobNumber = ""; // Overriding the job number during Job search
 	public static String expectedTightBufferJobNumberStartsWith = "TB"
@@ -159,57 +162,73 @@ public class TestData {
 	public static String tightBufferExpectedIncompleteTestsCount = "0";
 	public static String tightBufferExpectedPassedTestsCount = "6";
 	public static String tightBufferExpectedFailedTestsCount = "1";
- 
+
 	public static String ecqtsAppUsername() {
-		String username = null;
+
 		switch (testEnvironment) {
-		case "QA":
-			username = "testQA01"; // globalAdmin SumeethQA teamLead QA testQA01
-			break;
+
 		case "Dev":
-			username = "testerProd"; // sumeetDev Mandeep executiveDev
-			break;
-		case "Prod":
-			username = "testerProd";
-			break;
-		case "Second Prod":
-			username = "testerProd";
-			break;
+			return "testerProd"; // sumeetDev Mandeep executiveDev
+
+		case "Dev Global":
+			return "TestGlobal";
+
+		case "QA":
+			return "testQA01"; // globalAdmin SumeethQA teamLead QA testQA01
+
+		case "QA Global":
+			return "globalAdmin";
+
 		case "Soft Release Prod":
-			username = "testerProd";
-			break;
 		case "Soft Release Second Prod":
-			username = "testerProd";
-			break;
+		case "Prod":
+		case "Second Prod":
+			return "testerProd";
+
+		case "Soft Release Prod Global":
+		case "Soft Release Second Prod Global":
+		case "Prod Global":
+		case "Second Prod Global":
+			return "sumeethGlobalProd";
+
+		default:
+			return null;
 		}
-		return username;
 	}
- 
+
 	public static String ecqtsAppPassword() {
-		String password = null;
+
 		switch (testEnvironment) {
-		case "QA":
-			password = "Welcome@123";
-			break;
+
 		case "Dev":
-			password = "Welcome@123"; // Password123#
-			break;
-		case "Prod":
-			password = "Welcome@0650";
-			break;
-		case "Second Prod":
-			password = "Welcome@0650";
-			break;
+			return "Welcome@123"; // Password123#
+
+		case "Dev Global":
+			return "Welcome@123";
+		
+		case "QA":
+			return "Welcome@123";
+			
+		case "QA Global":
+			return "Welcome@123";	
+
 		case "Soft Release Prod":
-			password = "Welcome@0650";
-			break;
 		case "Soft Release Second Prod":
-			password = "Welcome@0650";
-			break;
+		case "Prod":
+		case "Second Prod":
+			return "Welcome@0650";
+			
+		case "Soft Release Prod Global":
+		case "Soft Release Second Prod Global":
+		case "Prod Global":
+		case "Second Prod Global":
+			return "Welcome@0650";
+
+		default:
+			return null;
 		}
-		return password;
 	}
- 
+
 	public static String connectionProfileName_Simulator = "Simulator";
 	public static String connectionProfileName_JGR_One = "JGR-1";
 	public static String connectionProfileName_JGR_Two = "JGR-2";
@@ -222,7 +241,7 @@ public class TestData {
 	public static String connectionProfile_Office_OTDR_IP_Address = "10.9.10.200";
 	public static String connectionProfile_Office_OTDR_Port = "2288";
 	public static String connectionProfile_Anritsu_9085_IP_Address = "192.168.10.10";
- 
+
 	public static String OTDR_Settings_ConnectionProfile_Name(String module) {
 		String profileName = "";
 		if (module.equals(fiberTestModuleName)) {
@@ -234,7 +253,7 @@ public class TestData {
 		}
 		return profileName;
 	}
- 
+
 	public static String OTDR_Settings_LaunchLength(String module) {
 		String launchLength = "";
 		if (module.equals(fiberTestModuleName)) {
@@ -244,7 +263,7 @@ public class TestData {
 		}
 		return launchLength;
 	}
- 
+
 	public static String OTDR_Settings_CutLength(String module) {
 		String cutLength = "";
 		if (module.equals(fiberTestModuleName)) {
@@ -254,12 +273,12 @@ public class TestData {
 		}
 		return cutLength;
 	}
- 
+
 	public static String OTDR_Settings_LaunchLength2 = "1000";
 	public static String OTDR_Settings_manufacturedLength = "1000";
 	public static String OTDR_Settings_Horizontal = "10";
 	public static String OTDR_Settings_Vertical = "-10";
- 
+
 	public static String appId() {
 		String appId = null;
 		switch (testEnvironment) {
@@ -284,21 +303,21 @@ public class TestData {
 		}
 		return appId;
 	}
- 
+
 	public static String packageName(String testEnvironment) {
 		switch (testEnvironment) {
 		case "Soft Release Prod":
 			return "com.ecsite.afl.softrelease_aqd9xyv20zq6r";
- 
+
 		default:
 			return appId().split("!")[0];
 		}
 	}
- 
+
 	public static String getCurrentDateTimeStamp() {
 		return new java.text.SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
 	}
- 
+
 	/*
 	 * To get appId, use below command in windows powershell : Get-StartApps |
 	 * Where-Object {$_.Name -like "*ECQTS*"} Name AppID ---- ----- ECQTS Dev

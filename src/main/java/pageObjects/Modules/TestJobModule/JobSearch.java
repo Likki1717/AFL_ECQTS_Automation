@@ -51,7 +51,7 @@ public class JobSearch extends BaseClass {
 	}
 
 	public static boolean isJobNumberLabelDisplayed() {
-		return isElementDisplayed(By.xpath("//Text[@Name='Job Number *']"), 10);
+		return isElementDisplayed(By.xpath("//Text[@Name='Job Number *']"), 20);
 	}
 
 	public static boolean isCutNumberHeaderDisplayed() {
