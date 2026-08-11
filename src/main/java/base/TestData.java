@@ -4,14 +4,16 @@ import java.io.File;
 
 public class TestData {
 	public static String systemUsername = "sumeeth"; // veltris // LikhithaR
-	public static String testEnvironment = "Prod"; // Dev/QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
-	public static String expectedAppVersion = "Version: 7.7.7.0";
+	public static String testEnvironment = "QA"; // Dev/QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
+	public static String expectedAppVersion = "Version: 7.8.1.0";
 	public static boolean shouldClearPreviousSessionData = true;
 	public static boolean useOfficeOtdr = true;
 	public static boolean useExternalCamera = false;
 	public static int numberOfFibersToTest = 12;
-	public static int numberOfFibersToTestForAnomalyVerification = 3;
 	public static int expectedIncompleteOrFailedTestsOnHoldForApprovalPopup = 12;
+	public static int numberOfFibersToTestForAnomalyVerification = (testEnvironment.equals("Dev")
+			|| testEnvironment.equals("QA")) ? 2 : 6;
+	public static String expectedAnomalyStatus = testEnvironment.equals("Dev") ? "More Likely" : (testEnvironment.equals("QA") ? "Less Likely" : "Likely");
 
 	public static String vpnAppPassword() {
 		if (systemUsername.equals("sumeeth")) {
@@ -83,10 +85,15 @@ public class TestData {
 	public static String taihanExpectedOtdrLength = "6181 m";
 	public static String taihanJobNumberStartsWith = "7887";
 	public static String taihanJobExpectedItemNumber = "DNL-6536-01";
-
+	
+	public static String fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification = "48944910";
+	public static String fiberTestExpectedSalesOrder = "2797719-30";
+	public static String incompleteTestCountForReelIAndSalesOrderdVerification  = "299";
+	public static String passedTestCountForReelIAndSalesOrderdVerification = "4";
+	public static String failedTestCountForReelIAndSalesOrderdVerification = "0";
+	
 	public static final String fiberTestModuleName = "Fiber Test";
 	public static String fiberTestJobSearchJobNumber = "25305754"; // Large Job - 15811448
-	public static String fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification = "48944910";
 	public static String fiberTestJobSearchCutNumber = getCurrentDateTimeStamp();
 	public static String fiberTestJobSearchCutNumberInfo = "ZTEST01";
 	public static String fiberTestExpectedIncompleteTestsCount = "0";
@@ -205,19 +212,19 @@ public class TestData {
 
 		case "Dev Global":
 			return "Welcome@123";
-		
+
 		case "QA":
 			return "Welcome@123";
-			
+
 		case "QA Global":
-			return "Welcome@123";	
+			return "Welcome@123";
 
 		case "Soft Release Prod":
 		case "Soft Release Second Prod":
 		case "Prod":
 		case "Second Prod":
 			return "Welcome@0650";
-			
+
 		case "Soft Release Prod Global":
 		case "Soft Release Second Prod Global":
 		case "Prod Global":

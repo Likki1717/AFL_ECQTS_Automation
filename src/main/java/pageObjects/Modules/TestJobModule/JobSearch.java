@@ -7,6 +7,7 @@ import org.openqa.selenium.By.ByName;
 import org.openqa.selenium.WebElement;
 
 import base.BaseClass;
+import base.TestData;
 
 public class JobSearch extends BaseClass {
 
@@ -97,9 +98,25 @@ public class JobSearch extends BaseClass {
 		return driver.findElement(By.xpath("//Button[@Name='Create']"));
 	}
 
+	public static WebElement salesOrderValue() {
+		return driver.findElement(By.xpath("//Text[@Name='" + TestData.fiberTestExpectedSalesOrder + "']"));
+	}
+
 	public static String getReelId() {
-		return driver.findElement(By.xpath("//Text[contains(@Name, 'Reel ID')]/following-sibling::Text[1]"))
-				.getAttribute("Name");
+
+		By reelIdLocator = By.xpath("//Text[contains(@Name, 'Reel ID')]/following-sibling::Text[1]");
+		if (driver.findElements(reelIdLocator).isEmpty()) {
+			return "";
+		}
+		return driver.findElements(reelIdLocator).get(0).getAttribute("Name");
+	}
+
+	public static WebElement salesOrder() {
+		return driver.findElement(By.xpath("//Edit[@Name='Search Sales Order']"));
+	}
+
+	public static WebElement salesOrderClearButton() {
+		return driver.findElement(By.xpath("//Edit[@Name='Search Sales Order']/following::Text[@Name='✕'][1]"));
 	}
 
 }

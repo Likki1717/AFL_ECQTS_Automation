@@ -162,5 +162,9 @@ public class JobDetailsPage extends BaseClass {
 			Thread.sleep(1000);
 		}
 	}
+	
+	public static WebElement salesOrder() {
+	        return driver.findElement(By.xpath("//Text[@Name='Sales Order:']/following-sibling::Text"));
+	}
 
 }

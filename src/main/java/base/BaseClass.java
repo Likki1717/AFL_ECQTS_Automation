@@ -56,10 +56,11 @@ public class BaseClass {
 	public static SoftAssert softAssert = new SoftAssert();
 	public static boolean isAppLaunched = false;
 	public static boolean isAppLoggedIn = false;
-	public static boolean verifyRemoveSalesOrder = false;
+	public static boolean shouldRemoveSalesOrder = false;
 
 	@BeforeClass
 	public static void applicationSetupAndLaunch() throws Exception {
+
 		clearPreviousSessionData();
 
 		launchWinAppDriver();
@@ -381,6 +382,14 @@ public class BaseClass {
 		} catch (Exception e) {
 			System.out.println("****Exception in verifyBuildVersion()****");
 		}
+	}
+
+	public static void verify_Delete_Create_And_Edit_Connection_Profiles() {
+		deleteAllExistingConnectionProfiles();
+
+		createConnectionProfiles();
+
+		editConnectionProfile();
 	}
 
 	public static void deleteAllExistingConnectionProfiles() {
@@ -710,6 +719,14 @@ public class BaseClass {
 				TestData.importcutNumberInfo, "After " + importType + " Import", itemNumber);
 	}
 
+	public static void verify_All_Three_Imports() {
+		importPrysmianJob();
+
+		importTaihanJob();
+
+		importSwindonJob();
+	}
+
 	public static void importPrysmianJob() {
 		try {
 			// Multi-file string
@@ -888,6 +905,23 @@ public class BaseClass {
 				Dashboard.waitUntilOkButtonIsDisplayed();
 			}
 		}
+		if (jobNumber.equals(TestData.fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification)) {
+			Dashboard.waitUntilLoaderIsNotDisplayed();
+			JobSearch.salesOrderValue().click();
+			if (shouldRemoveSalesOrder) {
+				JobSearch.salesOrder().click();
+				JobSearch.salesOrderClearButton().click();
+				softAssert.assertEquals(JobSearch.getReelId(), "",
+						"Reel ID should not be displayed after Sales Order is removed.");
+				softAssert.assertEquals(JobSearch.salesOrder().getAttribute("Value.Value"), null,
+						"Sales Order should be cleared after Sales Order is removed.");
+			} else {
+				softAssert.assertEquals(JobSearch.getReelId(), TestData.fiberTestExpectedReelId,
+						"Mismatch in Reel Id in Job Search popup.");
+				softAssert.assertEquals(JobSearch.salesOrder().getAttribute("Value.Value"),
+						TestData.fiberTestExpectedSalesOrder, "Mismatch in Sales Order in Job Search popup.");
+			}
+		}
 		while (!JobSearch.searchCutNumber().equals(driver.switchTo().activeElement())) {
 			JobSearch.searchCutNumber().click();
 			Thread.sleep(1000);
@@ -925,15 +959,6 @@ public class BaseClass {
 			JobSearch.searchCutNumberInfo().sendKeys(cutNumberInfo);
 			actions.sendKeys(Keys.ENTER).perform();
 			Thread.sleep(1000);
-		}
-		if (jobNumber.equals(TestData.fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification)) {
-			softAssert.assertEquals(JobSearch.getReelId(), TestData.fiberTestExpectedReelId,
-					"Mismatch in Reel Id in Job Search popup.");
-		}
-		
-		if(verifyRemoveSalesOrder)
-		{
-			// remove, verify if its removed
 		}
 		JobSearch.goButton().click();
 		while (!JobSearch.isGoButtonNotDisplayed()) {
@@ -1069,7 +1094,7 @@ public class BaseClass {
 				"Mismatch in buffer tubes count between optics page and job details page");
 	}
 
-	public static void verifyDownTime() throws Exception {
+	public static void verify_Down_Time_Tracker_Module() throws Exception {
 		navigateToModule(TestData.downTimeModuleName);
 		Dashboard.waitUntilLoaderIsNotDisplayed();
 		String defaultSelectedStartTime = "";
@@ -1137,6 +1162,8 @@ public class BaseClass {
 
 		softAssert.assertEquals(DownTime.getSavedReason(), TestData.expectedDownTimeReason,
 				"Before editing, down time Reason mismatch.");
+
+		editDownTime();
 
 	}
 
@@ -1385,7 +1412,7 @@ public class BaseClass {
 		}
 	}
 
-	public static void verifyCopyResults() throws Exception {
+	public static void verify_Copy_Results_Module() throws Exception {
 
 		do {
 			navigateToModule(TestData.copyResultsModuleName);
@@ -1723,7 +1750,7 @@ public class BaseClass {
 		}
 	}
 
-	public static void logOutAndCloseApplication() throws Exception {
+	public static void log_Out_And_Close_Application() throws Exception {
 		if (Dashboard.isOpenNavigationButtonDisplayed()) {
 			Dashboard.openNavigationButton().click();
 			Thread.sleep(1000);
@@ -1743,11 +1770,11 @@ public class BaseClass {
 		isAppLoggedIn = false;
 	}
 
-	public static void verifyAnomalyStatus() throws Exception {
+	public static void verify_Anomaly_Status() throws Exception {
 
-		if (isAppLoggedIn) {
-			logOutAndCloseApplication();
-		}
+//		if (isAppLoggedIn) {
+//			log_Out_And_Close_Application();
+//		}
 
 		if (!isAppLaunched) {
 			launch_ECQTS_Application();
@@ -1804,14 +1831,14 @@ public class BaseClass {
 		Dashboard.okButton().click();
 		Dashboard.waitUntilLoaderIsNotDisplayed();
 		Reports.waitUntilDownloadOCR_ReportIsDisplayed();
-		softAssert.assertEquals(JobDetailsPage.getAnomalyStatus(), "Likely",
+		softAssert.assertEquals(JobDetailsPage.getAnomalyStatus(), TestData.expectedAnomalyStatus,
 				"After clicking on Reports tab, Anomaly status is not as expected.");
 		JobDetailsPage.anomalyInfoIcon().click();
 		JobDetailsPage.waitUntilAnomalyDetailsPopupIsDisplayed();
 		String anomalyDetailsMessage = JobDetailsPage.getAnomalyDetailsMessage();
 //		System.out.println("After clicking on Reports Tab, Anomaly Details Message - " + anomalyDetailsMessage);
 		softAssert.assertTrue(anomalyDetailsMessage.contains("The following fibers have detected anomalies:"),
-				"After clicking on Reports tab, Anomaly Details popup message is not as expected.");
+				"After clicking on Reports tab, Anomaly Details popup message is expected to show detected anomalies.");
 		int anomalyFibersCountFromAnomalyDetailsMessage = anomalyDetailsMessage.contains(":")
 				? anomalyDetailsMessage.split(":", 2)[1].trim().split("\\R").length
 				: 0;
@@ -1828,7 +1855,7 @@ public class BaseClass {
 		Reports.overrideSaveButton().click();
 		Dashboard.waitUntilOkButtonIsDisplayed();
 		Dashboard.okButton().click();
-		softAssert.assertEquals(JobDetailsPage.getAnomalyStatus(), "Likely",
+		softAssert.assertEquals(JobDetailsPage.getAnomalyStatus(), TestData.expectedAnomalyStatus,
 				"Anomaly status after overriding others should not change.");
 		JobDetailsPage.completionTab().click();
 		Completion.isSeqNumberTestDisplayed();
@@ -1903,7 +1930,7 @@ public class BaseClass {
 		JobDetailsPage.reportsTab().click();
 	}
 
-	public static void verify_SOR_OCR_Files_Downloaded() {
+	public static void verify_If_SOR_And_OCR_Files_Downloaded() {
 		softAssert.assertEquals(getFilesCount(TestData.OCR_Report_Path), 2, "Mismatch in downloaded OCR report count.");
 		softAssert.assertEquals(getFilesCount(TestData.SOR_Files_Path), 4, "Mismatch in downloaded SOR files count.");
 	}
@@ -1929,28 +1956,54 @@ public class BaseClass {
 		}
 	}
 
-	public static void verify_Reel_Id_And_Sales_Order_In_Job_Search_popup() throws Exception {
-		navigateToModule(TestData.fiberTestModuleName);
-		searchJobAndNavigationToJobDetailsPage(TestData.fiberTestModuleName, TestData.jobSearchOrg,
-				TestData.fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification, TestData.fiberTestJobSearchCutNumber,
-				TestData.fiberTestJobSearchCutNumberInfo);
-	}
-	
-	public static void verify_Remove_Sales_Order_Flow() throws Exception
-	{
-		verifyRemoveSalesOrder = true;
-		navigateToModule(TestData.fiberTestModuleName);
-		searchJobAndNavigationToJobDetailsPage(TestData.fiberTestModuleName, TestData.jobSearchOrg,
-				TestData.fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification, TestData.fiberTestJobSearchCutNumber,
-				TestData.fiberTestJobSearchCutNumberInfo);
-		verify_Reel_Id_And_Sales_Order_In_Completion_Tab();
-		// SHould not be able to download shipping label 
+	public static void verify_Reel_Id_And_Remove_Sales_Order_Changes() throws Exception {
+
+		verify_Reel_Id_And_Remove_Sales_Order_Changes_In_Job_Search_Popup();
+
+		verify_Reel_Id_And_Remove_Sales_Order_Changes_In_Completion_Tab();
+
+		shouldRemoveSalesOrder = true;
+
+		verify_Reel_Id_And_Remove_Sales_Order_Changes_In_Job_Search_Popup();
+
+		verify_Reel_Id_And_Remove_Sales_Order_Changes_In_Completion_Tab();
+
+		JobDetailsPage.reportsTab().click();
+		Dashboard.waitUntilOkButtonIsDisplayed();
+		Dashboard.okButton().click();
+		Reports.shippingLabel().click();
+		softAssert.assertEquals(Reports.getErrorMessageWhileDownloadingShippingLabelReport(),
+				"A sales order must be selected to generate a shipping label.", "Mismatch in error displayed while downloading shipping label report.");
+		Dashboard.okButton().click();
+		
+		shouldRemoveSalesOrder = false;
 	}
 
-	public static void verify_Reel_Id_And_Sales_Order_In_Completion_Tab() throws Exception {
+	public static void verify_Reel_Id_And_Remove_Sales_Order_Changes_In_Job_Search_Popup() throws Exception {
+
+		navigateToModule(TestData.fiberTestModuleName);
+
+		searchJobAndNavigationToJobDetailsPage(TestData.fiberTestModuleName, TestData.jobSearchOrg,
+				TestData.fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification,
+				TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo);
+	}
+
+	public static void verify_Reel_Id_And_Remove_Sales_Order_Changes_In_Completion_Tab() throws Exception {
+
 		JobDetailsPage.completionTab().click();
 		Dashboard.waitUntilLoaderIsNotDisplayed();
 		Thread.sleep(2000);
+
+		if (shouldRemoveSalesOrder) {
+			TestData.fiberTestExpectedSalesOrder = "";
+		}
+		softAssert.assertEquals(JobDetailsPage.salesOrder().getText().trim(), TestData.fiberTestExpectedSalesOrder,
+				"sales order mismatch in job details page");
+
+		verifyTestResultsCount(TestData.incompleteTestCountForReelIAndSalesOrderdVerification,
+				TestData.passedTestCountForReelIAndSalesOrderdVerification,
+				TestData.failedTestCountForReelIAndSalesOrderdVerification,
+				"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification);
 
 		softAssert.assertEquals(Completion.reelItem().getText(), TestData.fiberTestExpectedReelItem,
 				"Reel item mismatch in Completion Tab.");
@@ -1978,7 +2031,6 @@ public class BaseClass {
 				"Reel Label field should be non-editable.");
 		softAssert.assertEquals(Completion.getReelLabelResult(), "PASS", "Reel Label result was supposed to be Pass.");
 
-		// COunt and header for sales order 
 	}
 
 	public static void runWtcTestForAllRibbonsInJob(int numberOfRibbonsToTestBeforeTakingDump,
@@ -2053,9 +2105,11 @@ public class BaseClass {
 		WTC.waitUntilStopButtonIsNotDisplayed();
 	}
 
-	public static void verifyFiberTestModule() throws Exception {
-		
+	public static void verify_Fiber_Test_Module() throws Exception {
+
 		updateTestSettings();
+
+		updateApplicationSettings();
 
 		searchJobAndNavigationToJobDetailsPage(TestData.fiberTestModuleName, TestData.jobSearchOrg,
 				TestData.fiberTestJobSearchJobNumber, TestData.fiberTestJobSearchCutNumber,
@@ -2085,9 +2139,9 @@ public class BaseClass {
 				TestData.fiberTestExpectedPassedTestsCount, TestData.fiberTestExpectedFailedTestsCount,
 				"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumber);
 	}
-	
-	public static void verifyTightBufferModule() throws Exception
-	{
+
+	public static void verify_Tight_Buffer_Module() throws Exception {
+
 		TestData.useOfficeOtdr = false;
 
 		updateTestSettings();
@@ -2098,7 +2152,8 @@ public class BaseClass {
 
 		verifyJobDetailsHeader(TestData.jobSearchOrg, TestData.tightBufferJobNumber,
 				TestData.tightBufferTestJobSearchCutNumber, TestData.tightBufferTestJobSearchCutNumberInfo,
-				"Tight Buffer test with Job # " + TestData.tightBufferJobNumber, TestData.tightBufferExpectedItemNumber);
+				"Tight Buffer test with Job # " + TestData.tightBufferJobNumber,
+				TestData.tightBufferExpectedItemNumber);
 
 		enterProtectionLayerValues(TestData.tightBufferModuleName);
 
@@ -2118,7 +2173,35 @@ public class BaseClass {
 				TestData.tightBufferExpectedPassedTestsCount, TestData.tightBufferExpectedFailedTestsCount,
 				"Tight Buffer with Job # " + TestData.tightBufferJobNumber);
 	}
-	
-	
+
+	public static void verify_PK_Fiber_Test_Module() throws Exception {
+
+		searchJobAndNavigationToJobDetailsPage(TestData.PK_FiberTestModuleName, TestData.jobSearchOrg,
+				TestData.PK_FiberTestJobSearchJobNumber, TestData.PK_FiberTestJobSearchCutNumber,
+				TestData.PK_FiberTestJobSearchCutNumberInfo);
+
+		verifyJobDetailsHeader(TestData.jobSearchOrg, TestData.PK_FiberTestJobSearchJobNumber,
+				TestData.PK_FiberTestJobSearchCutNumber, TestData.PK_FiberTestJobSearchCutNumberInfo,
+				"PK Fiber test with Job # " + TestData.PK_FiberTestJobSearchJobNumber,
+				TestData.PK_FiberTestExpectedItemNumber);
+
+		enterProtectionLayerValues(TestData.PK_FiberTestModuleName);
+
+//		runGetLengthTest(TestData.tightBufferModuleName);
+
+		verifyOpticsPage();
+
+//		runFiberTest(TestData.tightBufferModuleName, 1);
+
+//		downloadSorFiles();
+
+		enterCompletionLayerValues(TestData.PK_FiberTestModuleName);
+
+//		download_OCR_Report();
+
+		verifyTestResultsCount(TestData.PK_FiberTestExpectedIncompleteTestsCount,
+				TestData.PK_FiberTestExpectedPassedTestsCount, TestData.PK_FiberTestExpectedFailedTestsCount,
+				"PK Fiber Test with Job # " + TestData.PK_FiberTestJobSearchJobNumber);
+	}
 
 }

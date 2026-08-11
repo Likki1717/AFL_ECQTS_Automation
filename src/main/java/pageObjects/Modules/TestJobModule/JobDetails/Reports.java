@@ -11,7 +11,7 @@ public class Reports extends BaseClass {
 	public static boolean isJobWarnings_ErrorsPopupDisplayed() {
 		return isElementDisplayed(ByName.name("Job Warnings/Errors"), 70);
 	}
-	
+
 	public static boolean isJobWarnings_ErrorsPopupNotDisplayed() {
 		return !isElementDisplayed(ByName.name("Job Warnings/Errors"), 5);
 	}
@@ -21,9 +21,8 @@ public class Reports extends BaseClass {
 			Thread.sleep(1000);
 		}
 	}
-	
-	public static boolean isDownloadOCR_ReportDisplayed()
-	{
+
+	public static boolean isDownloadOCR_ReportDisplayed() {
 		return isElementDisplayed(By.xpath("//Text[@Name='Optical Characteristics']"), 2);
 	}
 
@@ -38,24 +37,30 @@ public class Reports extends BaseClass {
 	public static String getHoldForApprovalMessage() {
 		return driver.findElementByAccessibilityId("HoldforApproveMessage").getAttribute("Name");
 	}
-	
-	public static WebElement overrideTypeDropdown()
-	{
+
+	public static WebElement overrideTypeDropdown() {
 		return driver.findElement(By.xpath("//Text[@Name='Override Type:']/following-sibling::ComboBox"));
 	}
-	
-	public static WebElement overrideCheckbox()
-	{
+
+	public static WebElement overrideCheckbox() {
 		return driver.findElement(By.xpath("//Text[@Name='Override Type:']/following-sibling::CheckBox"));
 	}
-	
-	public static WebElement overrideComment()
-	{
+
+	public static WebElement overrideComment() {
 		return driver.findElement(By.xpath("//Text[@Name='Override Type:']/following-sibling::Edit"));
 	}
-	
-	public static WebElement overrideSaveButton()
-	{
+
+	public static WebElement overrideSaveButton() {
 		return driver.findElement(By.xpath("//Text[@Name='Override Type:']/following-sibling::Button"));
+	}
+
+	public static WebElement shippingLabel() {
+		return driver.findElement(By.xpath("//Text[@Name='Shipping Label']"));
+	}
+	
+	public static String getErrorMessageWhileDownloadingShippingLabelReport() {
+		By errorMessageLocator = By.xpath("//Text[@AutomationId='SalesOrderAlertMessage']");
+	    isElementDisplayed(errorMessageLocator, 10);
+	    return driver.findElement(errorMessageLocator).getAttribute("Name");
 	}
 }
