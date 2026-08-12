@@ -6,6 +6,7 @@ import org.openqa.selenium.By.ByName;
 
 import base.BaseClass;
 import io.appium.java_client.MobileBy.ByAccessibilityId;
+import pageObjects.CommonPages.Dashboard;
 
 public class ConnectionProfiles extends BaseClass{
 
@@ -73,12 +74,14 @@ public class ConnectionProfiles extends BaseClass{
 		return driver.findElementByXPath("//Button[@Name='Test Switch Connection']");
 	}
  
-	public static boolean isConnectionSuccessfulPopupDisplayed() {
-		return isElementDisplayed(By.xpath("//Text[contains(@Name, 'Connection Successful')]"), 15);
+	public static boolean isConnectionSuccessfulPopupDisplayed() throws Exception {
+		Dashboard.waitUntilOkButtonIsDisplayed();
+		return isElementDisplayed(By.xpath("//Text[contains(@Name, 'Connection Successful')]"), 1);
 	}
 	
-	public static boolean isConnectionFailurePopupDisplayed() {
-		return isElementDisplayed(By.xpath("//Text[contains(@Name, 'Connection Failed')]"), 15);
+	public static boolean isConnectionFailurePopupDisplayed() throws Exception {
+		Dashboard.waitUntilOkButtonIsDisplayed();
+		return isElementDisplayed(By.xpath("//Text[contains(@Name, 'Connection Failed')]"), 1);
 	}
  
 	public static WebElement switchModuleTextBox() {

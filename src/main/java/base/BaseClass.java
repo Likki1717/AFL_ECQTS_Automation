@@ -75,7 +75,6 @@ public class BaseClass {
 
 		loginToApplication();
 
-		verifyBuildVersion();
 	}
 
 	public static void clearPreviousSessionData() throws Exception {
@@ -360,7 +359,7 @@ public class BaseClass {
 		}
 	}
 
-	public static void verifyBuildVersion() throws Exception {
+	public static void verifyAboutPage() throws Exception {
 		try {
 
 			Dashboard.openNavigationButton().click();
@@ -385,6 +384,7 @@ public class BaseClass {
 	}
 
 	public static void verify_Delete_Create_And_Edit_Connection_Profiles() {
+
 		deleteAllExistingConnectionProfiles();
 
 		createConnectionProfiles();
@@ -436,20 +436,27 @@ public class BaseClass {
 					ConnectionProfiles.findAddressTextBox().sendKeys("SIMULATO");
 					ConnectionProfiles.testSwitchConnectionButton().click();
 					softAssert.assertTrue(ConnectionProfiles.isConnectionFailurePopupDisplayed(),
-							"Tried for 15 seconds, Connection failure popup is not displayed");
+							"Connection failure popup is not displayed for " + connectionProfileName);
 					ConnectionProfiles.okButton().click();
+					ConnectionProfiles.findAddressTextBox().clear();
+					ConnectionProfiles.findAddressTextBox().sendKeys(" SIMULATOR ");
+					ConnectionProfiles.testSwitchConnectionButton().click();
+					softAssert.assertTrue(ConnectionProfiles.isConnectionSuccessfulPopupDisplayed(),
+							"Connection successful popup is not displayed for " + connectionProfileName);
+					ConnectionProfiles.okButton().click();
+				} else {
+					ConnectionProfiles.findAddressTextBox().clear();
+					ConnectionProfiles.findAddressTextBox().sendKeys("SIMULATOR");
 				}
-				ConnectionProfiles.findAddressTextBox().clear();
-				ConnectionProfiles.findAddressTextBox().sendKeys("SIMULATOR");
 				ConnectionProfiles.workerNumberTextBox().sendKeys(connectionProfileName.split("-")[1]);
 				ConnectionProfiles.spoonTextBox().sendKeys(connectionProfileName.split("-")[1]);
 			}
 			ConnectionProfiles.saveProfileButton().click();
 			if ((connectionProfileName.equals(TestData.connectionProfileName_Office_OTDR) && TestData.useOfficeOtdr)
 					|| !connectionProfileName.equals(TestData.connectionProfileName_Office_OTDR)) {
-				validateSuccessfulConnectionPopup();
+				validateSuccessfulConnectionPopup(connectionProfileName);
 			} else {
-				validateFailureConnectionPopup();
+				validateFailureConnectionPopup(connectionProfileName);
 			}
 		} catch (Exception e) {
 			System.out.println("****Exception in createProfile() - " + connectionProfileName + "****");
@@ -467,26 +474,26 @@ public class BaseClass {
 				TestData.connectionProfile_Simulator_Port);
 	}
 
-	public static void validateSuccessfulConnectionPopup() {
+	public static void validateSuccessfulConnectionPopup(String connectionProfileName) {
 		try {
 			wait = new WebDriverWait(driver, 15);
 			wait.until(ExpectedConditions.elementToBeClickable(ConnectionProfiles.testConnection()));
 			ConnectionProfiles.testConnection().click();
 			softAssert.assertTrue(ConnectionProfiles.isConnectionSuccessfulPopupDisplayed(),
-					"Tried for 15 seconds, Connection successful popup is not displayed");
+					"Connection successful popup is not displayed for " + connectionProfileName);
 			ConnectionProfiles.okButton().click();
 		} catch (Exception e) {
 			System.out.println("****Exception in validateSuccessfulConnectionPopup()****");
 		}
 	}
 
-	public static void validateFailureConnectionPopup() {
+	public static void validateFailureConnectionPopup(String connectionProfileName) {
 		try {
 			wait = new WebDriverWait(driver, 15);
 			wait.until(ExpectedConditions.elementToBeClickable(ConnectionProfiles.testConnection()));
 			ConnectionProfiles.testConnection().click();
 			softAssert.assertTrue(ConnectionProfiles.isConnectionFailurePopupDisplayed(),
-					"Tried for 15 seconds, Connection failed popup is not displayed");
+					"Connection failed popup is not displayed for " + connectionProfileName);
 			ConnectionProfiles.okButton().click();
 		} catch (Exception e) {
 			System.out.println("****Exception in validateFailureConnectionPopup()****");
@@ -512,7 +519,7 @@ public class BaseClass {
 			ConnectionProfiles.saveProfileButton().click();
 			ConnectionProfiles.testConnection().click();
 			softAssert.assertTrue(ConnectionProfiles.isConnectionFailurePopupDisplayed(),
-					"Tried for 15 seconds, Connection failed popup is not displayed");
+					"Connection failed popup is not displayed for Simulator profile during Edit and changing instrument type");
 			ConnectionProfiles.okButton().click();
 			ConnectionProfiles.editButton().click();
 			softAssert.assertTrue(ConnectionProfiles.ipAddressTextBox().getAttribute("Value.Value")
@@ -556,6 +563,9 @@ public class BaseClass {
 	}
 
 	public static void updateApplicationSettings() {
+		if (!TestData.useExternalCamera) {
+			return;
+		}
 		try {
 			if (!Settings.isTestSettingsButtonDisplayed()) {
 				Dashboard.openNavigationButton().click();
@@ -568,19 +578,25 @@ public class BaseClass {
 			if (TestData.useExternalCamera == ApplicationSettings.cameraSourceDropDown().getText()
 					.contains("Integrated")) {
 				ApplicationSettings.cameraSourceDropDown().click();
-				if (TestData.useExternalCamera) {
-					if (ApplicationSettings.isExternalCameraDisplayed()) {
-						ApplicationSettings.externalCamera().click();
-					} else {
-						System.out.println("****External camera is not available to select****");
-					}
+				if (ApplicationSettings.isExternalCameraDisplayed()) {
+					ApplicationSettings.externalCamera().click();
 				} else {
-					try {
-						ApplicationSettings.integratedCamera().click();
-					} catch (Exception e) {
-						System.out.println("****Integrated camera is not available to select****");
-					}
+					System.out.println("****External camera is not available to select****");
 				}
+//				if (TestData.useExternalCamera) {
+//					if (ApplicationSettings.isExternalCameraDisplayed()) {
+//						ApplicationSettings.externalCamera().click();
+//					} else {
+//						System.out.println("****External camera is not available to select****");
+//					}
+//				} 
+//				else {
+//					try {
+//						ApplicationSettings.integratedCamera().click();
+//					} catch (Exception e) {
+//						System.out.println("****Integrated camera is not available to select****");
+//					}
+//				}
 			}
 		} catch (Exception e) {
 			System.out.println("****Exception in updateApplicationSettings()****");
@@ -909,8 +925,8 @@ public class BaseClass {
 			Dashboard.waitUntilLoaderIsNotDisplayed();
 			JobSearch.salesOrderValue().click();
 			if (shouldRemoveSalesOrder) {
-				JobSearch.salesOrder().click();
 				JobSearch.salesOrderClearButton().click();
+				JobSearch.salesOrder().click();
 				softAssert.assertEquals(JobSearch.getReelId(), "",
 						"Reel ID should not be displayed after Sales Order is removed.");
 				softAssert.assertEquals(JobSearch.salesOrder().getAttribute("Value.Value"), null,
@@ -1744,6 +1760,11 @@ public class BaseClass {
 
 			Completion.jacketColor().sendKeys("2");
 
+			robot.keyPress(KeyEvent.VK_TAB);
+			robot.keyRelease(KeyEvent.VK_TAB);
+
+			Thread.sleep(1000);
+
 		} catch (Exception e) {
 			System.out.println(
 					"****Could not enter all the values in Completion tab, possibly this job does not have all fields****");
@@ -1772,9 +1793,9 @@ public class BaseClass {
 
 	public static void verify_Anomaly_Status() throws Exception {
 
-//		if (isAppLoggedIn) {
-//			log_Out_And_Close_Application();
-//		}
+		if (isAppLoggedIn) {
+			log_Out_And_Close_Application();
+		}
 
 		if (!isAppLaunched) {
 			launch_ECQTS_Application();
@@ -1973,9 +1994,10 @@ public class BaseClass {
 		Dashboard.okButton().click();
 		Reports.shippingLabel().click();
 		softAssert.assertEquals(Reports.getErrorMessageWhileDownloadingShippingLabelReport(),
-				"A sales order must be selected to generate a shipping label.", "Mismatch in error displayed while downloading shipping label report.");
+				"A sales order must be selected to generate a shipping label.",
+				"Mismatch in error displayed while downloading shipping label report.");
 		Dashboard.okButton().click();
-		
+
 		shouldRemoveSalesOrder = false;
 	}
 
@@ -1986,6 +2008,12 @@ public class BaseClass {
 		searchJobAndNavigationToJobDetailsPage(TestData.fiberTestModuleName, TestData.jobSearchOrg,
 				TestData.fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification,
 				TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo);
+
+		verifyJobDetailsHeader(TestData.jobSearchOrg,
+				TestData.fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification,
+				TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo,
+				"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification,
+				TestData.fiberTestExpectedItemNumberForReelIdAndSalesOrderVerification);
 	}
 
 	public static void verify_Reel_Id_And_Remove_Sales_Order_Changes_In_Completion_Tab() throws Exception {
@@ -2001,8 +2029,8 @@ public class BaseClass {
 				"sales order mismatch in job details page");
 
 		verifyTestResultsCount(TestData.incompleteTestCountForReelIAndSalesOrderdVerification,
-				TestData.passedTestCountForReelIAndSalesOrderdVerification,
-				TestData.failedTestCountForReelIAndSalesOrderdVerification,
+				TestData.passedTestCountForReelIdAndSalesOrderdVerification,
+				TestData.failedTestCountForReelIdAndSalesOrderdVerification,
 				"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification);
 
 		softAssert.assertEquals(Completion.reelItem().getText(), TestData.fiberTestExpectedReelItem,
@@ -2010,26 +2038,31 @@ public class BaseClass {
 		softAssert.assertEquals(Completion.reelItem().getAttribute("IsKeyboardFocusable"), "False",
 				"Reel Item field should be non-editable.");
 		softAssert.assertEquals(Completion.getReelItemResult(), "PASS", "Reel Item result was supposed to be Pass.");
+		try {
+			softAssert.assertEquals(Completion.iseReelLabel().getText(), TestData.fiberTestExpectedIseReelLabel,
+					"ISE Reel Label mismatch in Completion Tab.");
+			softAssert.assertEquals(Completion.iseReelLabel().getAttribute("IsKeyboardFocusable"), "False",
+					"ISE Reel Label field should be non-editable.");
+			softAssert.assertEquals(Completion.getIseReelLabelResult(), "PASS",
+					"ISE Reel Label result was supposed to be Pass.");
 
-		softAssert.assertEquals(Completion.iseReelLabel().getText(), TestData.fiberTestExpectedIseReelLabel,
-				"ISE Reel Label mismatch in Completion Tab.");
-		softAssert.assertEquals(Completion.iseReelLabel().getAttribute("IsKeyboardFocusable"), "False",
-				"ISE Reel Label field should be non-editable.");
-		softAssert.assertEquals(Completion.getIseReelLabelResult(), "PASS",
-				"ISE Reel Label result was supposed to be Pass.");
+			softAssert.assertEquals(Completion.oseReelLabel().getText(), TestData.fiberTestExpectedOseReelLabel,
+					"OSE Reel Label mismatch in Completion Tab.");
+			softAssert.assertEquals(Completion.oseReelLabel().getAttribute("IsKeyboardFocusable"), "False",
+					"OSE Reel Label field should be non-editable.");
+			softAssert.assertEquals(Completion.getOseReelLabelResult(), "PASS",
+					"OSE Reel Label result was supposed to be Pass.");
 
-		softAssert.assertEquals(Completion.oseReelLabel().getText(), TestData.fiberTestExpectedOseReelLabel,
-				"OSE Reel Label mismatch in Completion Tab.");
-		softAssert.assertEquals(Completion.oseReelLabel().getAttribute("IsKeyboardFocusable"), "False",
-				"OSE Reel Label field should be non-editable.");
-		softAssert.assertEquals(Completion.getOseReelLabelResult(), "PASS",
-				"OSE Reel Label result was supposed to be Pass.");
-
-		softAssert.assertEquals(Completion.reelLabel().getText(), TestData.fiberTestExpectedReelLabel,
-				"Reel Label mismatch in Completion Tab.");
-		softAssert.assertEquals(Completion.reelLabel().getAttribute("IsKeyboardFocusable"), "False",
-				"Reel Label field should be non-editable.");
-		softAssert.assertEquals(Completion.getReelLabelResult(), "PASS", "Reel Label result was supposed to be Pass.");
+			softAssert.assertEquals(Completion.reelLabel().getText(), TestData.fiberTestExpectedReelLabel,
+					"Reel Label mismatch in Completion Tab.");
+			softAssert.assertEquals(Completion.reelLabel().getAttribute("IsKeyboardFocusable"), "False",
+					"Reel Label field should be non-editable.");
+			softAssert.assertEquals(Completion.getReelLabelResult(), "PASS",
+					"Reel Label result was supposed to be Pass.");
+		} catch (Exception e) {
+			softAssert.fail(
+					"Reel Label is not available after removing sales order for a Job which had reel label when sales order was selected.");
+		}
 
 	}
 

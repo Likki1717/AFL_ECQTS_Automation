@@ -24,10 +24,10 @@ public class ApplicationSettings extends BaseClass {
 	
 	public static WebElement externalCamera()
 	{
-		return driver.findElement(By.xpath("//ListItem[not(contains(@Name, 'Integrated Camera'))]"));
+		return driver.findElement(By.xpath("//ListItem[not(contains(@Name, 'Camera'))]"));
 	}
 	
 	public static boolean isExternalCameraDisplayed() {
-		return isElementDisplayed(By.xpath("//ListItem[not(contains(@Name, 'Integrated Camera'))]"), 2);
+		return isElementDisplayed(By.xpath("//ListItem[not(contains(@Name, 'Camera'))]"), 2);
 	}
 }
