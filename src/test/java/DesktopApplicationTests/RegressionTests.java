@@ -16,33 +16,35 @@ public class RegressionTests extends BaseClass {
 //BeforeClass applicationSetupAndLaunch includes - clearPreviousSessionData, launchWinAppDriver, launchOpenVpnAppAndConnect, 
 //launch_ECQTS_Application, verifyIncorrectCredentials, validateRecoverPasswordButtonAvailability, loginToApplication, verifyBuildVersion	
 
-//			verifyAboutPage();
-//			
+			verifyAboutPage();
+
 			verify_Delete_Create_And_Edit_Connection_Profiles();
-//			
-//			verify_Fiber_Test_Module();
+
+			verify_Fiber_Test_Module();
 
 //			verify_WTC_Test_Module();
 
-//			verify_PK_Fiber_Test_Module();
-//			
-//			verify_Tight_Buffer_Module();
+			verify_PK_Fiber_Test_Module();
 
-//			verify_Copy_Results_Module();
+			verify_Tight_Buffer_Module();
+
+			verify_Copy_Results_Module();
+
+			verify_All_Three_Imports();
+
+			verify_Down_Time_Tracker_Module();
+
+			verify_If_SOR_And_OCR_Files_Downloaded();
+
+			verify_Reel_Id_And_Remove_Sales_Order_Flow();
+
+			log_Out_And_Close_Application();
+
+			verify_Anomaly_Status();
 
 //			verify_QE_Labs();
 
-//			verify_All_Three_Imports();
-
-//			verify_Down_Time_Tracker_Module();
-//					
-//			verify_If_SOR_And_OCR_Files_Downloaded();
-//
-			verify_Reel_Id_And_Remove_Sales_Order_Changes();
-//
-//			log_Out_And_Close_Application();
-//
-//			verify_Anomaly_Status();
+			verify_Override_Meter_Marks_Flow();
 
 		} catch (Exception e) {
 			exception = e;

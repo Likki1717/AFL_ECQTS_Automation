@@ -4,16 +4,38 @@ import java.io.File;
 
 public class TestData {
 	public static String systemUsername = "sumeeth"; // veltris // LikhithaR
-	public static String testEnvironment = "Prod"; // Dev/QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
-	public static String expectedAppVersion = "Version: 7.7.7.0";
-	public static boolean shouldClearPreviousSessionData = true;
+	public static String testEnvironment = "Dev"; // Dev/QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
+	public static boolean isAppLogInRequired = true;
 	public static boolean useOfficeOtdr = true;
 	public static boolean useExternalCamera = false;
+
+	public static String expectedAppVersion() {
+		switch (testEnvironment) {
+		case "Dev":
+			return "Version: 7.8.5.0";
+
+		case "QA":
+			return "Version: 7.8.2.0";
+
+		case "Soft Release Prod":
+		case "Soft Release Second Prod":
+			return "Version: 7.8.1.0";
+
+		case "Prod":
+		case "Second Prod":
+			return "Version: 7.7.7.0";
+
+		default:
+			return null;
+		}
+	}
+
 	public static int numberOfFibersToTest = 12;
-	public static int expectedIncompleteOrFailedTestsOnHoldForApprovalPopup = 12;
+	public static int expectedIncompleteOrFailedTestsOnHoldForApprovalPopupInAnomalyVerificationFlow = 12;
 	public static int numberOfFibersToTestForAnomalyVerification = (testEnvironment.equals("Dev")
-			|| testEnvironment.equals("QA")) ? 2 : 9;
-	public static String expectedAnomalyStatus = testEnvironment.equals("Dev") ? "More Likely" : (testEnvironment.equals("QA") ? "Less Likely" : "Likely");
+			|| testEnvironment.equals("QA")) ? 2 : 6;
+	public static int expectedAnomalyFibersCount = 2;
+	public static String expectedAnomalyStatus = testEnvironment.equals("Dev") ? "More Likely" : "Less Likely";
 
 	public static String vpnAppPassword() {
 		if (systemUsername.equals("sumeeth")) {
@@ -85,14 +107,14 @@ public class TestData {
 	public static String taihanExpectedOtdrLength = "6181 m";
 	public static String taihanJobNumberStartsWith = "7887";
 	public static String taihanJobExpectedItemNumber = "DNL-6536-01";
-	
-	public static String fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification = "48944910";
+
+	public static String fiberTestJobSearchJobNumberForReelIdAndSalesOrderVerification = "48944910";
 	public static String fiberTestExpectedSalesOrder = "2797719-30";
-	public static String incompleteTestCountForReelIAndSalesOrderdVerification  = "299";
-	public static String passedTestCountForReelIdAndSalesOrderdVerification = "4";
-	public static String failedTestCountForReelIdAndSalesOrderdVerification = "0";
+	public static String incompleteTestCountForReelIdAndSalesOrderVerification = "299";
+	public static String passedTestCountForReelIdAndSalesOrderVerification = "4";
+	public static String failedTestCountForReelIdAndSalesOrderVerification = "0";
 	public static String fiberTestExpectedItemNumberForReelIdAndSalesOrderVerification = "DNO-12759";
-	
+
 	public static final String fiberTestModuleName = "Fiber Test";
 	public static String fiberTestJobSearchJobNumber = "25305754";
 	public static String fiberTestJobSearchCutNumber = getCurrentDateTimeStamp();
@@ -178,14 +200,14 @@ public class TestData {
 		case "Dev":
 			return "TesterDev01"; // sumeetDev Mandeep executiveDev
 
-		case "Dev Global":
-			return "TestGlobal";
+		case "Dev executive":
+			return "executiveDev";
 
 		case "QA":
 			return "testQA01"; // globalAdmin SumeethQA teamLead QA testQA01
 
-		case "QA Global":
-			return "globalAdmin";
+		case "QA executive":
+			return "executiveQA";
 
 		case "Soft Release Prod":
 		case "Soft Release Second Prod":
@@ -193,11 +215,11 @@ public class TestData {
 		case "Second Prod":
 			return "testerProd";
 
-		case "Soft Release Prod Global":
-		case "Soft Release Second Prod Global":
-		case "Prod Global":
-		case "Second Prod Global":
-			return "sumeethGlobalProd";
+		case "Soft Release Prod executive":
+		case "Soft Release Second Prod executive":
+		case "Prod executive":
+		case "Second Prod executive":
+			return "executiveProd";
 
 		default:
 			return null;
@@ -211,13 +233,13 @@ public class TestData {
 		case "Dev":
 			return "Welcome@123"; // Password123#
 
-		case "Dev Global":
+		case "Dev executive":
 			return "Welcome@123";
 
 		case "QA":
 			return "Welcome@123";
 
-		case "QA Global":
+		case "QA executive":
 			return "Welcome@123";
 
 		case "Soft Release Prod":
@@ -226,10 +248,10 @@ public class TestData {
 		case "Second Prod":
 			return "Welcome@0650";
 
-		case "Soft Release Prod Global":
-		case "Soft Release Second Prod Global":
-		case "Prod Global":
-		case "Second Prod Global":
+		case "Soft Release Prod executive":
+		case "Soft Release Second Prod executive":
+		case "Prod executive":
+		case "Second Prod executive":
 			return "Welcome@0650";
 
 		default:

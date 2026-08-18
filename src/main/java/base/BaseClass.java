@@ -55,7 +55,6 @@ public class BaseClass {
 	public static DesiredCapabilities capabilities;
 	public static SoftAssert softAssert = new SoftAssert();
 	public static boolean isAppLaunched = false;
-	public static boolean isAppLoggedIn = false;
 	public static boolean shouldRemoveSalesOrder = false;
 
 	@BeforeClass
@@ -79,7 +78,8 @@ public class BaseClass {
 
 	public static void clearPreviousSessionData() throws Exception {
 
-		if (!TestData.shouldClearPreviousSessionData) {
+		if (!TestData.isAppLogInRequired) {
+			softAssert.fail("As app is in logged in state, Previous session data has not been cleared");
 			return;
 		}
 
@@ -257,9 +257,6 @@ public class BaseClass {
 			System.out.println("****Normal launch of ECQTS application failed, Trying Root attach****");
 			attachExistingApplication();
 		}
-		if (!TestData.shouldClearPreviousSessionData) {
-			isAppLoggedIn = true;
-		}
 		dismissSyncStatusPopupIfDisplayed();
 		actions = new Actions(driver);
 		isAppLaunched = true;
@@ -295,7 +292,7 @@ public class BaseClass {
 	}
 
 	public static void verifyIncorrectCredentials() throws Exception {
-		if (isAppLoggedIn) {
+		if (!TestData.isAppLogInRequired) {
 			softAssert.fail("As app is in logged in state, cannot verify incorrect credentials scenario");
 			return;
 		}
@@ -310,7 +307,7 @@ public class BaseClass {
 	}
 
 	public static void validateRecoverPasswordButtonAvailability() throws Exception {
-		if (isAppLoggedIn) {
+		if (!TestData.isAppLogInRequired) {
 			softAssert.fail("As app is in logged in state, cannot verify recover password button availability");
 			return;
 		}
@@ -320,7 +317,7 @@ public class BaseClass {
 
 	public static void loginToApplication() throws Exception {
 		try {
-			if (isAppLoggedIn) {
+			if (!TestData.isAppLogInRequired) {
 				softAssert.fail("As app is in logged in state, cannot verify login scenario");
 				return;
 			}
@@ -333,7 +330,7 @@ public class BaseClass {
 			Dashboard.waitUntilLoaderIsNotDisplayed();
 			softAssert.assertTrue(Dashboard.isFiberTestModuleDisplayed(),
 					"Tried for 10 secs, Fiber Test module was not visible after login");
-			isAppLoggedIn = true;
+			TestData.isAppLogInRequired = false;
 		} catch (Exception e) {
 			Assert.fail("****Exception in loginToApplication()****");
 		}
@@ -365,7 +362,7 @@ public class BaseClass {
 			Dashboard.openNavigationButton().click();
 			SideMenu.aboutButton().click();
 			String appVersion = About.versionNumber().getText();
-			Assert.assertEquals(appVersion, TestData.expectedAppVersion, "Build version mismatch.");
+			Assert.assertEquals(appVersion, TestData.expectedAppVersion(), "Build version mismatch.");
 			String expectedEnvironment = (TestData.testEnvironment.equals("Dev")
 					|| TestData.testEnvironment.equals("QA")) ? "-" + TestData.testEnvironment.toLowerCase() : "";
 			String expectedPortalLink = "https://www.ecqts" + expectedEnvironment + ".aflglobal.com";
@@ -921,7 +918,7 @@ public class BaseClass {
 				Dashboard.waitUntilOkButtonIsDisplayed();
 			}
 		}
-		if (jobNumber.equals(TestData.fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification)) {
+		if (jobNumber.equals(TestData.fiberTestJobSearchJobNumberForReelIdAndSalesOrderVerification)) {
 			Dashboard.waitUntilLoaderIsNotDisplayed();
 			JobSearch.salesOrderValue().click();
 			if (shouldRemoveSalesOrder) {
@@ -1410,6 +1407,7 @@ public class BaseClass {
 	public static void downloadSorFiles() throws Exception {
 		Dashboard.waitUntilLoaderIsNotDisplayed();
 		for (int i = 1; i <= 4; i++) {
+			FiberResults.waitUntil_SOR_DownloadIcon_IsDisplayed(i);
 			FiberResults.SOR_DownloadIcon(i).click();
 			Dashboard.waitUntilFileNameTextBoxIsDisplayed();
 			actions.keyDown(Keys.ALT).sendKeys("d").keyUp(Keys.ALT).build().perform();
@@ -1788,12 +1786,12 @@ public class BaseClass {
 				"Mismatch in logged out page text.");
 		SignIn.closeAppIcon().click();
 		isAppLaunched = false;
-		isAppLoggedIn = false;
+		TestData.isAppLogInRequired = true;
 	}
 
 	public static void verify_Anomaly_Status() throws Exception {
 
-		if (isAppLoggedIn) {
+		if (!TestData.isAppLogInRequired) {
 			log_Out_And_Close_Application();
 		}
 
@@ -1801,7 +1799,7 @@ public class BaseClass {
 			launch_ECQTS_Application();
 		}
 
-		TestData.testEnvironment += " Global";
+		TestData.testEnvironment += " executive";
 
 		loginToApplication();
 
@@ -1844,10 +1842,9 @@ public class BaseClass {
 //		System.out.println("Failed Count : " + incompleteOrFailedTestsCountFromHoldForApprovalPopup);
 //		System.out.println("Anomaly Count" + anomalyFibersCountFromHoldForApprovalPopup);
 		softAssert.assertEquals(incompleteOrFailedTestsCountFromHoldForApprovalPopup,
-				TestData.expectedIncompleteOrFailedTestsOnHoldForApprovalPopup,
+				TestData.expectedIncompleteOrFailedTestsOnHoldForApprovalPopupInAnomalyVerificationFlow,
 				"Mismatch in Incomplete or Failed tests count displayed on hold for approval popup.");
-		softAssert.assertEquals(anomalyFibersCountFromHoldForApprovalPopup,
-				TestData.numberOfFibersToTestForAnomalyVerification,
+		softAssert.assertEquals(anomalyFibersCountFromHoldForApprovalPopup, TestData.expectedAnomalyFibersCount,
 				"Mismatch in Anomaly detected fibers count displayed on hold for approval popup.");
 		Dashboard.okButton().click();
 		Dashboard.waitUntilLoaderIsNotDisplayed();
@@ -1865,8 +1862,7 @@ public class BaseClass {
 				: 0;
 //		System.out.println(
 //				"anomalyFibersCountFromAnomalyDetailsMessage - " + anomalyFibersCountFromAnomalyDetailsMessage);
-		softAssert.assertEquals(anomalyFibersCountFromAnomalyDetailsMessage,
-				TestData.numberOfFibersToTestForAnomalyVerification,
+		softAssert.assertEquals(anomalyFibersCountFromAnomalyDetailsMessage, TestData.expectedAnomalyFibersCount,
 				"Mismatch in anomalies detected fibers count in anomaly details popup.");
 		Dashboard.okButton().click();
 		Reports.overrideTypeDropdown().sendKeys("Other");
@@ -1891,8 +1887,7 @@ public class BaseClass {
 //		System.out.println("Anomaly Count" + anomalyFibersCountFromHoldForApprovalPopup);
 		softAssert.assertEquals(incompleteOrFailedTestsCountFromHoldForApprovalPopup, 0,
 				"After overriding others, Mismatch in Incomplete or Failed tests count displayed on hold for approval popup.");
-		softAssert.assertEquals(anomalyFibersCountFromHoldForApprovalPopup,
-				TestData.numberOfFibersToTestForAnomalyVerification,
+		softAssert.assertEquals(anomalyFibersCountFromHoldForApprovalPopup, TestData.expectedAnomalyFibersCount,
 				"After overriding others, Mismatch in Anomaly detected fibers count displayed on hold for approval popup.");
 		Dashboard.okButton().click();
 		Dashboard.waitUntilLoaderIsNotDisplayed();
@@ -1925,8 +1920,7 @@ public class BaseClass {
 				: 0;
 //		System.out.println(
 //				"anomalyFibersCountFromAnomalyDetailsMessage - " + anomalyFibersCountFromAnomalyDetailsMessage);
-		softAssert.assertEquals(anomalyFibersCountFromAnomalyDetailsMessage,
-				TestData.numberOfFibersToTestForAnomalyVerification,
+		softAssert.assertEquals(anomalyFibersCountFromAnomalyDetailsMessage, TestData.expectedAnomalyFibersCount,
 				"After overriding anomaly, Mismatch in anomalies detected fibers count in anomaly details popup.");
 		Dashboard.okButton().click();
 	}
@@ -1977,7 +1971,7 @@ public class BaseClass {
 		}
 	}
 
-	public static void verify_Reel_Id_And_Remove_Sales_Order_Changes() throws Exception {
+	public static void verify_Reel_Id_And_Remove_Sales_Order_Flow() throws Exception {
 
 		verify_Reel_Id_And_Remove_Sales_Order_Changes_In_Job_Search_Popup();
 
@@ -2006,13 +2000,13 @@ public class BaseClass {
 		navigateToModule(TestData.fiberTestModuleName);
 
 		searchJobAndNavigationToJobDetailsPage(TestData.fiberTestModuleName, TestData.jobSearchOrg,
-				TestData.fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification,
+				TestData.fiberTestJobSearchJobNumberForReelIdAndSalesOrderVerification,
 				TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo);
 
 		verifyJobDetailsHeader(TestData.jobSearchOrg,
-				TestData.fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification,
+				TestData.fiberTestJobSearchJobNumberForReelIdAndSalesOrderVerification,
 				TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo,
-				"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification,
+				"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumberForReelIdAndSalesOrderVerification,
 				TestData.fiberTestExpectedItemNumberForReelIdAndSalesOrderVerification);
 	}
 
@@ -2028,10 +2022,10 @@ public class BaseClass {
 		softAssert.assertEquals(JobDetailsPage.salesOrder().getText().trim(), TestData.fiberTestExpectedSalesOrder,
 				"sales order mismatch in job details page");
 
-		verifyTestResultsCount(TestData.incompleteTestCountForReelIAndSalesOrderdVerification,
-				TestData.passedTestCountForReelIdAndSalesOrderdVerification,
-				TestData.failedTestCountForReelIdAndSalesOrderdVerification,
-				"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumberForReelIAndSalesOrderdVerification);
+		verifyTestResultsCount(TestData.incompleteTestCountForReelIdAndSalesOrderVerification,
+				TestData.passedTestCountForReelIdAndSalesOrderVerification,
+				TestData.failedTestCountForReelIdAndSalesOrderVerification,
+				"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumberForReelIdAndSalesOrderVerification);
 
 		softAssert.assertEquals(Completion.reelItem().getText(), TestData.fiberTestExpectedReelItem,
 				"Reel item mismatch in Completion Tab.");
@@ -2063,6 +2057,10 @@ public class BaseClass {
 			softAssert.fail(
 					"Reel Label is not available after removing sales order for a Job which had reel label when sales order was selected.");
 		}
+
+	}
+
+	public static void verify_Override_Meter_Marks_Flow() {
 
 	}
 

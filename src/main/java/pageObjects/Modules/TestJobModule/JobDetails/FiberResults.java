@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.By.ByName;
+import org.openqa.selenium.By.ByXPath;
 import org.openqa.selenium.WebElement;
 
 import base.BaseClass;
@@ -78,12 +79,11 @@ public class FiberResults extends BaseClass {
 	public static WebElement goToFiberButton() {
 		return driver.findElementByAccessibilityId("GoToFiberButton");
 	}
-	
-	public static void enterSpliceGainValues()
-	{
-		for(int i=0; i<(2*TestData.numberOfFibersToTestForAnomalyVerification); i++)
-		{
-			WebElement spliceGainElement = driver.findElement(By.xpath("(//Text[contains(@Name, 'Splice Gain')]/following-sibling::Edit[1])[("+i+"+1)]"));
+
+	public static void enterSpliceGainValues() {
+		for (int i = 0; i < (2 * TestData.numberOfFibersToTestForAnomalyVerification); i++) {
+			WebElement spliceGainElement = driver.findElement(
+					By.xpath("(//Text[contains(@Name, 'Splice Gain')]/following-sibling::Edit[1])[(" + i + "+1)]"));
 			spliceGainElement.clear();
 			spliceGainElement.sendKeys("1");
 		}
@@ -108,6 +108,11 @@ public class FiberResults extends BaseClass {
 	public static WebElement SOR_DownloadIcon(int sorToBeDownloaded) {
 		return driver.findElementByXPath(
 				"(//Text[contains(@Name, ':')]/following-sibling::Image)[" + sorToBeDownloaded + "]");
+	}
+
+	public static void waitUntil_SOR_DownloadIcon_IsDisplayed(int sorToBeDownloaded) {
+		isElementDisplayed(ByXPath.xpath(
+				"(//Text[contains(@Name, ':')]/following-sibling::Image)[" + sorToBeDownloaded + "]"), 100);
 	}
 
 }
