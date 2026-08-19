@@ -29,6 +29,7 @@ import pageObjects.CommonPages.SideMenu;
 import pageObjects.CommonPages.SignIn;
 import pageObjects.Modules.CopyResults;
 import pageObjects.Modules.DownTime;
+import pageObjects.Modules.QE_Labs;
 import pageObjects.Modules.ImportData.Import;
 import pageObjects.Modules.TestJobModule.JobDetailsPage;
 import pageObjects.Modules.TestJobModule.JobSearch;
@@ -171,9 +172,7 @@ public class BaseClass {
 			Thread.sleep(500);
 			robot.keyPress(KeyEvent.VK_ENTER);
 			robot.keyRelease(KeyEvent.VK_ENTER);
-			Thread.sleep(1000);
-			copyPasteAndClickEnter(TestData.vpnAppPassword());
-			Thread.sleep(2000);
+			Thread.sleep(3000);
 		}
 	}
 
@@ -806,6 +805,7 @@ public class BaseClass {
 			SideMenu.dashboardButton().click();
 			Thread.sleep(1000);
 		}
+		Thread.sleep(1000);
 		switch (module) {
 		case TestData.fiberTestModuleName:
 			Dashboard.fiberTestModule().click();
@@ -833,6 +833,10 @@ public class BaseClass {
 
 		case TestData.PK_FiberTestModuleName:
 			Dashboard.PK_FiberTestModule().click();
+			break;
+
+		case TestData.QE_LabsModuleName:
+			Dashboard.QE_LabsModule().click();
 			break;
 
 		default:
@@ -934,6 +938,8 @@ public class BaseClass {
 				softAssert.assertEquals(JobSearch.salesOrder().getAttribute("Value.Value"),
 						TestData.fiberTestExpectedSalesOrder, "Mismatch in Sales Order in Job Search popup.");
 			}
+		} else {
+			JobSearch.salesOrder().click();
 		}
 		while (!JobSearch.searchCutNumber().equals(driver.switchTo().activeElement())) {
 			JobSearch.searchCutNumber().click();
@@ -1372,23 +1378,23 @@ public class BaseClass {
 				FiberResults.waitUntilTestsCompletedTextIsDisplayed();
 				return;
 			}
-			if (TestData.useOfficeOtdr) {
-				FiberResults.waitUntilStopTestsButtonIsDisplayed();
-			} else {
-				Dashboard.waitUntilOkButtonIsDisplayed();
-				Dashboard.okButton().click(); // Ok button on Max Attenutation Popup
-				Dashboard.waitUntilOkButtonIsDisplayed();
-			}
+//			if (TestData.useOfficeOtdr) {
+			FiberResults.waitUntilStopTestsButtonIsDisplayed();
+//			} else {
+//				Dashboard.waitUntilOkButtonIsDisplayed();
+//				Dashboard.okButton().click(); // Ok button on Max Attenutation Popup
+//				Dashboard.waitUntilOkButtonIsDisplayed();
+//			}
 //			System.out.println("Number of fiberes to test - " + numberOfFibersToTest);
 //			System.out.println("Number of FIber TESTED - " + fibersTested);
 			if (numberOfFibersToTest == fibersTested) {
 //				System.out.println("Expected number of fibers are TESTED");
-				if (TestData.useOfficeOtdr) {
-					FiberResults.stopButton().click();
-				} else {
+//				if (TestData.useOfficeOtdr) {
+				FiberResults.stopButton().click();
+//				} else {
 //					System.out.println("Need to click on CANCEL button to stop further fibers testing");
-					Dashboard.cancelButton().click();
-				}
+//					Dashboard.cancelButton().click();
+//				}
 			} else {
 				if (TestData.useOfficeOtdr) {
 					FiberResults.continueButton().click();
@@ -1407,7 +1413,7 @@ public class BaseClass {
 	public static void downloadSorFiles() throws Exception {
 		Dashboard.waitUntilLoaderIsNotDisplayed();
 		for (int i = 1; i <= 4; i++) {
-			FiberResults.waitUntil_SOR_DownloadIcon_IsDisplayed(i);
+//			FiberResults.waitUntil_SOR_DownloadIcon_IsDisplayed(i);
 			FiberResults.SOR_DownloadIcon(i).click();
 			Dashboard.waitUntilFileNameTextBoxIsDisplayed();
 			actions.keyDown(Keys.ALT).sendKeys("d").keyUp(Keys.ALT).build().perform();
@@ -1925,6 +1931,17 @@ public class BaseClass {
 		Dashboard.okButton().click();
 	}
 
+	public static void verify_QE_Labs() {
+		try {
+			navigateToModule(TestData.QE_LabsModuleName);
+			softAssert.assertEquals(QE_Labs.get_QE_Labs_Comming_Soon_Text(),
+					"QE Labs navigation will be restored shortly.", "Mismatch in QE Labs popup message.");
+			Dashboard.okButton().click();
+		} catch (Exception e) {
+			softAssert.fail("Unable to verify QE Labs");
+		}
+	}
+
 	public static void download_OCR_Report() throws Exception {
 
 		if (!Reports.isDownloadOCR_ReportDisplayed()) {
@@ -1987,9 +2004,13 @@ public class BaseClass {
 		Dashboard.waitUntilOkButtonIsDisplayed();
 		Dashboard.okButton().click();
 		Reports.shippingLabel().click();
-		softAssert.assertEquals(Reports.getErrorMessageWhileDownloadingShippingLabelReport(),
-				"A sales order must be selected to generate a shipping label.",
-				"Mismatch in error displayed while downloading shipping label report.");
+		try {
+			softAssert.assertEquals(Reports.getErrorMessageWhileDownloadingShippingLabelReport(),
+					"A sales order must be selected to generate a shipping label.",
+					"Mismatch in error displayed while downloading shipping label report.");
+		} catch (Exception e) {
+			softAssert.fail("Did not find popup with message as : A sales order must be selected to generate a shipping label.");
+		}
 		Dashboard.okButton().click();
 
 		shouldRemoveSalesOrder = false;
@@ -2207,32 +2228,34 @@ public class BaseClass {
 
 	public static void verify_PK_Fiber_Test_Module() throws Exception {
 
-		searchJobAndNavigationToJobDetailsPage(TestData.PK_FiberTestModuleName, TestData.jobSearchOrg,
-				TestData.PK_FiberTestJobSearchJobNumber, TestData.PK_FiberTestJobSearchCutNumber,
-				TestData.PK_FiberTestJobSearchCutNumberInfo);
+		try {
+			searchJobAndNavigationToJobDetailsPage(TestData.PK_FiberTestModuleName, TestData.jobSearchOrg,
+					TestData.PK_FiberTestJobSearchJobNumber, TestData.PK_FiberTestJobSearchCutNumber,
+					TestData.PK_FiberTestJobSearchCutNumberInfo);
 
-		verifyJobDetailsHeader(TestData.jobSearchOrg, TestData.PK_FiberTestJobSearchJobNumber,
-				TestData.PK_FiberTestJobSearchCutNumber, TestData.PK_FiberTestJobSearchCutNumberInfo,
-				"PK Fiber test with Job # " + TestData.PK_FiberTestJobSearchJobNumber,
-				TestData.PK_FiberTestExpectedItemNumber);
+			verifyJobDetailsHeader(TestData.jobSearchOrg, TestData.PK_FiberTestJobSearchJobNumber,
+					TestData.PK_FiberTestJobSearchCutNumber, TestData.PK_FiberTestJobSearchCutNumberInfo,
+					"PK Fiber test with Job # " + TestData.PK_FiberTestJobSearchJobNumber,
+					TestData.PK_FiberTestExpectedItemNumber);
 
-		enterProtectionLayerValues(TestData.PK_FiberTestModuleName);
+			enterProtectionLayerValues(TestData.PK_FiberTestModuleName);
 
-//		runGetLengthTest(TestData.tightBufferModuleName);
+			verifyOpticsPage();
 
-		verifyOpticsPage();
-
-//		runFiberTest(TestData.tightBufferModuleName, 1);
+//		runFiberTest(TestData.PK_FiberTestModuleName, 1);
 
 //		downloadSorFiles();
 
-		enterCompletionLayerValues(TestData.PK_FiberTestModuleName);
+			enterCompletionLayerValues(TestData.PK_FiberTestModuleName);
 
 //		download_OCR_Report();
 
-		verifyTestResultsCount(TestData.PK_FiberTestExpectedIncompleteTestsCount,
-				TestData.PK_FiberTestExpectedPassedTestsCount, TestData.PK_FiberTestExpectedFailedTestsCount,
-				"PK Fiber Test with Job # " + TestData.PK_FiberTestJobSearchJobNumber);
+			verifyTestResultsCount(TestData.PK_FiberTestExpectedIncompleteTestsCount,
+					TestData.PK_FiberTestExpectedPassedTestsCount, TestData.PK_FiberTestExpectedFailedTestsCount,
+					"PK Fiber Test with Job # " + TestData.PK_FiberTestJobSearchJobNumber);
+		} catch (Exception e) {
+			softAssert.fail("Unable to verify PK Fiber Test module");
+		}
 	}
 
 }

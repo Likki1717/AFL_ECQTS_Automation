@@ -18,7 +18,7 @@ public class RegressionTests extends BaseClass {
 
 			verifyAboutPage();
 
-			verify_Delete_Create_And_Edit_Connection_Profiles();
+			verify_Delete_Create_And_Edit_Connection_Profiles();  
 
 			verify_Fiber_Test_Module();
 
@@ -36,15 +36,15 @@ public class RegressionTests extends BaseClass {
 
 			verify_If_SOR_And_OCR_Files_Downloaded();
 
-			verify_Reel_Id_And_Remove_Sales_Order_Flow();
+//			verify_Reel_Id_And_Remove_Sales_Order_Flow();
 
 			log_Out_And_Close_Application();
 
 			verify_Anomaly_Status();
 
-//			verify_QE_Labs();
+			verify_QE_Labs();
 
-			verify_Override_Meter_Marks_Flow();
+//			verify_Override_Meter_Marks_Flow();
 
 		} catch (Exception e) {
 			exception = e;

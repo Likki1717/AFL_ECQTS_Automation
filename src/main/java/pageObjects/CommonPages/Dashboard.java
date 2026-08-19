@@ -67,6 +67,10 @@ public class Dashboard extends BaseClass {
 	public static WebElement PK_FiberTestModule() {
 		return driver.findElement(By.xpath("//Text[@Name='PK Fiber Test']"));
 	}
+	
+	public static WebElement QE_LabsModule() {
+		return driver.findElement(By.xpath("//Text[@Name='QE Labs']"));
+	}
 
 	public static WebElement backArrow() {
 		return driver.findElementByAccessibilityId("NavigationViewBackButton");

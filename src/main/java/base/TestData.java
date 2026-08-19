@@ -4,7 +4,7 @@ import java.io.File;
 
 public class TestData {
 	public static String systemUsername = "sumeeth"; // veltris // LikhithaR
-	public static String testEnvironment = "Dev"; // Dev/QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
+	public static String testEnvironment = "Soft Release Prod"; // Dev/QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
 	public static boolean isAppLogInRequired = true;
 	public static boolean useOfficeOtdr = true;
 	public static boolean useExternalCamera = false;
@@ -15,15 +15,15 @@ public class TestData {
 			return "Version: 7.8.5.0";
 
 		case "QA":
-			return "Version: 7.8.2.0";
+			return "Version: 7.9.0.0";
 
 		case "Soft Release Prod":
 		case "Soft Release Second Prod":
-			return "Version: 7.8.1.0";
+			return "Version: 7.9.1.0";
 
 		case "Prod":
 		case "Second Prod":
-			return "Version: 7.7.7.0";
+			return "Version: 7.8.5.0";
 
 		default:
 			return null;
@@ -36,18 +36,6 @@ public class TestData {
 			|| testEnvironment.equals("QA")) ? 2 : 6;
 	public static int expectedAnomalyFibersCount = 2;
 	public static String expectedAnomalyStatus = testEnvironment.equals("Dev") ? "More Likely" : "Less Likely";
-
-	public static String vpnAppPassword() {
-		if (systemUsername.equals("sumeeth")) {
-			return "kumar@123";
-		} else if (systemUsername.equals("veltris")) {
-			return "manohar@123";
-		} else if (systemUsername.equals("LikhithaR")) {
-			return "kumar@123";
-		} else {
-			return "kumar@1234"; // Update below if other user is using automation script
-		}
-	}
 
 	public static String jobSearchOrg = "CAB";
 	public static String jobSearchLocation = "Hillside";
@@ -192,33 +180,59 @@ public class TestData {
 	public static String tightBufferExpectedIncompleteTestsCount = "0";
 	public static String tightBufferExpectedPassedTestsCount = "6";
 	public static String tightBufferExpectedFailedTestsCount = "1";
+	
+	public static final String QE_LabsModuleName  = "QE Labs";
 
 	public static String ecqtsAppUsername() {
 
 		switch (testEnvironment) {
 
 		case "Dev":
+			if(systemUsername.equals("LikhithaR"))
+			{
+				return "TesterDev";
+			}
 			return "TesterDev01"; // sumeetDev Mandeep executiveDev
 
 		case "Dev executive":
+			if(systemUsername.equals("LikhithaR"))
+			{
+				return "likhithaExecutive";
+			}
 			return "executiveDev";
 
 		case "QA":
+			if(systemUsername.equals("LikhithaR"))
+			{
+				return "TesterQA";
+			}
 			return "testQA01"; // globalAdmin SumeethQA teamLead QA testQA01
 
 		case "QA executive":
+			if(systemUsername.equals("LikhithaR"))
+			{
+				return "likhithaExecutive";
+			}
 			return "executiveQA";
 
 		case "Soft Release Prod":
 		case "Soft Release Second Prod":
 		case "Prod":
 		case "Second Prod":
+			if(systemUsername.equals("LikhithaR"))
+			{
+				return "LikhithaTester";
+			}
 			return "testerProd";
 
 		case "Soft Release Prod executive":
 		case "Soft Release Second Prod executive":
 		case "Prod executive":
 		case "Second Prod executive":
+			if(systemUsername.equals("LikhithaR"))
+			{
+				return "likhithaExecutive";
+			}
 			return "executiveProd";
 
 		default:
