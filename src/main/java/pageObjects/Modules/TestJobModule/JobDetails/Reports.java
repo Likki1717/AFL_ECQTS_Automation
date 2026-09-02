@@ -5,6 +5,7 @@ import org.openqa.selenium.By.ByName;
 import org.openqa.selenium.WebElement;
 
 import base.BaseClass;
+import io.appium.java_client.MobileBy.ByAccessibilityId;
 
 public class Reports extends BaseClass {
 
@@ -34,10 +35,6 @@ public class Reports extends BaseClass {
 		return isElementDisplayed(ByName.name("Generating reports in background!"), 10);
 	}
 
-	public static String getHoldForApprovalMessage() {
-		return driver.findElementByAccessibilityId("HoldforApproveMessage").getAttribute("Name");
-	}
-
 	public static WebElement overrideTypeDropdown() {
 		return driver.findElement(By.xpath("//Text[@Name='Override Type:']/following-sibling::ComboBox"));
 	}
@@ -54,13 +51,40 @@ public class Reports extends BaseClass {
 		return driver.findElement(By.xpath("//Text[@Name='Override Type:']/following-sibling::Button"));
 	}
 
-	public static WebElement shippingLabel() {
+	public static WebElement shippingLabelReport() {
 		return driver.findElement(By.xpath("//Text[@Name='Shipping Label']"));
 	}
 	
-	public static String getErrorMessageWhileDownloadingShippingLabelReport() {
-		By errorMessageLocator = By.xpath("//Text[@AutomationId='SalesOrderAlertMessage']");
-	    isElementDisplayed(errorMessageLocator, 10);
-	    return driver.findElement(errorMessageLocator).getAttribute("Name");
+	public static WebElement jacketTestReport() {
+		return driver.findElement(By.xpath("//Text[@Name='Jacket Test']"));
 	}
+	
+	public static WebElement failedTestsReport() {
+		return driver.findElement(By.xpath("//Text[@Name='Failed Tests']"));
+	}
+
+	public static boolean isMeterMarkInputFieldDisplayed() {
+		return isElementDisplayed(ByAccessibilityId.AccessibilityId("MeterMarkLengthEntry"), 1);
+	}
+
+	public static WebElement meterMarkInputField() {
+		return driver.findElementByAccessibilityId("MeterMarkLengthEntry");
+	}
+
+	public static String getMeterMarkValue() {
+		return driver.findElementByAccessibilityId("MeterMarkLengthEntry").getAttribute("Value.Value");
+	}
+
+	public static String getMeterMarkUoM() {
+		return driver.findElementByAccessibilityId("MeterMarkUomLabel").getAttribute("Name");
+	}
+
+	public static WebElement checkMeterMarkButton() {
+		return driver.findElementByAccessibilityId("ValidateMeterMarkButton");
+	}
+
+	public static String getMeterMarkValidationStatus() {
+		return driver.findElementByAccessibilityId("MeterMarkValidationStatusLabel").getAttribute("Name");
+	}
+
 }

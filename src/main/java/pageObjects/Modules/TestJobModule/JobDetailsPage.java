@@ -52,7 +52,7 @@ public class JobDetailsPage extends BaseClass {
 	}
 
 	public static boolean isCompletionTabDisplayed() {
-		return isElementDisplayed(ByName.name("Completion"), 10);
+		return isElementDisplayed(ByName.name("Completion"), 5);
 	}
 
 	public static WebElement completionTab() {
@@ -145,10 +145,6 @@ public class JobDetailsPage extends BaseClass {
 
 	public static WebElement anomalyInfoIcon() {
 		return driver.findElementByAccessibilityId("AnmonalyInfo");
-	}
-
-	public static String getAnomalyDetailsMessage() {
-		return driver.findElementByAccessibilityId("AnomalyDetailsMessage").getAttribute("Name");
 	}
 
 	public static void waitUntilAnomalyDetailsPopupIsDisplayed() throws Exception {

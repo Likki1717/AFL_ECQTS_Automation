@@ -3,11 +3,14 @@ package base;
 import java.io.File;
 
 public class TestData {
-	public static String systemUsername = "sumeeth"; // veltris // LikhithaR
-	public static String testEnvironment = "Soft Release Prod"; // Dev/QA/Soft Release Prod/Soft Release Second Prod/Prod/Second Prod
+	public static String systemUsername = "sumeeth"; // veltris // LikhithaR // sumeeth
+	public static String testEnvironment = "QA"; // Dev/QA/Soft Release Prod/Soft Release Second
+													// Prod/Prod/Second Prod
 	public static boolean isAppLogInRequired = true;
 	public static boolean useOfficeOtdr = true;
 	public static boolean useExternalCamera = false;
+
+	public static int numberOfFibersToTest = 12; // 12
 
 	public static String expectedAppVersion() {
 		switch (testEnvironment) {
@@ -15,7 +18,7 @@ public class TestData {
 			return "Version: 7.8.5.0";
 
 		case "QA":
-			return "Version: 7.9.0.0";
+			return "Version: 7.9.3.0";
 
 		case "Soft Release Prod":
 		case "Soft Release Second Prod":
@@ -30,13 +33,6 @@ public class TestData {
 		}
 	}
 
-	public static int numberOfFibersToTest = 12;
-	public static int expectedIncompleteOrFailedTestsOnHoldForApprovalPopupInAnomalyVerificationFlow = 12;
-	public static int numberOfFibersToTestForAnomalyVerification = (testEnvironment.equals("Dev")
-			|| testEnvironment.equals("QA")) ? 2 : 6;
-	public static int expectedAnomalyFibersCount = 2;
-	public static String expectedAnomalyStatus = testEnvironment.equals("Dev") ? "More Likely" : "Less Likely";
-
 	public static String jobSearchOrg = "CAB";
 	public static String jobSearchLocation = "Hillside";
 	public static String jobSearchOperator = "QE1";
@@ -46,6 +42,8 @@ public class TestData {
 	// Deleting this SecureStorage folder will have app in logged out state
 	public static String secureStorageFolderPath = "C:\\Users\\" + systemUsername + "\\AppData\\Local\\Packages\\"
 			+ packageName(testEnvironment) + "\\LocalState\\SecureStorage";
+	public static String powerSyncFolderPath = "C:\\Users\\" + systemUsername + "\\AppData\\Local\\Packages\\"
+			+ packageName(testEnvironment) + "\\LocalState\\PowerSync";
 	public static String openVpnAppPath = "C:\\Program Files\\OpenVPN Connect\\OpenVPNConnect.exe";
 	public static String SOR_Files_Path = new File("src/test/Resources/SOR_Files_Downloaded_From_Automation")
 			.getAbsolutePath();
@@ -96,15 +94,8 @@ public class TestData {
 	public static String taihanJobNumberStartsWith = "7887";
 	public static String taihanJobExpectedItemNumber = "DNL-6536-01";
 
-	public static String fiberTestJobSearchJobNumberForReelIdAndSalesOrderVerification = "48944910";
-	public static String fiberTestExpectedSalesOrder = "2797719-30";
-	public static String incompleteTestCountForReelIdAndSalesOrderVerification = "299";
-	public static String passedTestCountForReelIdAndSalesOrderVerification = "4";
-	public static String failedTestCountForReelIdAndSalesOrderVerification = "0";
-	public static String fiberTestExpectedItemNumberForReelIdAndSalesOrderVerification = "DNO-12759";
-
 	public static final String fiberTestModuleName = "Fiber Test";
-	public static String fiberTestJobSearchJobNumber = "25305754";
+	public static String fiberTestJobSearchJobNumber = "25305754"; // 25305754
 	public static String fiberTestJobSearchCutNumber = getCurrentDateTimeStamp();
 	public static String fiberTestJobSearchCutNumberInfo = "ZTEST01";
 	public static String fiberTestExpectedIncompleteTestsCount = "0";
@@ -113,11 +104,19 @@ public class TestData {
 	public static String fiberTestEditAdjLengthValue = "9836";
 	public static String fiberTestExpectedItemNumber = "DNA-32673-02";
 	public static String fiberTestCompletionTabIseSeqValue = "9886";
-	public static String fiberTestExpectedReelItem = "REL00291";
+	public static String fiberTestReelItem = "REL00235";
 	public static String fiberTestExpectedIseReelLabel = "15791";
 	public static String fiberTestExpectedOseReelLabel = "15791";
 	public static String fiberTestExpectedReelLabel = "YES";
 	public static String fiberTestExpectedReelId = "15791";
+
+	public static String fiberTestJobSearchJobNumberForReelIdAndSalesOrderVerification = "48944910";
+	public static String fiberTestExpectedSalesOrderForReelIdAndSalesOrderVerification = "2797719-30";
+	public static String incompleteTestCountForReelIdAndSalesOrderVerification = "299";
+	public static String passedTestCountForReelIdAndSalesOrderVerification = "4";
+	public static String failedTestCountForReelIdAndSalesOrderVerification = "0";
+	public static String fiberTestExpectedItemNumberForReelIdAndSalesOrderVerification = "DNO-12759";
+	public static String fiberTestReelItemForReelIdAndSalesOrderVerification = "REL00291";
 
 	public static final String PK_FiberTestModuleName = "PK Fiber Test";
 	public static String PK_FiberTestJobSearchJobNumber = "15811448";
@@ -140,23 +139,27 @@ public class TestData {
 	public static String wtcTestExpectedPassedTestsCount = "20";
 	public static String wtcTestExpectedFailedTestsCount = "6";
 	public static String wtcTestCompletionTabIseSeqValue = "9886";
-	public static String wtcTestExpectedItemNumber = "PR02264-01";
+	public static String wtcTestExpectedItemNumber = "PR02256-01";
+	public static String wtcTestEditAdjLengthValue = "2634";
 
 	public static final String copyResultsModuleName = "Copy Results";
-	public static String copyJobModule = wtcTestModuleName; // fiberTestModuleName
+	public static String copyJobModule = fiberTestModuleName;
 	public static String copyJobOrg = "CAB";
-	public static String copyJobSourceJobNumber = "50296772-2926838";
-	public static String copyJobSourceCutNumber = "123";
-	public static String copyJobSourceCutNumberInfo = "ZTEST01";
-	public static String copyJobDestinationJobNumber = "50296772-2926838";
+	public static String copyJobSourceJobNumber = "51297060";
+	public static String copyJobSourceCutNumber = "00";
+	public static String copyJobSourceCutNumberInfo = "";
+	public static String copyJobDestinationJobNumber = "51297060";
 	public static String copyJobDestinationCutNumber = getCurrentDateTimeStamp();
 	public static String copyJobDestinationCutNumberInfo = "ZTEST01";
-	public static String copyJobDestinationJobExpectedIncompleteTests = "2";
-	public static String copyJobDestinationJobExpectedPassedTests = "13833";
-	public static String copyJobDestinationJobExpectedFailedTests = "3";
-	public static String copyJobDestinationJobExpectedHelixFactor = "1.0";
-	public static String copyJobDestinationJobExpectedOtdrLength = "5765 m";
-	public static String copyJobDestinationJobExpectedItemNumber = "PR01872-01";
+	public static String copyJobDestinationJobExpectedIncompleteTestsBeforeCompletionLayer = "6";
+	public static String copyJobDestinationJobExpectedPassedTestsBeforeCompletionLayer = "305";
+	public static String copyJobDestinationJobExpectedFailedTestsBeforeCompletionLayer = "0";
+	public static String copyJobDestinationJobExpectedIncompleteTestsAfterCompletionLayer = "3";
+	public static String copyJobDestinationJobExpectedPassedTestsAfterCompletionLayer = "308";
+	public static String copyJobDestinationJobExpectedFailedTestsAfterCompletionLayer = "0";
+	public static String copyJobDestinationJobExpectedHelixFactor = "1.003";
+	public static String copyJobDestinationJobExpectedOtdrLength = "7030 m";
+	public static String copyJobDestinationJobExpectedItemNumber = "DNS-5869";
 
 	public static final String downTimeModuleName = "Down Time";
 	public static String expectedStartDateTime = java.time.LocalDate.now()
@@ -178,39 +181,45 @@ public class TestData {
 	public static String tightBufferTestJobSearchCutNumber = getCurrentDateTimeStamp();
 	public static String tightBufferTestJobSearchCutNumberInfo = "ZTEST01";
 	public static String tightBufferExpectedIncompleteTestsCount = "0";
-	public static String tightBufferExpectedPassedTestsCount = "6";
-	public static String tightBufferExpectedFailedTestsCount = "1";
-	
-	public static final String QE_LabsModuleName  = "QE Labs";
+	public static String tightBufferExpectedPassedTestsCount = (testEnvironment.equals("Dev")
+			|| testEnvironment.equals("QA")) ? "6" : "2";
+	public static String tightBufferExpectedFailedTestsCount = (testEnvironment.equals("Dev")
+			|| testEnvironment.equals("QA")) ? "1" : "5";
+
+	public static final String QE_LabsModuleName = "QE Labs";
+
+	public static int expectedIncompleteOrFailedTestsOnHoldForApprovalPopupInAnomalyVerificationFlow = 13;
+	public static int numberOfFibersToTestForAnomalyVerification = (testEnvironment.equals("Dev")
+			|| testEnvironment.equals("QA")) ? 2 : 6;
+	public static int expectedAnomalyFibersCount = 2;
+	public static String expectedAnomalyStatus = (testEnvironment.equals("Dev") || testEnvironment.equals("QA"))
+			? "More Likely"
+			: "Less Likely";
 
 	public static String ecqtsAppUsername() {
 
 		switch (testEnvironment) {
 
 		case "Dev":
-			if(systemUsername.equals("LikhithaR"))
-			{
+			if (systemUsername.equals("LikhithaR")) {
 				return "TesterDev";
 			}
 			return "TesterDev01"; // sumeetDev Mandeep executiveDev
 
 		case "Dev executive":
-			if(systemUsername.equals("LikhithaR"))
-			{
+			if (systemUsername.equals("LikhithaR")) {
 				return "likhithaExecutive";
 			}
 			return "executiveDev";
 
 		case "QA":
-			if(systemUsername.equals("LikhithaR"))
-			{
+			if (systemUsername.equals("LikhithaR")) {
 				return "TesterQA";
 			}
 			return "testQA01"; // globalAdmin SumeethQA teamLead QA testQA01
 
 		case "QA executive":
-			if(systemUsername.equals("LikhithaR"))
-			{
+			if (systemUsername.equals("LikhithaR")) {
 				return "likhithaExecutive";
 			}
 			return "executiveQA";
@@ -219,8 +228,7 @@ public class TestData {
 		case "Soft Release Second Prod":
 		case "Prod":
 		case "Second Prod":
-			if(systemUsername.equals("LikhithaR"))
-			{
+			if (systemUsername.equals("LikhithaR")) {
 				return "LikhithaTester";
 			}
 			return "testerProd";
@@ -229,8 +237,7 @@ public class TestData {
 		case "Soft Release Second Prod executive":
 		case "Prod executive":
 		case "Second Prod executive":
-			if(systemUsername.equals("LikhithaR"))
-			{
+			if (systemUsername.equals("LikhithaR")) {
 				return "likhithaExecutive";
 			}
 			return "executiveProd";

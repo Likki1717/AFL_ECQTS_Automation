@@ -9,9 +9,9 @@
 <table>
 <tr><th>Test</th><th># Passed</th><th># Skipped</th><th># Retried</th><th># Failed</th><th>Time (ms)</th><th>Included Groups</th><th>Excluded Groups</th></tr>
 <tr><th colspan="8">Default suite</th></tr>
-<tr><td><a href="#t0">Default test</a></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num attn">1</td><td class="num">95,019</td><td></td><td></td></tr>
+<tr><td><a href="#t0">Default test</a></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num attn">1</td><td class="num">1,653,412</td><td></td><td></td></tr>
 </table>
-<table id='summary'><thead><tr><th>Class</th><th>Method</th><th>Start</th><th>Time (ms)</th></tr></thead><tbody><tr><th colspan="4">Default suite</th></tr></tbody><tbody id="t0"><tr><th colspan="4">Default test &#8212; failed</th></tr><tr class="failedeven"><td rowspan="1">DesktopApplicationTests.RegressionTests</td><td><a href="#m0">runRegressionTestSuite</a></td><td rowspan="1">1787112451391</td><td rowspan="1">36446</td></tr></tbody>
+<table id='summary'><thead><tr><th>Class</th><th>Method</th><th>Start</th><th>Time (ms)</th></tr></thead><tbody><tr><th colspan="4">Default suite</th></tr></tbody><tbody id="t0"><tr><th colspan="4">Default test &#8212; failed</th></tr><tr class="failedeven"><td rowspan="1">DesktopApplicationTests.RegressionTests</td><td><a href="#m0">runRegressionTestSuite</a></td><td rowspan="1">1788371029624</td><td rowspan="1">1602480</td></tr></tbody>
 </table>
 <h2>Default test</h2><h3 id="m0">DesktopApplicationTests.RegressionTests#runRegressionTestSuite</h3><table class="result"><tr><th>Exception</th></tr><tr><td><div class="stacktrace">org.openqa.selenium.NoSuchElementException: An element could not be located on the page using the given search parameters. (WARNING: The server did not provide any stacktrace information)
 Command duration or timeout: 0 milliseconds
@@ -19,9 +19,9 @@ For documentation on this error, please visit: https://www.seleniumhq.org/except
 Build info: version: &apos;3.141.59&apos;, revision: &apos;e82be7d358&apos;, time: &apos;2018-11-14T08:17:03&apos;
 System info: host: &apos;VELTRISMS785&apos;, ip: &apos;192.168.29.113&apos;, os.name: &apos;Windows 11&apos;, os.arch: &apos;amd64&apos;, os.version: &apos;10.0&apos;, java.version: &apos;21.0.4&apos;
 Driver info: io.appium.java_client.windows.WindowsDriver
-Capabilities {app: com.ecsite.afl.softreleasep..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
-Session ID: 21DC51C7-0BBA-4EBB-9F04-7B03B3EE68B0
-*** Element info: {Using=xpath, value=//Button[@Name=&apos;Open Navigation&apos;]}
+Capabilities {app: com.ecsite.afl.qa_aqd9xyv20..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
+Session ID: 7FD2E150-6710-479B-B506-E940F295B94D
+*** Element info: {Using=xpath, value=//Text[@AutomationId=&apos;OverallStatusIncompleteValueLabel&apos;]}
 	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
 	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
 	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
@@ -44,11 +44,15 @@ Session ID: 21DC51C7-0BBA-4EBB-9F04-7B03B3EE68B0
 	at io.appium.java_client.DefaultGenericMobileDriver.findElementByXPath(DefaultGenericMobileDriver.java:151)
 	at io.appium.java_client.AppiumDriver.findElementByXPath(AppiumDriver.java:1)
 	at io.appium.java_client.windows.WindowsDriver.findElementByXPath(WindowsDriver.java:1)
-	at pageObjects.CommonPages.Dashboard.openNavigationButton(Dashboard.java:24)
-	at base.BaseClass.navigateToModule(BaseClass.java:804)
-	at base.BaseClass.searchJobAndNavigationToJobDetailsPage(BaseClass.java:848)
-	at base.BaseClass.verify_Fiber_Test_Module(BaseClass.java:2150)
-	at DesktopApplicationTests.RegressionTests.runRegressionTestSuite(RegressionTests.java:23)
+	at org.openqa.selenium.By$ByXPath.findElement(By.java:353)
+	at org.openqa.selenium.remote.RemoteWebDriver.findElement(RemoteWebDriver.java:315)
+	at io.appium.java_client.DefaultGenericMobileDriver.findElement(DefaultGenericMobileDriver.java:57)
+	at io.appium.java_client.AppiumDriver.findElement(AppiumDriver.java:1)
+	at io.appium.java_client.windows.WindowsDriver.findElement(WindowsDriver.java:1)
+	at pageObjects.Modules.TestJobModule.JobDetailsPage.getActualTestResultsCounts(JobDetailsPage.java:64)
+	at base.BaseClass.verifyTestResultsCount(BaseClass.java:1066)
+	at base.BaseClass.verify_Copy_Results_Module(BaseClass.java:1574)
+	at DesktopApplicationTests.RegressionTests.runRegressionTestSuite(RegressionTests.java:32)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at org.testng.internal.invokers.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:141)

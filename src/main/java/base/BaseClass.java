@@ -57,6 +57,8 @@ public class BaseClass {
 	public static SoftAssert softAssert = new SoftAssert();
 	public static boolean isAppLaunched = false;
 	public static boolean shouldRemoveSalesOrder = false;
+	public static boolean isGetLengthAndEditAdjLengthDoneForWtcJob = false;
+	public static boolean isExecutiveProfileLoggedIn = false;
 
 	@BeforeClass
 	public static void applicationSetupAndLaunch() throws Exception {
@@ -74,6 +76,10 @@ public class BaseClass {
 		validateRecoverPasswordButtonAvailability();
 
 		loginToApplication();
+
+		updateTestSettings();
+
+		updateApplicationSettings();
 
 	}
 
@@ -102,6 +108,22 @@ public class BaseClass {
 			if (deleteAttempts == 0) {
 				deleteAttempts++;
 				deleteDirectory(secureStorageFolder);
+			} else {
+				// If deletion failed, likely due to files being in use
+				Assert.fail("****Close the existing open App and run the script again****");
+			}
+		}
+
+		deleteAttempts = 0;
+
+		File powerSyncFolder = new File(TestData.powerSyncFolderPath);
+
+		// Keep trying to delete the secureStorageFolder folder if it exists, this will
+		// make sure the app is in Logged Out state
+		while (powerSyncFolder.exists()) {
+			if (deleteAttempts == 0) {
+				deleteAttempts++;
+				deleteDirectory(powerSyncFolder);
 			} else {
 				// If deletion failed, likely due to files being in use
 				Assert.fail("****Close the existing open App and run the script again****");
@@ -256,7 +278,13 @@ public class BaseClass {
 			System.out.println("****Normal launch of ECQTS application failed, Trying Root attach****");
 			attachExistingApplication();
 		}
+		Dashboard.waitUntilLoaderIsNotDisplayed();
 		dismissSyncStatusPopupIfDisplayed();
+		if (!TestData.isAppLogInRequired) {
+			Dashboard.waitUntilLoaderIsNotDisplayed();
+			softAssert.assertTrue(Dashboard.isOpenNavigationButtonDisplayed(),
+					"Tried for 3 secs, side navigation option was not visible after app launch");
+		}
 		actions = new Actions(driver);
 		isAppLaunched = true;
 	}
@@ -295,7 +323,8 @@ public class BaseClass {
 			softAssert.fail("As app is in logged in state, cannot verify incorrect credentials scenario");
 			return;
 		}
-		SignIn.isUsernameFieldDisplayed();
+		softAssert.assertTrue(SignIn.isUsernameFieldDisplayed(),
+				"Username field is not displayed within 10 seconds of app launch");
 		SignIn.usernameField().clear();
 		SignIn.usernameField().sendKeys(TestData.ecqtsAppUsername());
 		SignIn.passwordField().sendKeys("Invalid password");
@@ -320,7 +349,8 @@ public class BaseClass {
 				softAssert.fail("As app is in logged in state, cannot verify login scenario");
 				return;
 			}
-			SignIn.isUsernameFieldDisplayed();
+			softAssert.assertTrue(SignIn.isUsernameFieldDisplayed(),
+					"Username field is not displayed within 10 seconds of app launch");
 			SignIn.usernameField().clear();
 			SignIn.usernameField().sendKeys(TestData.ecqtsAppUsername());
 			SignIn.passwordField().clear();
@@ -690,7 +720,7 @@ public class BaseClass {
 							TestData.importCutNumber, TestData.importcutNumberInfo);
 				} else if (Import.isWarningsErrorsPopupDisplayedOtherThanMissingFiberId()) {
 					softAssert.fail(importType + " Import Failed, found warning/errors popup - "
-							+ Dashboard.getWarningMessage());
+							+ Dashboard.getMessageDisplayedOnPopup());
 					Dashboard.okButton().click();
 					return;
 				} else if (Import.isPrysmianTypeDisplayed()) {
@@ -936,7 +966,7 @@ public class BaseClass {
 				softAssert.assertEquals(JobSearch.getReelId(), TestData.fiberTestExpectedReelId,
 						"Mismatch in Reel Id in Job Search popup.");
 				softAssert.assertEquals(JobSearch.salesOrder().getAttribute("Value.Value"),
-						TestData.fiberTestExpectedSalesOrder, "Mismatch in Sales Order in Job Search popup.");
+						TestData.fiberTestExpectedSalesOrderForReelIdAndSalesOrderVerification, "Mismatch in Sales Order in Job Search popup.");
 			}
 		} else {
 			JobSearch.salesOrder().click();
@@ -1015,19 +1045,26 @@ public class BaseClass {
 		Assert.assertEquals(JobDetailsPage.cutNumber().getText().trim(), cutNumber,
 				whichTestBeingPerformed + " - Cut number mismatch.");
 
-		Assert.assertEquals(JobDetailsPage.cutNumberInfo().getText().trim(), cutNumberInfo,
-				whichTestBeingPerformed + " - Cut number info mismatch.");
+		if (jobNumber.equals(TestData.fiberTestJobSearchJobNumberForReelIdAndSalesOrderVerification)) {
+			softAssert.assertEquals(JobDetailsPage.cutNumberInfo().getText().trim(), cutNumberInfo,
+					whichTestBeingPerformed + " - Cut number info mismatch.");
+		} else {
+			Assert.assertEquals(JobDetailsPage.cutNumberInfo().getText().trim(), cutNumberInfo,
+					whichTestBeingPerformed + " - Cut number info mismatch.");
+		}
 
-		Assert.assertEquals(JobDetailsPage.itemNumber().getText().trim(), itemNumber,
+		softAssert.assertEquals(JobDetailsPage.itemNumber().getText().trim(), itemNumber,
 				whichTestBeingPerformed + " - Item Number mismatch.");
 	}
 
 	public static void verifyTestResultsCount(String expectedIncompleteTestsCount, String expectedPassedTestsCount,
-			String expectedFailedTestsCount, String whichTestBeingPerformed) {
+			String expectedFailedTestsCount, String whichTestBeingPerformed) throws Exception {
 
 		String expectedTestResultsCounts = "Incomplete: " + expectedIncompleteTestsCount + ", Passed: "
 				+ expectedPassedTestsCount + ", Failed: " + expectedFailedTestsCount;
 
+		Dashboard.waitUntilLoaderIsNotDisplayed();
+		
 		String actualTestResultsCount = JobDetailsPage.getActualTestResultsCounts();
 
 		softAssert.assertEquals(actualTestResultsCount, expectedTestResultsCounts,
@@ -1093,15 +1130,15 @@ public class BaseClass {
 				"Waited for 50 seconds, Get Length history drop down field is not displayed");
 	}
 
-	public static void editAdjLength() throws Exception {
+	public static void editAdjLength(String adjLengthValue) throws Exception {
 		JobDetailsPage.editAdjLengthIcon().click();
 		Thread.sleep(1000);
 		JobDetailsPage.adjLengthInputField().click();
 		JobDetailsPage.adjLengthInputField().clear();
-		JobDetailsPage.adjLengthInputField().sendKeys(TestData.fiberTestEditAdjLengthValue);
+		JobDetailsPage.adjLengthInputField().sendKeys(adjLengthValue);
 		JobDetailsPage.adjLengthSaveIcon().click();
 		Thread.sleep(1000);
-		softAssert.assertEquals(JobDetailsPage.getAdjLengthValue(), TestData.fiberTestEditAdjLengthValue + " m",
+		softAssert.assertEquals(JobDetailsPage.getAdjLengthValue(), adjLengthValue + " m",
 				"Adj length did not get updated.");
 	}
 
@@ -1126,7 +1163,7 @@ public class BaseClass {
 			defaultSelectedEndTime = DownTime.getSavedEndTime();
 			defaultSelectedEndTime = defaultSelectedEndTime.substring(defaultSelectedEndTime.length() - 8);
 			DownTime.editButton().click();
-			Thread.sleep(500);
+			Thread.sleep(1000);
 		} else {
 			defaultSelectedStartTime = DownTime.startTimePicker().getText();
 			defaultSelectedEndTime = DownTime.endTimePicker().getText();
@@ -1136,11 +1173,11 @@ public class BaseClass {
 				.equals(LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))) {
 			DownTime.startDateSelectionCalendar().click();
 			DownTime.todaysDate().click();
-			Thread.sleep(500);
+			Thread.sleep(1000);
 		}
 
 		DownTime.startTimePicker().click();
-		Thread.sleep(1000);
+		Thread.sleep(2000);
 		selectTime(defaultSelectedStartTime, 11, 59, "PM");
 
 		if (!DownTime.endDateSelectionCalendar().getAttribute("Value.Value").replaceAll("\\p{Cf}", "").trim()
@@ -1165,7 +1202,12 @@ public class BaseClass {
 		Dashboard.waitUntilLoaderIsNotDisplayed();
 
 		if (DownTime.isWarningMessageDisplayed()) {
-			softAssert.fail("Unable to create down time record, got some warning pop up");
+			String errorMessageOnPopup = "";
+			try {
+				errorMessageOnPopup = Dashboard.getMessageDisplayedOnPopup();
+			} catch (Exception e) {
+			}
+			softAssert.fail("Unable to create down time record, got warning pop up - " + errorMessageOnPopup);
 			Dashboard.okButton().click();
 			return;
 		}
@@ -1200,7 +1242,12 @@ public class BaseClass {
 		Dashboard.waitUntilLoaderIsNotDisplayed();
 
 		if (DownTime.isWarningMessageDisplayed()) {
-			softAssert.fail("Unable to update down time record, got some warning pop up");
+			String errorMessageOnPopup = "";
+			try {
+				errorMessageOnPopup = Dashboard.getMessageDisplayedOnPopup();
+			} catch (Exception e) {
+			}
+			softAssert.fail("Unable to update down time record, got warning pop up - " + errorMessageOnPopup);
 			Dashboard.okButton().click();
 			Dashboard.cancelButton().click();
 			return;
@@ -1260,7 +1307,7 @@ public class BaseClass {
 //			actions.sendKeys(direction).build().perform();
 			robot.keyPress(direction);
 			robot.keyRelease(direction);
-			Thread.sleep(100);
+			Thread.sleep(200);
 		}
 
 		Thread.sleep(500);
@@ -1304,7 +1351,7 @@ public class BaseClass {
 //			actions.sendKeys(direction).build().perform();
 			robot.keyPress(direction);
 			robot.keyRelease(direction);
-			Thread.sleep(100);
+			Thread.sleep(200);
 		}
 
 		Thread.sleep(500);
@@ -1378,8 +1425,13 @@ public class BaseClass {
 				FiberResults.waitUntilTestsCompletedTextIsDisplayed();
 				return;
 			}
+			if (!TestData.useOfficeOtdr && module.equals(TestData.fiberTestModuleName)) {
+				Dashboard.waitUntilOkButtonIsDisplayed();
+			} else {
+				FiberResults.waitUntilStopTestsButtonIsDisplayed();
+			}
 //			if (TestData.useOfficeOtdr) {
-			FiberResults.waitUntilStopTestsButtonIsDisplayed();
+//			FiberResults.waitUntilStopTestsButtonIsDisplayed();
 //			} else {
 //				Dashboard.waitUntilOkButtonIsDisplayed();
 //				Dashboard.okButton().click(); // Ok button on Max Attenutation Popup
@@ -1398,6 +1450,8 @@ public class BaseClass {
 			} else {
 				if (TestData.useOfficeOtdr) {
 					FiberResults.continueButton().click();
+				} else {
+					Dashboard.okButton().click();
 				}
 				if (FiberResults.isTestsCompletedTextDisplayed()) {
 					FiberResults.continueButton().click();
@@ -1515,10 +1569,14 @@ public class BaseClass {
 					TestData.copyJobDestinationCutNumber, TestData.copyJobDestinationCutNumberInfo,
 					"After copy results, On destination Job", TestData.copyJobDestinationJobExpectedItemNumber);
 
-			verifyTestResultsCount(TestData.copyJobDestinationJobExpectedIncompleteTests,
-					TestData.copyJobDestinationJobExpectedPassedTests,
-					TestData.copyJobDestinationJobExpectedFailedTests,
-					"destination Job after copying from source Job # " + TestData.copyJobSourceJobNumber);
+			Dashboard.waitUntilLoaderIsNotDisplayed();
+
+			Thread.sleep(2000);
+
+			verifyTestResultsCount(TestData.copyJobDestinationJobExpectedIncompleteTestsBeforeCompletionLayer,
+					TestData.copyJobDestinationJobExpectedPassedTestsBeforeCompletionLayer,
+					TestData.copyJobDestinationJobExpectedFailedTestsBeforeCompletionLayer,
+					"destination Job before clicking on completion tab for Job # " + TestData.copyJobSourceJobNumber);
 
 			softAssert.assertEquals(JobDetailsPage.OTDR_Length().getText(),
 					TestData.copyJobDestinationJobExpectedOtdrLength,
@@ -1527,9 +1585,266 @@ public class BaseClass {
 			softAssert.assertEquals(JobDetailsPage.helixFactor().getText().trim(),
 					TestData.copyJobDestinationJobExpectedHelixFactor,
 					"After copying job, On destination job - Helix Factor mismatch.");
+
+			JobDetailsPage.completionTab().click();
+
+			Dashboard.waitUntilLoaderIsNotDisplayed();
+
+			Thread.sleep(2000);
+
+			verifyTestResultsCount(TestData.copyJobDestinationJobExpectedIncompleteTestsAfterCompletionLayer,
+					TestData.copyJobDestinationJobExpectedPassedTestsAfterCompletionLayer,
+					TestData.copyJobDestinationJobExpectedFailedTestsAfterCompletionLayer,
+					"destination Job after clicking on completion tab for Job # " + TestData.copyJobSourceJobNumber);
+
 		} else {
 			Dashboard.cancelButton().click();
 		}
+	}
+
+	public static void enterIseOseValuesAndVerifyOverrideMeterMarkFlow(String iseValue, String oseValue,
+			String expectedSeqMarkTestResult, String meterMarkValue, String uomValue,
+			String expectedMeterMarkValidationStatus) throws Exception {
+
+		softAssert.assertTrue(JobDetailsPage.isCompletionTabDisplayed(), "Completion tab is not displayed.");
+		JobDetailsPage.completionTab().click();
+		Completion.is_ISE_SeqMark_Test_Displayed();
+		Completion.iseSeqMark().clear();
+		Completion.oseSeqMark().clear();
+		if (!uomValue.equals("")) {
+			Completion.iseSeqMark_UoM().sendKeys(uomValue);
+			Completion.oseSeqMark_UoM().sendKeys(uomValue);
+		}
+		Completion.iseSeqMark().sendKeys(iseValue);
+		Completion.oseSeqMark().sendKeys(oseValue);
+		robot.keyPress(KeyEvent.VK_TAB);
+		robot.keyRelease(KeyEvent.VK_TAB);
+		Thread.sleep(1000);
+
+		String seqMarkTextMismatchMessage = "Default message which is modified later based on expected seq mark test result";
+		if (expectedSeqMarkTestResult.equals("PASS")) {
+			seqMarkTextMismatchMessage = "Seq Mark test result was supposed to be Pass.";
+		} else if (expectedSeqMarkTestResult.equals("FAIL")) {
+			seqMarkTextMismatchMessage = "Seq Mark test result was supposed to be Fail.";
+			Dashboard.waitUntilOkButtonIsDisplayed();
+			Dashboard.okButton().click();
+//			if (Dashboard.isOkButtonDisplayed()) {
+//				Dashboard.okButton().click();
+//			}
+		} else if (expectedSeqMarkTestResult.equals("Incomplete")) {
+			seqMarkTextMismatchMessage = "Seq Mark test result was supposed to be Incomplete";
+		}
+		Dashboard.waitUntilLoaderIsNotDisplayed();
+		softAssert.assertEquals(Completion.getIseTestResult(), expectedSeqMarkTestResult, seqMarkTextMismatchMessage);
+		softAssert.assertEquals(Completion.getOseTestResult(), expectedSeqMarkTestResult, seqMarkTextMismatchMessage);
+
+		JobDetailsPage.reportsTab().click();
+		Dashboard.waitUntilOkButtonIsDisplayed();
+		Dashboard.okButton().click();
+		Dashboard.waitUntilLoaderIsNotDisplayed();
+		Reports.waitUntilDownloadOCR_ReportIsDisplayed();
+		boolean isMeterMarkFieldDisplayed = Reports.isMeterMarkInputFieldDisplayed();
+		if (TestData.testEnvironment.contains("executive")) {
+			if (expectedSeqMarkTestResult.equals("PASS")) {
+				softAssert.assertFalse(isMeterMarkFieldDisplayed,
+						"Meter Mark input field is not supposed to be displayed as the Ise/Ose Seq mark tests have Passed.");
+			} else if (expectedSeqMarkTestResult.equals("FAIL")) {
+				softAssert.assertTrue(isMeterMarkFieldDisplayed,
+						"Meter Mark input field is supposed to be displayed as the Ise/Ose Seq mark tests have Failed.");
+			} else if (expectedSeqMarkTestResult.equals("Incomplete")) {
+				softAssert.assertTrue(isMeterMarkFieldDisplayed,
+						"Meter Mark input field is supposed to be displayed as the Ise/Ose Seq mark tests are Incomplete.");
+			}
+			if (isMeterMarkFieldDisplayed) {
+				softAssert.assertEquals(Reports.getMeterMarkValue(), null,
+						"Mismatch in the default value displayed in meter mark field.");
+				softAssert.assertEquals(Reports.getMeterMarkValidationStatus(), "Incomplete",
+						"Mismatch in the default meter mark validation status.");
+				String expectedUoM = uomValue;
+				if (uomValue.equals("")) {
+					expectedUoM = "m";
+				}
+				softAssert.assertEquals(Reports.getMeterMarkUoM(), expectedUoM,
+						"Mismatch in the UoM displayed for meter mark field.");
+				Reports.meterMarkInputField().clear();
+				Reports.meterMarkInputField().sendKeys(meterMarkValue);
+				robot.keyPress(KeyEvent.VK_TAB);
+				robot.keyRelease(KeyEvent.VK_TAB);
+				Reports.checkMeterMarkButton().click();
+				Dashboard.waitUntilOkButtonIsDisplayed();
+				if (expectedMeterMarkValidationStatus.equalsIgnoreCase("Incomplete")) {
+					softAssert.assertEquals(Dashboard.getMessageDisplayedOnPopup(), "A value must be provided",
+							"Mismatch in the text displayed on Meter Mark validation popup");
+				} else if (expectedMeterMarkValidationStatus.equals("Pass")) {
+					softAssert.assertTrue(Dashboard.getMessageDisplayedOnPopup().contains("Status: Pass"),
+							"Mismatch in Meter Mark validation success popup, expected Status: Pass");
+				} else if (expectedMeterMarkValidationStatus.equals("Fail")) {
+					softAssert.assertTrue(Dashboard.getMessageDisplayedOnPopup().contains("Status: Fail"),
+							"Mismatch in Meter Mark validation success popup, expected Status: Fail");
+				}
+				Dashboard.okButton().click();
+				softAssert.assertEquals(Reports.getMeterMarkValue(), meterMarkValue,
+						"Mismatch in the value displayed in meter mark field.");
+				softAssert.assertEquals(Reports.getMeterMarkUoM(), expectedUoM,
+						"Mismatch in the UoM displayed for meter mark field.");
+				softAssert.assertEquals(Reports.getMeterMarkValidationStatus(), expectedMeterMarkValidationStatus,
+						"Mismatch in the meter mark validation status.");
+			}
+			if (!Reports.overrideCheckbox().isSelected()) {
+				Reports.overrideCheckbox().click();
+				Thread.sleep(1000);
+			}
+			Reports.overrideComment().sendKeys("Testing override from veltris side in meter mark validation flow");
+			Reports.overrideSaveButton().click();
+			Dashboard.waitUntilOkButtonIsDisplayed();
+			String expectedOverridePopupMessage = "This is default message which is updated later based on meter mark validation status";
+			if (!expectedMeterMarkValidationStatus.equals("Pass")) {
+				expectedOverridePopupMessage = "Please ensure Meter Mark validation is successful before overriding the Hold for Approval.";
+			} else {
+				expectedOverridePopupMessage = "Comments Saved Successfully!";
+			}
+			softAssert.assertEquals(Dashboard.getMessageDisplayedOnPopup(), expectedOverridePopupMessage,
+					"Mismatch in override popup message in mark validation flow");
+			Dashboard.okButton().click();
+		} else {
+			softAssert.assertFalse(isMeterMarkFieldDisplayed,
+					"Meter Mark input field is not supposed to be displayed to a Tester.");
+		}
+		String expectedMessageOnDownloadReportWarningPopup = "Default message which is changed later based on role and meter mark validation status";
+		if (!expectedMeterMarkValidationStatus.equals("Pass")) {
+			if (TestData.testEnvironment.contains("executive")) {
+				expectedMessageOnDownloadReportWarningPopup = "Please ensure Meter Mark validation is successful before downloading the report.";
+			} else {
+				expectedMessageOnDownloadReportWarningPopup = "Meter Mark validation must be completed successfully before downloading the report. Please contact your Team Lead or Manager to complete the validation.";
+			}
+		} else {
+			expectedMessageOnDownloadReportWarningPopup = "report in background and will be available soon";
+		}
+		Reports.shippingLabelReport().click();
+		Dashboard.waitUntilOkButtonIsDisplayed();
+		softAssert.assertTrue(
+				Dashboard.getMessageDisplayedOnPopup().contains(expectedMessageOnDownloadReportWarningPopup),
+				"Mismatch in the meter mark validation text displayed on popup while downloading report.");
+		Dashboard.okButton().click();
+		if (expectedMeterMarkValidationStatus.equals("Pass")) {
+			Dashboard.waitUntilLoaderIsNotDisplayed();
+			Dashboard.waitUntilOkButtonIsDisplayed();
+			softAssert.assertEquals(Dashboard.getMessageDisplayedOnPopup(), "Report Successfully Created",
+					"Mismtach in report download success popup.");
+			Dashboard.okButton().click();
+			Thread.sleep(1000);
+			JobDetailsPage.reportsTab().click();
+		}
+		Reports.jacketTestReport().click();
+		Dashboard.waitUntilOkButtonIsDisplayed();
+		softAssert.assertTrue(
+				Dashboard.getMessageDisplayedOnPopup().contains(expectedMessageOnDownloadReportWarningPopup),
+				"Mismatch in the meter mark validation text displayed on popup while downloading report.");
+		Dashboard.okButton().click();
+		if (expectedMeterMarkValidationStatus.equals("Pass")) {
+			Thread.sleep(2000);
+			Dashboard.waitUntilLoaderIsNotDisplayed();
+			Thread.sleep(1000);
+			JobDetailsPage.reportsTab().click();
+		}
+		Reports.failedTestsReport().click();
+		Dashboard.waitUntilOkButtonIsDisplayed();
+		softAssert.assertTrue(
+				Dashboard.getMessageDisplayedOnPopup().contains(expectedMessageOnDownloadReportWarningPopup),
+				"Mismatch in the meter mark validation text displayed on popup while downloading report.");
+		Dashboard.okButton().click();
+		if (expectedMeterMarkValidationStatus.equals("Pass")) {
+			Thread.sleep(2000);
+			Dashboard.waitUntilLoaderIsNotDisplayed();
+			Thread.sleep(1000);
+			JobDetailsPage.reportsTab().click();
+		}
+	}
+
+	public static void verify_Override_Meter_Mark_Validation_With_Tester_Role() throws Exception {
+
+		TestData.useOfficeOtdr = false;
+
+		updateTestSettings();
+
+		searchJobAndNavigationToJobDetailsPage(TestData.wtcTestModuleName, TestData.jobSearchOrg,
+				TestData.wtcTestJobSearchJobNumber, TestData.wtcTestJobSearchCutNumber,
+				TestData.wtcTestJobSearchCutNumberInfo);
+
+		verifyJobDetailsHeader(TestData.jobSearchOrg, TestData.wtcTestJobSearchJobNumber,
+				TestData.wtcTestJobSearchCutNumber, TestData.wtcTestJobSearchCutNumberInfo,
+				"WTC test with Job # " + TestData.wtcTestJobSearchJobNumber, TestData.wtcTestExpectedItemNumber);
+
+		if (!isGetLengthAndEditAdjLengthDoneForWtcJob) {
+			runGetLengthTest(TestData.wtcTestModuleName);
+			editAdjLength(TestData.wtcTestEditAdjLengthValue);
+			isGetLengthAndEditAdjLengthDoneForWtcJob = true;
+		}
+
+		Dashboard.waitUntilLoaderIsNotDisplayed();
+		JobDetailsPage.opticsTab().click();
+		robot.mouseWheel(100);
+		enterIseOseValuesAndVerifyOverrideMeterMarkFlow("", "", "Incomplete", null, "", "Incomplete");
+		enterIseOseValuesAndVerifyOverrideMeterMarkFlow("1000", "2000", "FAIL", "999.999", "ft", "Fail");
+	}
+
+	public static void verify_Override_Meter_Mark_Validation_With_Executive_Role() throws Exception {
+
+		if (!isExecutiveProfileLoggedIn) {
+			if (!TestData.isAppLogInRequired) {
+				log_Out_And_Close_Application();
+			}
+			if (!isAppLaunched) {
+				launch_ECQTS_Application();
+			}
+			TestData.testEnvironment += " executive";
+			loginToApplication();
+			isExecutiveProfileLoggedIn = true;
+		}
+
+		TestData.useOfficeOtdr = false;
+
+		updateTestSettings();
+
+		searchJobAndNavigationToJobDetailsPage(TestData.wtcTestModuleName, TestData.jobSearchOrg,
+				TestData.wtcTestJobSearchJobNumber, TestData.wtcTestJobSearchCutNumber,
+				TestData.wtcTestJobSearchCutNumberInfo);
+
+		verifyJobDetailsHeader(TestData.jobSearchOrg, TestData.wtcTestJobSearchJobNumber,
+				TestData.wtcTestJobSearchCutNumber, TestData.wtcTestJobSearchCutNumberInfo,
+				"WTC test with Job # " + TestData.wtcTestJobSearchJobNumber, TestData.wtcTestExpectedItemNumber);
+
+		if (!isGetLengthAndEditAdjLengthDoneForWtcJob) {
+			runGetLengthTest(TestData.wtcTestModuleName);
+			editAdjLength(TestData.wtcTestEditAdjLengthValue);
+			isGetLengthAndEditAdjLengthDoneForWtcJob = true;
+		}
+
+		Dashboard.waitUntilLoaderIsNotDisplayed();
+		JobDetailsPage.opticsTab().click();
+		robot.mouseWheel(100);
+		enterIseOseValuesAndVerifyOverrideMeterMarkFlow("1000", "2000", "FAIL", "1000.001", "m", "Fail");
+		enterIseOseValuesAndVerifyOverrideMeterMarkFlow("2765", "0", "FAIL", "2765", "m", "Pass");
+		JobDetailsPage.completionTab().click();
+		softAssert.assertTrue(Completion.is_ISE_SeqMark_Test_Displayed(),
+				"Waited for 5 seconds, ISE Sequence test is not displayed ");
+		Completion.iseSeqMark().clear();
+		Completion.iseSeqMark_UoM().sendKeys("ft");
+		robot.keyPress(KeyEvent.VK_TAB);
+		robot.keyRelease(KeyEvent.VK_TAB);
+		Thread.sleep(1000);
+		JobDetailsPage.reportsTab().click();
+		Dashboard.waitUntilOkButtonIsDisplayed();
+		Dashboard.okButton().click();
+		Dashboard.waitUntilLoaderIsNotDisplayed();
+		Reports.waitUntilDownloadOCR_ReportIsDisplayed();
+		softAssert.assertEquals(Reports.getMeterMarkValue(), "2765",
+				"Meter mark value was supposed to save and display the same as the validation was passed before switching to completion tab.");
+		softAssert.assertEquals(Reports.getMeterMarkUoM(), "m",
+				"Meter mark UoM was supposed to save and display the same as the validation was passed before switching to completion tab.");
+		softAssert.assertEquals(Reports.getMeterMarkValidationStatus(), "Pass",
+				"Meter mark validation status was supposed to save and display the same as the validation was passed before switching to completion tab.");
+		enterIseOseValuesAndVerifyOverrideMeterMarkFlow("2634", "0", "PASS", "NA as SeqMarkTest passed", "m", "Pass");
 	}
 
 	public static void takeDump(String label, int delayInSecondsWhileTakingDumpBeforeClosingPowerShell)
@@ -1716,30 +2031,30 @@ public class BaseClass {
 				Completion.jacketColor().sendKeys("2");
 				return;
 			}
-			softAssert.assertTrue(Completion.isSeqNumberTestDisplayed(),
+			softAssert.assertTrue(Completion.is_ISE_SeqMark_Test_Displayed(),
 					"Waited for 10 seconds, ISE Sequence test is not displayed ");
 
-			Completion.OSE_Seq_Number().sendKeys("1");
-			Completion.OSE_Seq_Number_uoM().sendKeys("m");
+			Completion.oseSeqMark().sendKeys("1");
+			Completion.oseSeqMark_UoM().sendKeys("m");
 
-			Completion.ISE_Seq_Number_uoM().sendKeys("m");
+			Completion.iseSeqMark_UoM().sendKeys("m");
 			if (TestData.fiberTestModuleName.equals(module)) {
-				Completion.ISE_Seq_Number().sendKeys(TestData.fiberTestCompletionTabIseSeqValue);
+				Completion.iseSeqMark().sendKeys(TestData.fiberTestCompletionTabIseSeqValue);
 
 				Dashboard.isLoaderDisplayed();
 				Dashboard.waitUntilLoaderIsNotDisplayed();
 
 				Thread.sleep(1000);
-				softAssert.assertEquals(Completion.completionTabIseTestResult().getText().trim(), "PASS",
+				softAssert.assertEquals(Completion.getIseTestResult(), "PASS",
 						"Mismatch in Completion tab ISE Seq test result.");
-				softAssert.assertEquals(Completion.completionTabOseTestResult().getText().trim(), "PASS",
+				softAssert.assertEquals(Completion.getOseTestResult(), "PASS",
 						"Mismatch in Completion tab OSE Seq test result.");
 
 				Completion.OSE_Print_Spacing().sendKeys("2");
 				Completion.ISE_Print_Spacing().sendKeys("2");
 			}
-			Completion.ISE_Seq_Number().clear();
-			Completion.ISE_Seq_Number()
+			Completion.iseSeqMark().clear();
+			Completion.iseSeqMark()
 					.sendKeys(String.valueOf(Integer.parseInt(TestData.fiberTestCompletionTabIseSeqValue) + 1));
 
 			Dashboard.isLoaderDisplayed();
@@ -1752,15 +2067,15 @@ public class BaseClass {
 				Thread.sleep(2000);
 			}
 
-			softAssert.assertEquals(Completion.completionTabIseTestResult().getText().trim(), "FAIL",
+			softAssert.assertEquals(Completion.getIseTestResult(), "FAIL",
 					"Mismatch in Completion tab ISE Seq test result.");
-			softAssert.assertEquals(Completion.completionTabOseTestResult().getText().trim(), "FAIL",
+			softAssert.assertEquals(Completion.getOseTestResult(), "FAIL",
 					"Mismatch in Completion tab OSE Seq test result.");
 
 			Completion.ISE_Print_Verified().sendKeys("2");
 			Completion.OSE_Print_Verified().sendKeys("2");
 
-//			Completion.reelItem().sendKeys("REL00235");
+			Completion.reelItem().sendKeys(TestData.fiberTestReelItem);
 
 			Completion.jacketColor().sendKeys("2");
 
@@ -1809,6 +2124,8 @@ public class BaseClass {
 
 		loginToApplication();
 
+		isExecutiveProfileLoggedIn = true;
+
 		TestData.useOfficeOtdr = true;
 
 		updateTestSettings();
@@ -1835,12 +2152,12 @@ public class BaseClass {
 				"Before clicking on Reports tab, Anomaly status is not as expected.");
 		JobDetailsPage.anomalyInfoIcon().click();
 		JobDetailsPage.waitUntilAnomalyDetailsPopupIsDisplayed();
-		softAssert.assertEquals(JobDetailsPage.getAnomalyDetailsMessage(), "No fibers with detected anomalies.",
+		softAssert.assertEquals(Dashboard.getMessageDisplayedOnPopup(), "No fibers with detected anomalies.",
 				"Before clicking on Reports tab, Anomaly Details popup message is not as expected.");
 		Dashboard.okButton().click();
 		JobDetailsPage.reportsTab().click();
 		Dashboard.waitUntilOkButtonIsDisplayed();
-		String holdForApprovalMessage = Reports.getHoldForApprovalMessage();
+		String holdForApprovalMessage = Dashboard.getMessageDisplayedOnPopup();
 //		System.out.println(holdForApprovalMessage);
 		int incompleteOrFailedTestsCountFromHoldForApprovalPopup = holdForApprovalMessage
 				.split("Incomplete or Failed").length - 1;
@@ -1859,7 +2176,7 @@ public class BaseClass {
 				"After clicking on Reports tab, Anomaly status is not as expected.");
 		JobDetailsPage.anomalyInfoIcon().click();
 		JobDetailsPage.waitUntilAnomalyDetailsPopupIsDisplayed();
-		String anomalyDetailsMessage = JobDetailsPage.getAnomalyDetailsMessage();
+		String anomalyDetailsMessage = Dashboard.getMessageDisplayedOnPopup();
 //		System.out.println("After clicking on Reports Tab, Anomaly Details Message - " + anomalyDetailsMessage);
 		softAssert.assertTrue(anomalyDetailsMessage.contains("The following fibers have detected anomalies:"),
 				"After clicking on Reports tab, Anomaly Details popup message is expected to show detected anomalies.");
@@ -1881,10 +2198,10 @@ public class BaseClass {
 		softAssert.assertEquals(JobDetailsPage.getAnomalyStatus(), TestData.expectedAnomalyStatus,
 				"Anomaly status after overriding others should not change.");
 		JobDetailsPage.completionTab().click();
-		Completion.isSeqNumberTestDisplayed();
+		Completion.is_ISE_SeqMark_Test_Displayed();
 		JobDetailsPage.reportsTab().click();
 		Dashboard.waitUntilOkButtonIsDisplayed();
-		holdForApprovalMessage = Reports.getHoldForApprovalMessage();
+		holdForApprovalMessage = Dashboard.getMessageDisplayedOnPopup();
 //		System.out.println(holdForApprovalMessage);
 		incompleteOrFailedTestsCountFromHoldForApprovalPopup = holdForApprovalMessage
 				.split("Incomplete or Failed").length - 1;
@@ -1908,7 +2225,7 @@ public class BaseClass {
 		softAssert.assertEquals(JobDetailsPage.getAnomalyStatus(), "Overridden",
 				"Anomaly status after overriding anomaly has not changed");
 		JobDetailsPage.completionTab().click();
-		Completion.isSeqNumberTestDisplayed();
+		Completion.is_ISE_SeqMark_Test_Displayed();
 		JobDetailsPage.reportsTab().click();
 		Dashboard.waitUntilLoaderIsNotDisplayed();
 		softAssert.assertTrue(Reports.isDownloadOCR_ReportDisplayed(),
@@ -1917,7 +2234,7 @@ public class BaseClass {
 				"Job warning error popup is displayed even after overriding other and anomaly");
 		JobDetailsPage.anomalyInfoIcon().click();
 		JobDetailsPage.waitUntilAnomalyDetailsPopupIsDisplayed();
-		anomalyDetailsMessage = JobDetailsPage.getAnomalyDetailsMessage();
+		anomalyDetailsMessage = Dashboard.getMessageDisplayedOnPopup();
 //		System.out.println("After clicking on Reports Tab, Anomaly Details Message - " + anomalyDetailsMessage);
 		softAssert.assertTrue(anomalyDetailsMessage.contains("The following fibers have detected anomalies:"),
 				"After clicking on Reports tab, Anomaly Details popup message is not as expected.");
@@ -1931,7 +2248,21 @@ public class BaseClass {
 		Dashboard.okButton().click();
 	}
 
-	public static void verify_QE_Labs() {
+	public static void verify_QE_Labs() throws Exception {
+
+		if (!isExecutiveProfileLoggedIn) {
+			if (!TestData.isAppLogInRequired) {
+				log_Out_And_Close_Application();
+			}
+
+			if (!isAppLaunched) {
+				launch_ECQTS_Application();
+			}
+			TestData.testEnvironment += " executive";
+			loginToApplication();
+			isExecutiveProfileLoggedIn = true;
+		}
+
 		try {
 			navigateToModule(TestData.QE_LabsModuleName);
 			softAssert.assertEquals(QE_Labs.get_QE_Labs_Comming_Soon_Text(),
@@ -1998,20 +2329,28 @@ public class BaseClass {
 
 		verify_Reel_Id_And_Remove_Sales_Order_Changes_In_Job_Search_Popup();
 
-		verify_Reel_Id_And_Remove_Sales_Order_Changes_In_Completion_Tab();
+		if (JobDetailsPage.salesOrder().getText().trim().equals("")) {
 
-		JobDetailsPage.reportsTab().click();
-		Dashboard.waitUntilOkButtonIsDisplayed();
-		Dashboard.okButton().click();
-		Reports.shippingLabel().click();
-		try {
-			softAssert.assertEquals(Reports.getErrorMessageWhileDownloadingShippingLabelReport(),
-					"A sales order must be selected to generate a shipping label.",
-					"Mismatch in error displayed while downloading shipping label report.");
-		} catch (Exception e) {
-			softAssert.fail("Did not find popup with message as : A sales order must be selected to generate a shipping label.");
+			verify_Reel_Id_And_Remove_Sales_Order_Changes_In_Completion_Tab();
+
+			JobDetailsPage.reportsTab().click();
+			Dashboard.waitUntilOkButtonIsDisplayed();
+			Dashboard.okButton().click();
+			Reports.shippingLabelReport().click();
+			Dashboard.waitUntilOkButtonIsDisplayed();
+			try {
+				softAssert.assertEquals(Dashboard.getMessageDisplayedOnPopup(),
+						"A sales order must be selected to generate a shipping label.",
+						"Mismatch in error displayed while downloading shipping label report.");
+			} catch (Exception e) {
+				softAssert.fail(
+						"Did not find popup with message as : A sales order must be selected to generate a shipping label.");
+			}
+			Dashboard.okButton().click();
+		} else {
+			softAssert.fail(
+					"As sales order was not removed, skipping the verication of reel id changes in completion tab and reports tab.");
 		}
-		Dashboard.okButton().click();
 
 		shouldRemoveSalesOrder = false;
 	}
@@ -2029,26 +2368,34 @@ public class BaseClass {
 				TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo,
 				"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumberForReelIdAndSalesOrderVerification,
 				TestData.fiberTestExpectedItemNumberForReelIdAndSalesOrderVerification);
+
+		if (shouldRemoveSalesOrder) {
+			TestData.fiberTestExpectedSalesOrderForReelIdAndSalesOrderVerification = "";
+		}
+		softAssert.assertEquals(JobDetailsPage.salesOrder().getText().trim(), TestData.fiberTestExpectedSalesOrderForReelIdAndSalesOrderVerification,
+				"Sales order mismatch in job details page");
 	}
 
 	public static void verify_Reel_Id_And_Remove_Sales_Order_Changes_In_Completion_Tab() throws Exception {
 
 		JobDetailsPage.completionTab().click();
 		Dashboard.waitUntilLoaderIsNotDisplayed();
-		Thread.sleep(2000);
-
-		if (shouldRemoveSalesOrder) {
-			TestData.fiberTestExpectedSalesOrder = "";
+		if (!shouldRemoveSalesOrder) {
+			Completion.reelItem().sendKeys(TestData.fiberTestReelItem);
+			Dashboard.isLoaderDisplayed();
+			Dashboard.isLoaderNotDisplayed();
+			Thread.sleep(4000);
+			Dashboard.isLoaderNotDisplayed();
+		} else {
+			Thread.sleep(2000);
 		}
-		softAssert.assertEquals(JobDetailsPage.salesOrder().getText().trim(), TestData.fiberTestExpectedSalesOrder,
-				"sales order mismatch in job details page");
 
 		verifyTestResultsCount(TestData.incompleteTestCountForReelIdAndSalesOrderVerification,
 				TestData.passedTestCountForReelIdAndSalesOrderVerification,
-				TestData.failedTestCountForReelIdAndSalesOrderVerification,
-				"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumberForReelIdAndSalesOrderVerification);
+				TestData.failedTestCountForReelIdAndSalesOrderVerification, "Fiber test with Job # "
+						+ TestData.fiberTestJobSearchJobNumberForReelIdAndSalesOrderVerification + ".");
 
-		softAssert.assertEquals(Completion.reelItem().getText(), TestData.fiberTestExpectedReelItem,
+		softAssert.assertEquals(Completion.reelItem().getText(), TestData.fiberTestReelItem,
 				"Reel item mismatch in Completion Tab.");
 		softAssert.assertEquals(Completion.reelItem().getAttribute("IsKeyboardFocusable"), "False",
 				"Reel Item field should be non-editable.");
@@ -2075,13 +2422,14 @@ public class BaseClass {
 			softAssert.assertEquals(Completion.getReelLabelResult(), "PASS",
 					"Reel Label result was supposed to be Pass.");
 		} catch (Exception e) {
-			softAssert.fail(
-					"Reel Label is not available after removing sales order for a Job which had reel label when sales order was selected.");
+			if (!shouldRemoveSalesOrder) {
+				softAssert.fail(
+						"Reel Label is not available after entering steel Reel Item when sales order was selected.");
+			} else {
+				softAssert.fail(
+						"Reel Label is not available after removing sales order for a Job which had reel label when sales order was selected.");
+			}
 		}
-
-	}
-
-	public static void verify_Override_Meter_Marks_Flow() {
 
 	}
 
@@ -2159,10 +2507,6 @@ public class BaseClass {
 
 	public static void verify_Fiber_Test_Module() throws Exception {
 
-		updateTestSettings();
-
-		updateApplicationSettings();
-
 		searchJobAndNavigationToJobDetailsPage(TestData.fiberTestModuleName, TestData.jobSearchOrg,
 				TestData.fiberTestJobSearchJobNumber, TestData.fiberTestJobSearchCutNumber,
 				TestData.fiberTestJobSearchCutNumberInfo);
@@ -2175,7 +2519,7 @@ public class BaseClass {
 
 		runGetLengthTest(TestData.fiberTestModuleName);
 
-		editAdjLength();
+		editAdjLength(TestData.fiberTestEditAdjLengthValue);
 
 		verifyOpticsPage();
 
@@ -2190,6 +2534,15 @@ public class BaseClass {
 		verifyTestResultsCount(TestData.fiberTestExpectedIncompleteTestsCount,
 				TestData.fiberTestExpectedPassedTestsCount, TestData.fiberTestExpectedFailedTestsCount,
 				"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumber);
+	}
+
+	public static void verify_WTC_Test_Module() throws Exception {
+//		if(!isGetLengthAndEditAdjLengthDoneForWtcJob)
+//		{
+//			runGetLengthTest(TestData.wtcTestModuleName);
+//			editAdjLength(TestData.wtcTestEditAdjLengthValue);
+//			isGetLengthAndEditAdjLengthDoneForWtcJob = true;
+//		}
 	}
 
 	public static void verify_Tight_Buffer_Module() throws Exception {

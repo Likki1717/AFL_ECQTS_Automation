@@ -99,7 +99,7 @@ public class JobSearch extends BaseClass {
 	}
 
 	public static WebElement salesOrderValue() {
-		return driver.findElement(By.xpath("//Text[@Name='" + TestData.fiberTestExpectedSalesOrder + "']"));
+		return driver.findElement(By.xpath("//Text[@Name='" + TestData.fiberTestExpectedSalesOrderForReelIdAndSalesOrderVerification + "']"));
 	}
 
 	public static String getReelId() {

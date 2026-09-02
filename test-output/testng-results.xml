@@ -2,16 +2,16 @@
 <testng-results ignored="0" total="1" passed="0" failed="1" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2026-08-19T09:36:33 IST" name="Default suite" finished-at="2026-08-19T09:38:08 IST" duration-ms="95019">
+  <suite started-at="2026-09-02T23:12:59 IST" name="Default suite" finished-at="2026-09-02T23:40:32 IST" duration-ms="1653412">
     <groups>
     </groups>
-    <test started-at="2026-08-19T09:36:33 IST" name="Default test" finished-at="2026-08-19T09:38:08 IST" duration-ms="95019">
+    <test started-at="2026-09-02T23:12:59 IST" name="Default test" finished-at="2026-09-02T23:40:32 IST" duration-ms="1653412">
       <class name="DesktopApplicationTests.RegressionTests">
-        <test-method is-config="true" signature="applicationSetupAndLaunch()[pri:0, instance:DesktopApplicationTests.RegressionTests@3b0090a4]" started-at="2026-08-19T09:36:33 IST" name="applicationSetupAndLaunch" finished-at="2026-08-19T09:37:31 IST" duration-ms="57947" status="PASS">
+        <test-method is-config="true" signature="applicationSetupAndLaunch()[pri:0, instance:DesktopApplicationTests.RegressionTests@4116aac9]" started-at="2026-09-02T23:12:59 IST" name="applicationSetupAndLaunch" finished-at="2026-09-02T23:13:49 IST" duration-ms="50218" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- applicationSetupAndLaunch -->
-        <test-method signature="runRegressionTestSuite()[pri:0, instance:DesktopApplicationTests.RegressionTests@3b0090a4]" started-at="2026-08-19T09:37:31 IST" name="runRegressionTestSuite" finished-at="2026-08-19T09:38:07 IST" duration-ms="36446" status="FAIL">
+        <test-method signature="runRegressionTestSuite()[pri:0, instance:DesktopApplicationTests.RegressionTests@4116aac9]" started-at="2026-09-02T23:13:49 IST" name="runRegressionTestSuite" finished-at="2026-09-02T23:40:32 IST" duration-ms="1602480" status="FAIL">
           <exception class="org.openqa.selenium.NoSuchElementException">
             <message>
               <![CDATA[An element could not be located on the page using the given search parameters. (WARNING: The server did not provide any stacktrace information)
@@ -20,9 +20,9 @@ For documentation on this error, please visit: https://www.seleniumhq.org/except
 Build info: version: '3.141.59', revision: 'e82be7d358', time: '2018-11-14T08:17:03'
 System info: host: 'VELTRISMS785', ip: '192.168.29.113', os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '21.0.4'
 Driver info: io.appium.java_client.windows.WindowsDriver
-Capabilities {app: com.ecsite.afl.softreleasep..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
-Session ID: 21DC51C7-0BBA-4EBB-9F04-7B03B3EE68B0
-*** Element info: {Using=xpath, value=//Button[@Name='Open Navigation']}]]>
+Capabilities {app: com.ecsite.afl.qa_aqd9xyv20..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
+Session ID: 7FD2E150-6710-479B-B506-E940F295B94D
+*** Element info: {Using=xpath, value=//Text[@AutomationId='OverallStatusIncompleteValueLabel']}]]>
             </message>
             <full-stacktrace>
               <![CDATA[org.openqa.selenium.NoSuchElementException: An element could not be located on the page using the given search parameters. (WARNING: The server did not provide any stacktrace information)
@@ -31,9 +31,9 @@ For documentation on this error, please visit: https://www.seleniumhq.org/except
 Build info: version: '3.141.59', revision: 'e82be7d358', time: '2018-11-14T08:17:03'
 System info: host: 'VELTRISMS785', ip: '192.168.29.113', os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '21.0.4'
 Driver info: io.appium.java_client.windows.WindowsDriver
-Capabilities {app: com.ecsite.afl.softreleasep..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
-Session ID: 21DC51C7-0BBA-4EBB-9F04-7B03B3EE68B0
-*** Element info: {Using=xpath, value=//Button[@Name='Open Navigation']}
+Capabilities {app: com.ecsite.afl.qa_aqd9xyv20..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
+Session ID: 7FD2E150-6710-479B-B506-E940F295B94D
+*** Element info: {Using=xpath, value=//Text[@AutomationId='OverallStatusIncompleteValueLabel']}
 at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
 at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
 at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
@@ -56,11 +56,15 @@ at org.openqa.selenium.remote.RemoteWebDriver.findElementByXPath(RemoteWebDriver
 at io.appium.java_client.DefaultGenericMobileDriver.findElementByXPath(DefaultGenericMobileDriver.java:151)
 at io.appium.java_client.AppiumDriver.findElementByXPath(AppiumDriver.java:1)
 at io.appium.java_client.windows.WindowsDriver.findElementByXPath(WindowsDriver.java:1)
-at pageObjects.CommonPages.Dashboard.openNavigationButton(Dashboard.java:24)
-at base.BaseClass.navigateToModule(BaseClass.java:804)
-at base.BaseClass.searchJobAndNavigationToJobDetailsPage(BaseClass.java:848)
-at base.BaseClass.verify_Fiber_Test_Module(BaseClass.java:2150)
-at DesktopApplicationTests.RegressionTests.runRegressionTestSuite(RegressionTests.java:23)
+at org.openqa.selenium.By$ByXPath.findElement(By.java:353)
+at org.openqa.selenium.remote.RemoteWebDriver.findElement(RemoteWebDriver.java:315)
+at io.appium.java_client.DefaultGenericMobileDriver.findElement(DefaultGenericMobileDriver.java:57)
+at io.appium.java_client.AppiumDriver.findElement(AppiumDriver.java:1)
+at io.appium.java_client.windows.WindowsDriver.findElement(WindowsDriver.java:1)
+at pageObjects.Modules.TestJobModule.JobDetailsPage.getActualTestResultsCounts(JobDetailsPage.java:64)
+at base.BaseClass.verifyTestResultsCount(BaseClass.java:1066)
+at base.BaseClass.verify_Copy_Results_Module(BaseClass.java:1574)
+at DesktopApplicationTests.RegressionTests.runRegressionTestSuite(RegressionTests.java:32)
 at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 at org.testng.internal.invokers.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:141)

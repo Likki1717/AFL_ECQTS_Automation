@@ -8,23 +8,23 @@ import base.BaseClass;
 
 public class Completion extends BaseClass {
 
-	public static boolean isSeqNumberTestDisplayed() {
+	public static boolean is_ISE_SeqMark_Test_Displayed() {
 		return isElementDisplayed(ByName.name("ISE Seq Mark"), 5);
 	}
 
-	public static WebElement ISE_Seq_Number() {
+	public static WebElement iseSeqMark() {
 		return driver.findElement(By.xpath("//Text[@Name='ISE Seq Mark']/following::Edit[1]"));
 	}
 
-	public static WebElement ISE_Seq_Number_uoM() {
+	public static WebElement iseSeqMark_UoM() {
 		return driver.findElement(By.xpath("//Text[@Name='ISE Seq Mark']/following::ComboBox[1]"));
 	}
 
-	public static WebElement OSE_Seq_Number() {
+	public static WebElement oseSeqMark() {
 		return driver.findElement(By.xpath("//Text[@Name='OSE Seq Mark']/following::Edit[1]"));
 	}
 
-	public static WebElement OSE_Seq_Number_uoM() {
+	public static WebElement oseSeqMark_UoM() {
 		return driver.findElement(By.xpath("//Text[@Name='OSE Seq Mark']/following::ComboBox[1]"));
 	}
 
@@ -37,11 +37,11 @@ public class Completion extends BaseClass {
 	}
 
 	public static WebElement reelItem() {
-		return driver.findElement(By.xpath("//Text[@Name='Reel Item']/following-sibling::Text[3]"));
+		return driver.findElement(By.xpath("//Text[@Name='Reel Item']/following-sibling::Edit"));
 	}
 
 	public static String getReelItemResult() {
-		return driver.findElement(By.xpath("//Text[@Name='Reel Item']/following-sibling::Text[5]"))
+		return driver.findElement(By.xpath("//Text[@Name='Reel Item']/following-sibling::Text[4]"))
 				.getAttribute("Name");
 	}
 
@@ -92,12 +92,12 @@ public class Completion extends BaseClass {
 		return isElementDisplayed(ByName.name("Invalid Meter Marks"), 30);
 	}
 
-	public static WebElement completionTabIseTestResult() {
-		return driver.findElement(By.xpath("//Text[@Name='ISE Seq Mark']/following::ComboBox/following::Text"));
+	public static String getIseTestResult() {
+		return driver.findElement(By.xpath("//Text[@Name='ISE Seq Mark']/following::ComboBox/following::Text")).getText().trim();
 	}
 
-	public static WebElement completionTabOseTestResult() {
-		return driver.findElement(By.xpath("//Text[@Name='OSE Seq Mark']/following::ComboBox/following::Text"));
+	public static String getOseTestResult() {
+		return driver.findElement(By.xpath("//Text[@Name='OSE Seq Mark']/following::ComboBox/following::Text")).getText().trim();
 	}
 
 	public static WebElement reelSize() {

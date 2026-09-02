@@ -59,15 +59,15 @@ public class Dashboard extends BaseClass {
 	public static WebElement downTimeModule() {
 		return driver.findElement(By.xpath("//Text[@Name='Down Time']"));
 	}
-	
+
 	public static WebElement tightBufferModule() {
 		return driver.findElement(By.xpath("//Text[@Name='Tight Buffer']"));
 	}
-	
+
 	public static WebElement PK_FiberTestModule() {
 		return driver.findElement(By.xpath("//Text[@Name='PK Fiber Test']"));
 	}
-	
+
 	public static WebElement QE_LabsModule() {
 		return driver.findElement(By.xpath("//Text[@Name='QE Labs']"));
 	}
@@ -91,7 +91,7 @@ public class Dashboard extends BaseClass {
 	}
 
 	public static boolean isOkButtonDisplayed() {
-		return isElementDisplayed(ByName.name("OK"), 1);
+		return isElementDisplayed(ByName.name("OK"), 2);
 	}
 
 	public static WebElement okButton() {
@@ -122,10 +122,6 @@ public class Dashboard extends BaseClass {
 		}
 	}
 
-	public static String getWarningMessage() {
-		return driver.findElement(By.xpath("//Text[contains(@AutomationId, 'WarningsMessage')]")).getText();
-	}
-
 	public static void waitUntilWebAddressBarIsDisplayed(WindowsDriver<WindowsElement> browserDriver) throws Exception {
 		wait = new WebDriverWait(browserDriver, 30);
 		while (true) {
@@ -140,5 +136,9 @@ public class Dashboard extends BaseClass {
 
 	public static WebElement webAddressBar(WindowsDriver<WindowsElement> browserDriver) {
 		return browserDriver.findElement(By.xpath("//*[@Name='Address and search bar']"));
+	}
+
+	public static String getMessageDisplayedOnPopup() {
+		return driver.findElement(By.xpath("//Text[contains(@AutomationId, 'Message')]")).getAttribute("Name");
 	}
 }
