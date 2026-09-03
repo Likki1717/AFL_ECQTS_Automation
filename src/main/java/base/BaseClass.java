@@ -966,7 +966,8 @@ public class BaseClass {
 				softAssert.assertEquals(JobSearch.getReelId(), TestData.fiberTestExpectedReelId,
 						"Mismatch in Reel Id in Job Search popup.");
 				softAssert.assertEquals(JobSearch.salesOrder().getAttribute("Value.Value"),
-						TestData.fiberTestExpectedSalesOrderForReelIdAndSalesOrderVerification, "Mismatch in Sales Order in Job Search popup.");
+						TestData.fiberTestExpectedSalesOrderForReelIdAndSalesOrderVerification,
+						"Mismatch in Sales Order in Job Search popup.");
 			}
 		} else {
 			JobSearch.salesOrder().click();
@@ -1045,13 +1046,8 @@ public class BaseClass {
 		Assert.assertEquals(JobDetailsPage.cutNumber().getText().trim(), cutNumber,
 				whichTestBeingPerformed + " - Cut number mismatch.");
 
-		if (jobNumber.equals(TestData.fiberTestJobSearchJobNumberForReelIdAndSalesOrderVerification)) {
-			softAssert.assertEquals(JobDetailsPage.cutNumberInfo().getText().trim(), cutNumberInfo,
-					whichTestBeingPerformed + " - Cut number info mismatch.");
-		} else {
-			Assert.assertEquals(JobDetailsPage.cutNumberInfo().getText().trim(), cutNumberInfo,
-					whichTestBeingPerformed + " - Cut number info mismatch.");
-		}
+		Assert.assertEquals(JobDetailsPage.cutNumberInfo().getText().trim(), cutNumberInfo,
+				whichTestBeingPerformed + " - Cut number info mismatch.");
 
 		softAssert.assertEquals(JobDetailsPage.itemNumber().getText().trim(), itemNumber,
 				whichTestBeingPerformed + " - Item Number mismatch.");
@@ -1064,7 +1060,7 @@ public class BaseClass {
 				+ expectedPassedTestsCount + ", Failed: " + expectedFailedTestsCount;
 
 		Dashboard.waitUntilLoaderIsNotDisplayed();
-		
+
 		String actualTestResultsCount = JobDetailsPage.getActualTestResultsCounts();
 
 		softAssert.assertEquals(actualTestResultsCount, expectedTestResultsCounts,
@@ -1576,7 +1572,7 @@ public class BaseClass {
 			verifyTestResultsCount(TestData.copyJobDestinationJobExpectedIncompleteTestsBeforeCompletionLayer,
 					TestData.copyJobDestinationJobExpectedPassedTestsBeforeCompletionLayer,
 					TestData.copyJobDestinationJobExpectedFailedTestsBeforeCompletionLayer,
-					"destination Job before clicking on completion tab for Job # " + TestData.copyJobSourceJobNumber);
+					"destination Job before clicking on completion tab for Job # " + TestData.copyJobSourceJobNumber + ". ");
 
 			softAssert.assertEquals(JobDetailsPage.OTDR_Length().getText(),
 					TestData.copyJobDestinationJobExpectedOtdrLength,
@@ -2372,7 +2368,8 @@ public class BaseClass {
 		if (shouldRemoveSalesOrder) {
 			TestData.fiberTestExpectedSalesOrderForReelIdAndSalesOrderVerification = "";
 		}
-		softAssert.assertEquals(JobDetailsPage.salesOrder().getText().trim(), TestData.fiberTestExpectedSalesOrderForReelIdAndSalesOrderVerification,
+		softAssert.assertEquals(JobDetailsPage.salesOrder().getText().trim(),
+				TestData.fiberTestExpectedSalesOrderForReelIdAndSalesOrderVerification,
 				"Sales order mismatch in job details page");
 	}
 
@@ -2395,10 +2392,10 @@ public class BaseClass {
 
 		verifyTestResultsCount(TestData.incompleteTestCountForReelIdAndSalesOrderVerification,
 				TestData.passedTestCountForReelIdAndSalesOrderVerification,
-				TestData.failedTestCountForReelIdAndSalesOrderVerification, message
-						+ TestData.fiberTestJobSearchJobNumberForReelIdAndSalesOrderVerification + ".");
+				TestData.failedTestCountForReelIdAndSalesOrderVerification,
+				message + TestData.fiberTestJobSearchJobNumberForReelIdAndSalesOrderVerification + ".");
 
-		softAssert.assertEquals(Completion.reelItem().getText(), TestData.fiberTestReelItem,
+		softAssert.assertEquals(Completion.reelItem().getText(), TestData.fiberTestReelItemForReelIdAndSalesOrderVerification,
 				"Reel item mismatch in Completion Tab.");
 		softAssert.assertEquals(Completion.reelItem().getAttribute("IsKeyboardFocusable"), "True",
 				"Reel Item field should be editable.");
