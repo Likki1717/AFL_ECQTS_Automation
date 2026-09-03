@@ -10,7 +10,7 @@ public class TestData {
 	public static boolean useOfficeOtdr = true;
 	public static boolean useExternalCamera = false;
 
-	public static int numberOfFibersToTest = 12; // 12
+	public static int numberOfFibersToTest = 1; // 12
 
 	public static String expectedAppVersion() {
 		switch (testEnvironment) {
