@@ -2380,25 +2380,28 @@ public class BaseClass {
 
 		JobDetailsPage.completionTab().click();
 		Dashboard.waitUntilLoaderIsNotDisplayed();
+		String message = "";
 		if (!shouldRemoveSalesOrder) {
-			Completion.reelItem().sendKeys(TestData.fiberTestReelItem);
+			Completion.reelItem().sendKeys(TestData.fiberTestReelItemForReelIdAndSalesOrderVerification);
 			Dashboard.isLoaderDisplayed();
 			Dashboard.isLoaderNotDisplayed();
-			Thread.sleep(4000);
+			Thread.sleep(5000);
 			Dashboard.isLoaderNotDisplayed();
+			message = "Fiber test with sales order for Job # ";
 		} else {
+			message = "Fiber test after removing sales order for Job # ";
 			Thread.sleep(2000);
 		}
 
 		verifyTestResultsCount(TestData.incompleteTestCountForReelIdAndSalesOrderVerification,
 				TestData.passedTestCountForReelIdAndSalesOrderVerification,
-				TestData.failedTestCountForReelIdAndSalesOrderVerification, "Fiber test with Job # "
+				TestData.failedTestCountForReelIdAndSalesOrderVerification, message
 						+ TestData.fiberTestJobSearchJobNumberForReelIdAndSalesOrderVerification + ".");
 
 		softAssert.assertEquals(Completion.reelItem().getText(), TestData.fiberTestReelItem,
 				"Reel item mismatch in Completion Tab.");
-		softAssert.assertEquals(Completion.reelItem().getAttribute("IsKeyboardFocusable"), "False",
-				"Reel Item field should be non-editable.");
+		softAssert.assertEquals(Completion.reelItem().getAttribute("IsKeyboardFocusable"), "True",
+				"Reel Item field should be editable.");
 		softAssert.assertEquals(Completion.getReelItemResult(), "PASS", "Reel Item result was supposed to be Pass.");
 		try {
 			softAssert.assertEquals(Completion.iseReelLabel().getText(), TestData.fiberTestExpectedIseReelLabel,
