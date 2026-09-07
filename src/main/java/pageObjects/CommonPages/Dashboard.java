@@ -49,7 +49,7 @@ public class Dashboard extends BaseClass {
 	}
 
 	public static boolean isImportDataModuleDisplayed() {
-		return isElementDisplayed(ByAccessibilityId.AccessibilityId("Import DataButton"), 3);
+		return isElementDisplayed(ByAccessibilityId.AccessibilityId("Import DataButton"), 2);
 	}
 
 	public static WebElement copyResultsModule() {
@@ -140,5 +140,15 @@ public class Dashboard extends BaseClass {
 
 	public static String getMessageDisplayedOnPopup() {
 		return driver.findElement(By.xpath("//Text[contains(@AutomationId, 'Message')]")).getAttribute("Name");
+	}
+
+	public static void waitUntilStopButtonIsNotDisplayed() throws Exception {
+		while (isElementDisplayed(ByName.name("Stop"), 1)) {
+			Thread.sleep(1000);
+		}
+	}
+
+	public static WebElement stopButton() {
+		return driver.findElementByName("Stop");
 	}
 }

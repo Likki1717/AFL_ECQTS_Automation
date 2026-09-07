@@ -28,7 +28,7 @@ public class JobDetailsPage extends BaseClass {
 	}
 
 	public static boolean isWtcTabDisplayed() {
-		return isElementDisplayed(ByName.name("WTC"), 3);
+		return isElementDisplayed(ByName.name("WTC"), 2);
 	}
 
 	public static WebElement wtcTab() {

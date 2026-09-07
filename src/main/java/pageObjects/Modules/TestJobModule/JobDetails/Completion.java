@@ -39,6 +39,11 @@ public class Completion extends BaseClass {
 	public static WebElement reelItem() {
 		return driver.findElement(By.xpath("//Text[@Name='Reel Item']/following-sibling::Edit"));
 	}
+	
+	public static boolean isReelLabelTestDisplayed()
+	{
+		return isElementDisplayed(By.xpath("//Text[@Name='Reel Label']/following-sibling::Text[3]"), 1);
+	}
 
 	public static String getReelItemResult() {
 		return driver.findElement(By.xpath("//Text[@Name='Reel Item']/following-sibling::Text[4]"))

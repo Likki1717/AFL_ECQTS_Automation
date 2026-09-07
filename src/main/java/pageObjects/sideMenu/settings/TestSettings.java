@@ -8,7 +8,7 @@ import base.BaseClass;
 public class TestSettings extends BaseClass {
 
 	public static boolean isDisplayRealTimePlotToogleDisplayed() {
-		return isElementDisplayed(By.xpath("//Text[@Name='Display Realtime Plot']"), 3);
+		return isElementDisplayed(By.xpath("//Text[@Name='Display Realtime Plot']"), 2);
 	}
 
 	public static WebElement displayRealTimetoggle() {

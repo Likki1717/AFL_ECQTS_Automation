@@ -4,25 +4,26 @@ import java.io.File;
 
 public class TestData {
 	public static String systemUsername = "sumeeth"; // veltris // LikhithaR // sumeeth
-	public static String testEnvironment = "Soft Release Second Prod"; // Dev/QA/Soft Release Prod/Soft Release Second Prod
+	public static String testEnvironment = "Dev"; // Dev/QA/Soft Release Prod/Soft Release Second Prod
 													                   // Prod/Second Prod
 	public static boolean isAppLogInRequired = true;
 	public static boolean useOfficeOtdr = true;
 	public static boolean useExternalCamera = false;
 
 	public static int numberOfFibersToTest = 12; // 12
+	public static int numberofRibbonsToTest = 2;
 
 	public static String expectedAppVersion() {
 		switch (testEnvironment) {
 		case "Dev":
-			return "Version: 7.8.5.0";
+			return "Version: 7.9.4.0";
 
 		case "QA":
 			return "Version: 7.9.3.0";
 
 		case "Soft Release Prod":
 		case "Soft Release Second Prod":
-			return "Version: 7.9.1.0";
+			return "Version: 7.9.2.2";
 
 		case "Prod":
 		case "Second Prod":
@@ -117,6 +118,10 @@ public class TestData {
 	public static String failedTestCountForReelIdAndSalesOrderVerification = "0";
 	public static String fiberTestExpectedItemNumberForReelIdAndSalesOrderVerification = "DNO-12759";
 	public static String fiberTestReelItemForReelIdAndSalesOrderVerification = "REL00291";
+	public static String fiberTestReelItemForReelIdAndSalesOrderVerificationAfterDeletingLastDigit = "REL00" ;
+	public static String incompleteTestCountForReelIdAndSalesOrderVerificationAfterDeletingLastDigit = "299";
+	public static String passedTestCountForReelIdAndSalesOrderVerificationAfterDeletingLastDigit = "0";
+	public static String failedTestCountForReelIdAndSalesOrderVerificationAfterDeletingLastDigit = "1";
 
 	public static final String PK_FiberTestModuleName = "PK Fiber Test";
 	public static String PK_FiberTestJobSearchJobNumber = "15811448";

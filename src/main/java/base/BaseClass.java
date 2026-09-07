@@ -57,6 +57,7 @@ public class BaseClass {
 	public static SoftAssert softAssert = new SoftAssert();
 	public static boolean isAppLaunched = false;
 	public static boolean shouldRemoveSalesOrder = false;
+	public static boolean isRemoveSalesOrderFlowCompleted = false;
 	public static boolean isGetLengthAndEditAdjLengthDoneForWtcJob = false;
 	public static boolean isExecutiveProfileLoggedIn = false;
 
@@ -486,6 +487,7 @@ public class BaseClass {
 			}
 		} catch (Exception e) {
 			System.out.println("****Exception in createProfile() - " + connectionProfileName + "****");
+			e.printStackTrace();
 		}
 	}
 
@@ -493,6 +495,12 @@ public class BaseClass {
 		createProfile(TestData.connectionProfileName_JGR_One, TestData.connectionProfile_Simulator_IP_Address,
 				TestData.connectionProfile_Simulator_Port);
 		createProfile(TestData.connectionProfileName_JGR_Two, TestData.connectionProfile_Simulator_IP_Address,
+				TestData.connectionProfile_Simulator_Port);
+		createProfile(TestData.connectionProfileName_JGR_Three, TestData.connectionProfile_Simulator_IP_Address,
+				TestData.connectionProfile_Simulator_Port);
+		createProfile(TestData.connectionProfileName_JGR_Four, TestData.connectionProfile_Simulator_IP_Address,
+				TestData.connectionProfile_Simulator_Port);
+		createProfile(TestData.connectionProfileName_JGR_Five, TestData.connectionProfile_Simulator_IP_Address,
 				TestData.connectionProfile_Simulator_Port);
 		createProfile(TestData.connectionProfileName_Office_OTDR, TestData.connectionProfile_Office_OTDR_IP_Address,
 				TestData.connectionProfile_Office_OTDR_Port);
@@ -979,13 +987,14 @@ public class BaseClass {
 
 		if (!module.equals(TestData.tightBufferModuleName)) {
 			softAssert.assertTrue(JobSearch.isCutNumberHeaderDisplayed(),
-					"Cut Number header in cut number field table is not displayed ");
+					"Cut Number header in cut number field table is not displayed during " + module + " for "
+							+ jobNumber);
 			softAssert.assertTrue(JobSearch.isUserHeaderDisplayed(),
-					"User header in cut number field table is not displayed ");
+					"User header in cut number field table is not displayed during " + module + " for " + jobNumber);
 			softAssert.assertTrue(JobSearch.isDateHeaderDisplayed(),
-					"Date Header in cut number field table is not displayed ");
+					"Date Header in cut number field table is not displayed during " + module + " for " + jobNumber);
 			softAssert.assertTrue(JobSearch.isProcessHeaderDisplayed(),
-					"Process Header in cut number field table is not displayed ");
+					"Process Header in cut number field table is not displayed during " + module + " for " + jobNumber);
 			softAssert.assertTrue(JobSearch.listOfRowsInCutNumberFieldTable().size() > 0,
 					"No rows present in Cut number field table");
 		}
@@ -995,11 +1004,12 @@ public class BaseClass {
 		JobSearch.searchCutNumberInfo().clear();
 		Dashboard.waitUntilLoaderIsNotDisplayed();
 		softAssert.assertTrue(JobSearch.isCutNumberInfoHeaderDisplayed(),
-				"Cut Number Info header in cut number info field table is not displayed ");
+				"Cut Number Info header in cut number info field table is not displayed during " + module + " for "
+						+ jobNumber);
 		softAssert.assertTrue(JobSearch.isDateHeaderDisplayed(),
-				"Date Header in cut number info field table is not displayed ");
+				"Date Header in cut number info field table is not displayed  during " + module + " for " + jobNumber);
 		softAssert.assertTrue(JobSearch.listOfRowsInCutNumberInfoFieldTable().size() > 0,
-				"No rows present in Cut Number Info field table");
+				"No rows present in Cut Number Info field table during " + module + " for " + jobNumber);
 		JobSearch.searchCutNumberInfo().sendKeys(cutNumberInfo);
 		actions.sendKeys(Keys.ENTER).perform();
 		Thread.sleep(1000);
@@ -1460,6 +1470,65 @@ public class BaseClass {
 		}
 	}
 
+	public static void runWtcTests() throws Exception {
+		Dashboard.waitUntilLoaderIsNotDisplayed();
+		dismissSyncStatusPopupIfDisplayed();
+		JobDetailsPage.isWtcTabDisplayed();
+		JobDetailsPage.wtcTab().click();
+		dismissSyncStatusPopupIfDisplayed();
+		WTC.isRunTestsButtonDisplayed();
+		int numberOfRibbonsTested = 0;
+		for (int i = 1; numberOfRibbonsTested < TestData.numberofRibbonsToTest; i++) {
+			dismissSyncStatusPopupIfDisplayed();
+			String nextWorkerToSelect = "JGR-" + i + "-" + i + "-" + i;
+			try {
+				WTC.incompleteStatus().click();
+				robot.mouseWheel(-1);
+				WTC.selectWorkerField().click();
+				actions.sendKeys(nextWorkerToSelect).build().perform();
+				actions.sendKeys(Keys.TAB).build().perform();
+			} catch (Exception e) {
+
+			}
+			while (true) {
+				try {
+					WTC.checkButton().click();
+					Dashboard.waitUntilOkButtonIsDisplayed();
+					while (Dashboard.isOkButtonDisplayed()) {
+						try {
+							Thread.sleep(1000);
+							Dashboard.cancelButton().click();
+							Thread.sleep(1000);
+						} catch (Exception e) {
+						}
+					}
+					break;
+				} catch (Exception e) {
+					if (WTC.isErrorMessageDisplayed()) {
+						Dashboard.okButton().click();
+					}
+				}
+			}
+			while (true) {
+				try {
+					WTC.runTestsButton().click();
+					break;
+				} catch (Exception e) {
+					Thread.sleep(1000);
+				}
+			}
+			numberOfRibbonsTested++;
+			robot.mouseWheel(3);
+//			System.out.println("Ribbons Tested - " + numberOfRibbonsTested);
+			JobDetailsPage.ribbonPosition(numberOfRibbonsTested).click();
+			robot.mouseWheel(1);
+			if (i == 5) {
+				i = 0;
+			}
+		}
+		Dashboard.waitUntilStopButtonIsNotDisplayed();
+	}
+
 	public static void downloadSorFiles() throws Exception {
 		Dashboard.waitUntilLoaderIsNotDisplayed();
 		for (int i = 1; i <= 4; i++) {
@@ -1572,7 +1641,8 @@ public class BaseClass {
 			verifyTestResultsCount(TestData.copyJobDestinationJobExpectedIncompleteTestsBeforeCompletionLayer,
 					TestData.copyJobDestinationJobExpectedPassedTestsBeforeCompletionLayer,
 					TestData.copyJobDestinationJobExpectedFailedTestsBeforeCompletionLayer,
-					"destination Job before clicking on completion tab for Job # " + TestData.copyJobSourceJobNumber + ". ");
+					"destination Job before clicking on completion tab for Job # " + TestData.copyJobSourceJobNumber
+							+ ". ");
 
 			softAssert.assertEquals(JobDetailsPage.OTDR_Length().getText(),
 					TestData.copyJobDestinationJobExpectedOtdrLength,
@@ -2343,12 +2413,15 @@ public class BaseClass {
 						"Did not find popup with message as : A sales order must be selected to generate a shipping label.");
 			}
 			Dashboard.okButton().click();
+
+			isRemoveSalesOrderFlowCompleted = true;
+
+			verify_Reel_Id_And_Remove_Sales_Order_Changes_In_Completion_Tab();
+
 		} else {
 			softAssert.fail(
 					"As sales order was not removed, skipping the verication of reel id changes in completion tab and reports tab.");
 		}
-
-		shouldRemoveSalesOrder = false;
 	}
 
 	public static void verify_Reel_Id_And_Remove_Sales_Order_Changes_In_Job_Search_Popup() throws Exception {
@@ -2386,51 +2459,77 @@ public class BaseClass {
 			Dashboard.isLoaderNotDisplayed();
 			message = "Fiber test with sales order for Job # ";
 		} else {
-			message = "Fiber test after removing sales order for Job # ";
+			if (isRemoveSalesOrderFlowCompleted) {
+				Completion.reelItem().clear();
+				Completion.reelItem()
+						.sendKeys(TestData.fiberTestReelItemForReelIdAndSalesOrderVerificationAfterDeletingLastDigit);
+				Dashboard.isLoaderDisplayed();
+				Dashboard.isLoaderNotDisplayed();
+				message = "Fiber test after making reel item as Fail for Job # ";
+			} else {
+				message = "Fiber test after removing sales order for Job # ";
+			}
 			Thread.sleep(2000);
 		}
 
-		verifyTestResultsCount(TestData.incompleteTestCountForReelIdAndSalesOrderVerification,
-				TestData.passedTestCountForReelIdAndSalesOrderVerification,
-				TestData.failedTestCountForReelIdAndSalesOrderVerification,
-				message + TestData.fiberTestJobSearchJobNumberForReelIdAndSalesOrderVerification + ".");
+		if (isRemoveSalesOrderFlowCompleted) {
+			verifyTestResultsCount(TestData.incompleteTestCountForReelIdAndSalesOrderVerificationAfterDeletingLastDigit,
+					TestData.passedTestCountForReelIdAndSalesOrderVerificationAfterDeletingLastDigit,
+					TestData.failedTestCountForReelIdAndSalesOrderVerificationAfterDeletingLastDigit,
+					message + TestData.fiberTestJobSearchJobNumberForReelIdAndSalesOrderVerification + ".");
+			softAssert.assertEquals(Completion.reelItem().getText(),
+					TestData.fiberTestReelItemForReelIdAndSalesOrderVerificationAfterDeletingLastDigit,
+					"Reel item mismatch in Completion Tab.");
+			softAssert.assertEquals(Completion.reelItem().getAttribute("IsKeyboardFocusable"), "True",
+					"Reel Item field should be editable.");
+			softAssert.assertEquals(Completion.getReelItemResult(), "FAIL",
+					"Reel Item result was supposed to be FAIL.");
+			softAssert.assertFalse(Completion.isReelLabelTestDisplayed(),
+					"Reel Label test was not supposed to be displayed as Reel Item was supposed to be failed");
+		} else {
+			verifyTestResultsCount(TestData.incompleteTestCountForReelIdAndSalesOrderVerification,
+					TestData.passedTestCountForReelIdAndSalesOrderVerification,
+					TestData.failedTestCountForReelIdAndSalesOrderVerification,
+					message + TestData.fiberTestJobSearchJobNumberForReelIdAndSalesOrderVerification + ".");
 
-		softAssert.assertEquals(Completion.reelItem().getText(), TestData.fiberTestReelItemForReelIdAndSalesOrderVerification,
-				"Reel item mismatch in Completion Tab.");
-		softAssert.assertEquals(Completion.reelItem().getAttribute("IsKeyboardFocusable"), "True",
-				"Reel Item field should be editable.");
-		softAssert.assertEquals(Completion.getReelItemResult(), "PASS", "Reel Item result was supposed to be Pass.");
-		try {
-			softAssert.assertEquals(Completion.iseReelLabel().getText(), TestData.fiberTestExpectedIseReelLabel,
-					"ISE Reel Label mismatch in Completion Tab.");
-			softAssert.assertEquals(Completion.iseReelLabel().getAttribute("IsKeyboardFocusable"), "False",
-					"ISE Reel Label field should be non-editable.");
-			softAssert.assertEquals(Completion.getIseReelLabelResult(), "PASS",
-					"ISE Reel Label result was supposed to be Pass.");
+			softAssert.assertEquals(Completion.reelItem().getText(),
+					TestData.fiberTestReelItemForReelIdAndSalesOrderVerification,
+					"Reel item mismatch in Completion Tab.");
+			softAssert.assertEquals(Completion.reelItem().getAttribute("IsKeyboardFocusable"), "True",
+					"Reel Item field should be editable.");
+			softAssert.assertEquals(Completion.getReelItemResult(), "PASS",
+					"Reel Item result was supposed to be Pass.");
+			try {
+				softAssert.assertEquals(Completion.iseReelLabel().getText(), TestData.fiberTestExpectedIseReelLabel,
+						"ISE Reel Label mismatch in Completion Tab.");
+				softAssert.assertEquals(Completion.iseReelLabel().getAttribute("IsKeyboardFocusable"), "False",
+						"ISE Reel Label field should be non-editable.");
+				softAssert.assertEquals(Completion.getIseReelLabelResult(), "PASS",
+						"ISE Reel Label result was supposed to be Pass.");
 
-			softAssert.assertEquals(Completion.oseReelLabel().getText(), TestData.fiberTestExpectedOseReelLabel,
-					"OSE Reel Label mismatch in Completion Tab.");
-			softAssert.assertEquals(Completion.oseReelLabel().getAttribute("IsKeyboardFocusable"), "False",
-					"OSE Reel Label field should be non-editable.");
-			softAssert.assertEquals(Completion.getOseReelLabelResult(), "PASS",
-					"OSE Reel Label result was supposed to be Pass.");
+				softAssert.assertEquals(Completion.oseReelLabel().getText(), TestData.fiberTestExpectedOseReelLabel,
+						"OSE Reel Label mismatch in Completion Tab.");
+				softAssert.assertEquals(Completion.oseReelLabel().getAttribute("IsKeyboardFocusable"), "False",
+						"OSE Reel Label field should be non-editable.");
+				softAssert.assertEquals(Completion.getOseReelLabelResult(), "PASS",
+						"OSE Reel Label result was supposed to be Pass.");
 
-			softAssert.assertEquals(Completion.reelLabel().getText(), TestData.fiberTestExpectedReelLabel,
-					"Reel Label mismatch in Completion Tab.");
-			softAssert.assertEquals(Completion.reelLabel().getAttribute("IsKeyboardFocusable"), "False",
-					"Reel Label field should be non-editable.");
-			softAssert.assertEquals(Completion.getReelLabelResult(), "PASS",
-					"Reel Label result was supposed to be Pass.");
-		} catch (Exception e) {
-			if (!shouldRemoveSalesOrder) {
-				softAssert.fail(
-						"Reel Label is not available after entering steel Reel Item when sales order was selected.");
-			} else {
-				softAssert.fail(
-						"Reel Label is not available after removing sales order for a Job which had reel label when sales order was selected.");
+				softAssert.assertEquals(Completion.reelLabel().getText(), TestData.fiberTestExpectedReelLabel,
+						"Reel Label mismatch in Completion Tab.");
+				softAssert.assertEquals(Completion.reelLabel().getAttribute("IsKeyboardFocusable"), "False",
+						"Reel Label field should be non-editable.");
+				softAssert.assertEquals(Completion.getReelLabelResult(), "PASS",
+						"Reel Label result was supposed to be Pass.");
+			} catch (Exception e) {
+				if (!shouldRemoveSalesOrder) {
+					softAssert.fail(
+							"Reel Label is not available after entering steel Reel Item when sales order was selected.");
+				} else {
+					softAssert.fail(
+							"Reel Label is not available after removing sales order for a Job which had reel label when sales order was selected.");
+				}
 			}
 		}
-
 	}
 
 	public static void runWtcTestForAllRibbonsInJob(int numberOfRibbonsToTestBeforeTakingDump,
@@ -2502,7 +2601,7 @@ public class BaseClass {
 				i = 0;
 			}
 		}
-		WTC.waitUntilStopButtonIsNotDisplayed();
+		Dashboard.waitUntilStopButtonIsNotDisplayed();
 	}
 
 	public static void verify_Fiber_Test_Module() throws Exception {
@@ -2537,12 +2636,28 @@ public class BaseClass {
 	}
 
 	public static void verify_WTC_Test_Module() throws Exception {
-//		if(!isGetLengthAndEditAdjLengthDoneForWtcJob)
-//		{
-//			runGetLengthTest(TestData.wtcTestModuleName);
-//			editAdjLength(TestData.wtcTestEditAdjLengthValue);
-//			isGetLengthAndEditAdjLengthDoneForWtcJob = true;
-//		}
+
+		TestData.useOfficeOtdr = false;
+
+		updateTestSettings();
+
+		navigateToModule(TestData.wtcTestModuleName);
+
+		createProfile(TestData.connectionProfileName_JGR_One, TestData.connectionProfile_Simulator_IP_Address,
+				TestData.connectionProfile_Simulator_Port);
+
+		searchJobAndNavigationToJobDetailsPage(TestData.wtcTestModuleName, TestData.jobSearchOrg,
+				TestData.wtcTestJobSearchJobNumber, TestData.wtcTestJobSearchCutNumber,
+				TestData.wtcTestJobSearchCutNumberInfo);
+
+		runGetLengthTest(TestData.wtcTestModuleName);
+
+		editAdjLength(TestData.wtcTestEditAdjLengthValue);
+
+		isGetLengthAndEditAdjLengthDoneForWtcJob = true;
+
+		runWtcTests();
+
 	}
 
 	public static void verify_Tight_Buffer_Module() throws Exception {

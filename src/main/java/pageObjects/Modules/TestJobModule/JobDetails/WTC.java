@@ -54,12 +54,6 @@ public class WTC extends BaseClass {
 		return isElementDisplayed(ByXPath.xpath("//Button[@Name='Run Tests']"), 3);
 	}
 
-	public static void waitUntilStopButtonIsNotDisplayed() throws InterruptedException {
-		while (isElementDisplayed(ByName.name("Stop"), 1)) {
-			Thread.sleep(1000);
-		}
-	}
-
 	public static boolean isErrorMessageDisplayed() {
 		return isElementDisplayed(ByName.name("Error Message"), 1);
 	}
