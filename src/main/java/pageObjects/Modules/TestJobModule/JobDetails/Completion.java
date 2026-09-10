@@ -112,4 +112,8 @@ public class Completion extends BaseClass {
 	public static boolean isReelSizeDisplayed() {
 		return isElementDisplayed(ByName.name("Reel Size"), 5);
 	}
+	
+	public static WebElement printLengthVerification() {
+		return driver.findElement(By.xpath("//Text[@Name='Print Length Verification']/following-sibling::Edit[1]"));
+	}
 }

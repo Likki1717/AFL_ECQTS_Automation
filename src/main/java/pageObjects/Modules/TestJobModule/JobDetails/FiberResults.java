@@ -42,38 +42,16 @@ public class FiberResults extends BaseClass {
 	}
 
 	public static boolean isRunTestsButtonDisplayed() {
-		return isElementDisplayed(By.xpath("(//Button[@Name='Run Tests'])[1]"), 5);
-	}
-
-	public static boolean isContinueTestsButtonDisplayed() {
-		return isElementDisplayed(ByAccessibilityId.AccessibilityId("ContinueButton"), 10);
-	}
-
-	public static boolean isStopTestsButtonDisplayed() {
-		return isElementDisplayed(ByAccessibilityId.AccessibilityId("StopButton"), 10);
-	}
-
-	public static void waitUntilStopTestsButtonIsDisplayed() throws InterruptedException {
-		while (!isElementDisplayed(ByAccessibilityId.AccessibilityId("StopButton"), 5)) {
-			Thread.sleep(1000);
-		}
+		return isElementDisplayed(By.xpath("(//Button[@Name='Run Tests'])[1]"), 3);
 	}
 
 	public static boolean isTestsCompletedTextDisplayed() {
-		return isElementDisplayed(ByName.name("Tests Complete"), 5);
+		return isElementDisplayed(ByName.name("Tests Complete"), 1);
 	}
 
 	public static void waitUntilTestsCompletedTextIsDisplayed() {
 		while (!isElementDisplayed(ByName.name("Tests Complete"), 5)) {
 		}
-	}
-
-	public static WebElement stopButton() {
-		return driver.findElementByAccessibilityId("StopButton");
-	}
-
-	public static WebElement continueButton() {
-		return driver.findElementByName("Continue");
 	}
 
 	public static WebElement goToFiberButton() {
@@ -107,12 +85,25 @@ public class FiberResults extends BaseClass {
 
 	public static WebElement SOR_DownloadIcon(int sorToBeDownloaded) {
 		return driver.findElementByXPath(
-				"(//Text[contains(@Name, ':')]/following-sibling::Image)[" + sorToBeDownloaded + "]");
+				"(//Text[contains(@Name, '0:')]/following-sibling::Image)[" + sorToBeDownloaded + "]");
 	}
 
 	public static void waitUntil_SOR_DownloadIcon_IsDisplayed(int sorToBeDownloaded) {
-		isElementDisplayed(ByXPath.xpath(
-				"(//Text[contains(@Name, ':')]/following-sibling::Image)[" + sorToBeDownloaded + "]"), 100);
+		isElementDisplayed(
+				ByXPath.xpath("(//Text[contains(@Name, '0:')]/following-sibling::Image)[" + sorToBeDownloaded + "]"),
+				100);
+	}
+
+	public static boolean isLastUpdatedFieldDisplayed() {
+		return isElementDisplayed(ByName.name("Last Updated"), 5);
+	}
+
+	public static WebElement fiberID(int fiberPosition) {
+		return driver.findElement(By.xpath("(//Edit[contains(@AutomationId, 'StrandId')])["+fiberPosition+"]"));
+	}
+	
+	public static String getTestCount(int fiberPosition) {
+	    return driver.findElement(By.xpath("(//Text[@Name='Test Count:']/following-sibling::Text[1])["+fiberPosition+"]")).getText();
 	}
 
 }

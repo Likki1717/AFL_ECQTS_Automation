@@ -43,8 +43,8 @@ public class JobDetailsPage extends BaseClass {
 		return isElementDisplayed(By.xpath("//ListItem/Text"), 3);
 	}
 
-	public static WebElement firstBufferTubeTab() {
-		return driver.findElement(By.xpath("//Text[@AutomationId='OpticsButton']/../following-sibling::ListItem/Text"));
+	public static WebElement bufferTubeTab(int bufferTubePosition) {
+		return driver.findElement(By.xpath("//Text[@AutomationId='OpticsButton']/../following-sibling::ListItem["+bufferTubePosition+"]/Text"));
 	}
 
 	public static WebElement reportsTab() {

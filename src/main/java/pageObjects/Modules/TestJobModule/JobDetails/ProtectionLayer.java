@@ -31,7 +31,7 @@ public class ProtectionLayer extends BaseClass {
 		return driver.findElement(By.xpath("//*[@Name='J1 180 Deg Wall']/following::Edit[1]"));
 	}
 
-	public static WebElement editJ1270DegWall() {
+	public static WebElement j1270DegWall() {
 		return driver.findElement(By.xpath("//*[@Name='J1 270 Deg Wall']/following::Edit[1]"));
 	}
 
@@ -45,5 +45,13 @@ public class ProtectionLayer extends BaseClass {
 
 	public static WebElement TB_Jacket_Adhesion() {
 		return driver.findElement(By.xpath("//*[@Name='TB Jacket Adhesion']/following::ComboBox[1]"));
+	}
+	
+	public static WebElement swr_Matrix_Quality() {
+		return driver.findElement(By.xpath("//Text[@Name='SWR Matrix Quality']/following-sibling::ComboBox[1]"));
+	}
+	
+	public static WebElement j1_Nominal_OD() {
+		return driver.findElement(By.xpath("//*[@Name='J1 Nominal OD']/following-sibling::Edit[1]"));
 	}
 }

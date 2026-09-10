@@ -496,12 +496,12 @@ public class BaseClass {
 				TestData.connectionProfile_Simulator_Port);
 		createProfile(TestData.connectionProfileName_JGR_Two, TestData.connectionProfile_Simulator_IP_Address,
 				TestData.connectionProfile_Simulator_Port);
-		createProfile(TestData.connectionProfileName_JGR_Three, TestData.connectionProfile_Simulator_IP_Address,
-				TestData.connectionProfile_Simulator_Port);
-		createProfile(TestData.connectionProfileName_JGR_Four, TestData.connectionProfile_Simulator_IP_Address,
-				TestData.connectionProfile_Simulator_Port);
-		createProfile(TestData.connectionProfileName_JGR_Five, TestData.connectionProfile_Simulator_IP_Address,
-				TestData.connectionProfile_Simulator_Port);
+//		createProfile(TestData.connectionProfileName_JGR_Three, TestData.connectionProfile_Simulator_IP_Address,
+//				TestData.connectionProfile_Simulator_Port);
+//		createProfile(TestData.connectionProfileName_JGR_Four, TestData.connectionProfile_Simulator_IP_Address,
+//				TestData.connectionProfile_Simulator_Port);
+//		createProfile(TestData.connectionProfileName_JGR_Five, TestData.connectionProfile_Simulator_IP_Address,
+//				TestData.connectionProfile_Simulator_Port);
 		createProfile(TestData.connectionProfileName_Office_OTDR, TestData.connectionProfile_Office_OTDR_IP_Address,
 				TestData.connectionProfile_Office_OTDR_Port);
 		createProfile(TestData.connectionProfileName_Simulator, TestData.connectionProfile_Simulator_IP_Address,
@@ -747,6 +747,11 @@ public class BaseClass {
 
 		if (!isManualJobSearchNeeded && JobDetailsPage.isMissingFiberIdWarningPopupDisplayed()) {
 			Dashboard.okButton().click();
+		} else if (Dashboard.isOkButtonDisplayed()) {
+			System.out.println("* Expected isManualJobSearchNeeded as False, found --> " + isManualJobSearchNeeded);
+			System.out.println(
+					"* Expected missing fiber id warning popup, found --> " + Dashboard.getMessageDisplayedOnPopup());
+			Dashboard.okButton().click();
 		}
 
 		// Waiting for buffer tube to display so that we can confirm data is loaded
@@ -833,17 +838,15 @@ public class BaseClass {
 
 	public static void navigateToModule(String module) throws Exception {
 		while (!Dashboard.isImportDataModuleDisplayed()) {
-			if (Dashboard.isOpenNavigationButtonDisplayed()) {
+			while (Dashboard.isOpenNavigationButtonDisplayed()) {
 				Dashboard.openNavigationButton().click();
-				Thread.sleep(1000);
-			}
-			if (!SideMenu.isDashboardButtonDisplayed()) {
-				Dashboard.openNavigationButton().click();
+				if (SideMenu.isDashboardButtonDisplayed()) {
+					break;
+				}
 			}
 			SideMenu.dashboardButton().click();
 			Thread.sleep(1000);
 		}
-		Thread.sleep(1000);
 		switch (module) {
 		case TestData.fiberTestModuleName:
 			Dashboard.fiberTestModule().click();
@@ -1069,6 +1072,10 @@ public class BaseClass {
 		String expectedTestResultsCounts = "Incomplete: " + expectedIncompleteTestsCount + ", Passed: "
 				+ expectedPassedTestsCount + ", Failed: " + expectedFailedTestsCount;
 
+		if (Dashboard.isOkButtonDisplayed()) {
+			Dashboard.okButton().click();
+		}
+
 		Dashboard.waitUntilLoaderIsNotDisplayed();
 
 		String actualTestResultsCount = JobDetailsPage.getActualTestResultsCounts();
@@ -1085,14 +1092,22 @@ public class BaseClass {
 				ProtectionLayer.TB_Jacket_Adhesion().sendKeys("2");
 				return;
 			}
+			ProtectionLayer.j1MinSpotWall().sendKeys("1600");
+			ProtectionLayer.j190DegWall().sendKeys("1000");
+			ProtectionLayer.j1180DegWall().sendKeys("1000");
+			ProtectionLayer.j1270DegWall().sendKeys("2000");
+			if (module.equals(TestData.wtcTestModuleName)) {
+				ProtectionLayer.swr_Matrix_Quality().sendKeys("2");
+				ProtectionLayer.j1_Nominal_OD().sendKeys("16.3");
+				robot.keyPress(KeyEvent.VK_TAB);
+				robot.keyRelease(KeyEvent.VK_TAB);
+				Thread.sleep(1000);
+				return;
+			}
 			ProtectionLayer.j1NomialODVertical().sendKeys("1000");
 			ProtectionLayer.j1NomialODHorizontal().sendKeys("1500");
 			ProtectionLayer.j1_1stRipcord().click();
 			ProtectionLayer.j1_1stRipcord().sendKeys("RIP00106");
-			ProtectionLayer.j1MinSpotWall().sendKeys("1600");
-			ProtectionLayer.j190DegWall().sendKeys("1000");
-			ProtectionLayer.j1180DegWall().sendKeys("1000");
-			ProtectionLayer.editJ1270DegWall().sendKeys("2000");
 			ProtectionLayer.core1Lay().sendKeys("40");
 			ProtectionLayer.FRP_Nomial_OD().sendKeys("1600");
 		} catch (Exception e) {
@@ -1401,8 +1416,8 @@ public class BaseClass {
 			Dashboard.waitUntilLoaderIsNotDisplayed();
 			if (startTestFromFirstBufferTube) {
 				JobDetailsPage.isBufferTubeDisplayed();
-				wait.until(ExpectedConditions.elementToBeClickable(JobDetailsPage.firstBufferTubeTab()));
-				JobDetailsPage.firstBufferTubeTab().click();
+				wait.until(ExpectedConditions.elementToBeClickable(JobDetailsPage.bufferTubeTab(1)));
+				JobDetailsPage.bufferTubeTab(1).click();
 				startTestFromFirstBufferTube = false;
 			}
 // Below if blocked is needed to click on Show more info button and to click on Run Test button of first fiber,
@@ -1414,6 +1429,8 @@ public class BaseClass {
 				FiberResults.isRunTestsButtonDisplayed();
 				wait = new WebDriverWait(driver, 40);
 				wait.until(ExpectedConditions.elementToBeClickable(FiberResults.runTestsButtonOfFirstFiber()));
+				softAssert.assertTrue(FiberResults.isLastUpdatedFieldDisplayed(),
+						"Clicking on Show more button is supposed to display Last Updated field.");
 				FiberResults.runTestsButtonOfFirstFiber().click();
 				startTestingInNewBufferTube = false;
 			}
@@ -1423,7 +1440,7 @@ public class BaseClass {
 			Thread.sleep(1000);
 			Dashboard.okButton().click();
 			fibersTested++;
-			FiberResults.isGoToFiberButtonVisible();
+//			FiberResults.isGoToFiberButtonVisible();
 			wait.until(ExpectedConditions.elementToBeClickable(FiberResults.goToFiberButton()));
 			FiberResults.goToFiberButton().click();
 			if (module.equals(TestData.tightBufferModuleName)
@@ -1431,40 +1448,31 @@ public class BaseClass {
 				FiberResults.waitUntilTestsCompletedTextIsDisplayed();
 				return;
 			}
-			if (!TestData.useOfficeOtdr && module.equals(TestData.fiberTestModuleName)) {
-				Dashboard.waitUntilOkButtonIsDisplayed();
-			} else {
-				FiberResults.waitUntilStopTestsButtonIsDisplayed();
+
+			String stopOrOkButton = Dashboard.waitUntilDisplayedAndReturn_OK_Or_STOP_Or_COMPLETED();
+
+			if (stopOrOkButton.equals("OK") && Dashboard.getMessageDisplayedOnPopup().contains("Maximum Attenuation")) {
+				Dashboard.okButton().click();
+				Thread.sleep(1000);
+				stopOrOkButton = Dashboard.waitUntilDisplayedAndReturn_OK_Or_STOP_Or_COMPLETED();
 			}
-//			if (TestData.useOfficeOtdr) {
-//			FiberResults.waitUntilStopTestsButtonIsDisplayed();
-//			} else {
-//				Dashboard.waitUntilOkButtonIsDisplayed();
-//				Dashboard.okButton().click(); // Ok button on Max Attenutation Popup
-//				Dashboard.waitUntilOkButtonIsDisplayed();
-//			}
-//			System.out.println("Number of fiberes to test - " + numberOfFibersToTest);
-//			System.out.println("Number of FIber TESTED - " + fibersTested);
+
 			if (numberOfFibersToTest == fibersTested) {
-//				System.out.println("Expected number of fibers are TESTED");
-//				if (TestData.useOfficeOtdr) {
-				FiberResults.stopButton().click();
-//				} else {
-//					System.out.println("Need to click on CANCEL button to stop further fibers testing");
-//					Dashboard.cancelButton().click();
-//				}
-			} else {
-				if (TestData.useOfficeOtdr) {
-					FiberResults.continueButton().click();
+				if (stopOrOkButton.equals("COMPLETED")) {
+					return;
 				} else {
-					Dashboard.okButton().click();
+					Dashboard.clickStopOrCancelButton(stopOrOkButton);
+					return;
 				}
-				if (FiberResults.isTestsCompletedTextDisplayed()) {
-					FiberResults.continueButton().click();
+			} else {
+				if (stopOrOkButton.equals("COMPLETED")) {
+					Dashboard.continueButton().click();
 					startTestingInNewBufferTube = true;
 					if (!FiberResults.isRunTestsButtonDisplayed()) {
 						startTestFromFirstBufferTube = true;
 					}
+				} else {
+					Dashboard.clickContinueButtonAndIgnoreIfOkButton(stopOrOkButton);
 				}
 			}
 		}
@@ -1526,7 +1534,7 @@ public class BaseClass {
 				i = 0;
 			}
 		}
-		Dashboard.waitUntilStopButtonIsNotDisplayed();
+		Dashboard.waitUntilStopButtonsAreNotDisplayed();
 	}
 
 	public static void downloadSorFiles() throws Exception {
@@ -1540,12 +1548,17 @@ public class BaseClass {
 			copyPasteAndClickEnter(TestData.SOR_Files_Path);
 			Thread.sleep(500);
 
-			robot.keyPress(KeyEvent.VK_ALT);
-			robot.keyPress(KeyEvent.VK_S);
+			for (int j = 0; j < 2; j++) {
+				robot.keyPress(KeyEvent.VK_ALT);
+				robot.keyPress(KeyEvent.VK_S);
 
-			robot.keyRelease(KeyEvent.VK_S);
-			robot.keyRelease(KeyEvent.VK_ALT);
+				robot.keyRelease(KeyEvent.VK_S);
+				robot.keyRelease(KeyEvent.VK_ALT);
+
+				Thread.sleep(1000);
+			}
 			i = i + 2;
+
 			Dashboard.waitUntilLoaderIsNotDisplayed();
 			Thread.sleep(1000);
 		}
@@ -2022,8 +2035,8 @@ public class BaseClass {
 					dismissSyncStatusPopupIfDisplayed();
 					wait = new WebDriverWait(driver, 40);
 					if (TestData.useOfficeOtdr) {
-						FiberResults.waitUntilStopTestsButtonIsDisplayed();
-						FiberResults.stopButton().click();
+						Dashboard.waitUntilStopButtonIsDisplayed();
+						Dashboard.stopButton().click();
 						System.out.println("  - Clicked on Stop test button");
 					} else {
 						Dashboard.waitUntilOkButtonIsDisplayed();
@@ -2083,76 +2096,109 @@ public class BaseClass {
 		}
 	}
 
-	public static void enterCompletionLayerValues(String module) {
+	public static void enterCompletionLayerValues(String module) throws Exception {
+
 		try {
 			Dashboard.waitUntilLoaderIsNotDisplayed();
 			JobDetailsPage.wait_Until_OSE_Button_Is_Enabled();
-//			JobDetailsPage.isCompletionTabDisplayed();
 			JobDetailsPage.completionTab().click();
-			if (TestData.tightBufferModuleName.equals(module)) {
+
+			boolean isTightBuffer = module.equals(TestData.tightBufferModuleName);
+			boolean isWtc = module.equals(TestData.wtcTestModuleName);
+			boolean isFiber = module.equals(TestData.fiberTestModuleName);
+
+			// Reel Size is required for Tight Buffer and WTC
+			if (isTightBuffer || isWtc) {
+
 				softAssert.assertTrue(Completion.isReelSizeDisplayed(),
 						"Waited for 10 seconds, Reel Size is not displayed ");
+
 				Completion.reelSize().sendKeys("42in Wood Reel");
-				actions.sendKeys(Keys.ENTER).perform();
-				Completion.jacketColor().sendKeys("2");
-				return;
+
+				robot.keyPress(KeyEvent.VK_ENTER);
+				robot.keyRelease(KeyEvent.VK_ENTER);
 			}
-			softAssert.assertTrue(Completion.is_ISE_SeqMark_Test_Displayed(),
-					"Waited for 10 seconds, ISE Sequence test is not displayed ");
 
-			Completion.oseSeqMark().sendKeys("1");
-			Completion.oseSeqMark_UoM().sendKeys("m");
+			// Tight Buffer does not have ISE/OSE Sequence tests
+			if (!isTightBuffer) {
 
-			Completion.iseSeqMark_UoM().sendKeys("m");
-			if (TestData.fiberTestModuleName.equals(module)) {
-				Completion.iseSeqMark().sendKeys(TestData.fiberTestCompletionTabIseSeqValue);
+				// Common for Fiber, PK Fiber and WTC
+				softAssert.assertTrue(Completion.is_ISE_SeqMark_Test_Displayed(),
+						"Waited for 10 seconds, ISE Sequence test is not displayed ");
+
+				Completion.oseSeqMark().sendKeys("1");
+				Completion.oseSeqMark_UoM().sendKeys("m");
+				Completion.iseSeqMark_UoM().sendKeys("m");
+
+				// Fiber Test specific - verify PASS result
+				if (isFiber) {
+
+					Completion.iseSeqMark().sendKeys(TestData.fiberTestCompletionTabIseSeqValue);
+
+					Dashboard.isLoaderDisplayed();
+					Dashboard.waitUntilLoaderIsNotDisplayed();
+
+					if (Dashboard.isOkButtonDisplayed()) {
+						Dashboard.okButton().click();
+					}
+
+					softAssert.assertEquals(Completion.getIseTestResult(), "PASS",
+							"Mismatch in Completion tab ISE Seq test result.");
+
+					softAssert.assertEquals(Completion.getOseTestResult(), "PASS",
+							"Mismatch in Completion tab OSE Seq test result.");
+				}
+
+				// Invalid Meter Mark validation
+				Completion.iseSeqMark().clear();
+
+				Completion.iseSeqMark()
+						.sendKeys(String.valueOf(Integer.parseInt(TestData.fiberTestCompletionTabIseSeqValue) + 1));
 
 				Dashboard.isLoaderDisplayed();
-				Dashboard.waitUntilLoaderIsNotDisplayed();
 
-				Thread.sleep(1000);
-				softAssert.assertEquals(Completion.getIseTestResult(), "PASS",
+				softAssert.assertTrue(Completion.isInvalidMeterMarksPopupDisplayed(),
+						"Waited for 30 seconds, Invalid Meter Marks popup is not visible");
+
+				if (Completion.isInvalidMeterMarksPopupDisplayed()) {
+					Completion.okButton().click();
+					Thread.sleep(2000);
+				}
+
+				softAssert.assertEquals(Completion.getIseTestResult(), "FAIL",
 						"Mismatch in Completion tab ISE Seq test result.");
-				softAssert.assertEquals(Completion.getOseTestResult(), "PASS",
+
+				softAssert.assertEquals(Completion.getOseTestResult(), "FAIL",
 						"Mismatch in Completion tab OSE Seq test result.");
 
+				// Common for Fiber, PK Fiber and WTC
+				Completion.ISE_Print_Verified().sendKeys("2");
+				Completion.OSE_Print_Verified().sendKeys("2");
+
+				// Print Spacing is common for Fiber, PK Fiber and WTC
 				Completion.OSE_Print_Spacing().sendKeys("2");
 				Completion.ISE_Print_Spacing().sendKeys("2");
+
+				// Module-specific fields
+				if (isWtc) {
+					Completion.printLengthVerification().sendKeys("3045");
+				} else {
+					// Fiber and PK Fiber
+					Completion.reelItem().sendKeys(TestData.fiberTestReelItem);
+				}
 			}
-			Completion.iseSeqMark().clear();
-			Completion.iseSeqMark()
-					.sendKeys(String.valueOf(Integer.parseInt(TestData.fiberTestCompletionTabIseSeqValue) + 1));
-
-			Dashboard.isLoaderDisplayed();
-
-			softAssert.assertTrue(Completion.isInvalidMeterMarksPopupDisplayed(),
-					"Waited for 30 seconds, Invalid Meter Marks popup is not visible");
-
-			if (Completion.isInvalidMeterMarksPopupDisplayed()) {
-				Completion.okButton().click();
-				Thread.sleep(2000);
-			}
-
-			softAssert.assertEquals(Completion.getIseTestResult(), "FAIL",
-					"Mismatch in Completion tab ISE Seq test result.");
-			softAssert.assertEquals(Completion.getOseTestResult(), "FAIL",
-					"Mismatch in Completion tab OSE Seq test result.");
-
-			Completion.ISE_Print_Verified().sendKeys("2");
-			Completion.OSE_Print_Verified().sendKeys("2");
-
-			Completion.reelItem().sendKeys(TestData.fiberTestReelItem);
-
 			Completion.jacketColor().sendKeys("2");
+
+		} catch (Exception e) {
+
+			System.out.println(
+					"****Could not enter all the values in Completion tab, possibly this job does not have all fields****");
+
+		} finally {
 
 			robot.keyPress(KeyEvent.VK_TAB);
 			robot.keyRelease(KeyEvent.VK_TAB);
-
 			Thread.sleep(1000);
-
-		} catch (Exception e) {
-			System.out.println(
-					"****Could not enter all the values in Completion tab, possibly this job does not have all fields****");
 		}
 	}
 
@@ -2343,11 +2389,11 @@ public class BaseClass {
 
 		if (!Reports.isDownloadOCR_ReportDisplayed()) {
 			JobDetailsPage.reportsTab().click();
-//			Reports.isJobWarnings_ErrorsPopupDisplayed();
 			Dashboard.waitUntilOkButtonIsDisplayed();
 			Dashboard.okButton().click();
 		}
 		Reports.waitUntilDownloadOCR_ReportIsDisplayed();
+		Thread.sleep(1000);
 		Reports.opticalCharacteristics().click();
 		softAssert.assertTrue(Reports.isGeneratingReportsInBackgroundTextDisplayed(),
 				"Waited for 10 seconds, Generating Reports in background text is not displayed  ");
@@ -2360,8 +2406,8 @@ public class BaseClass {
 	}
 
 	public static void verify_If_SOR_And_OCR_Files_Downloaded() {
-		softAssert.assertEquals(getFilesCount(TestData.OCR_Report_Path), 2, "Mismatch in downloaded OCR report count.");
-		softAssert.assertEquals(getFilesCount(TestData.SOR_Files_Path), 4, "Mismatch in downloaded SOR files count.");
+		softAssert.assertEquals(getFilesCount(TestData.OCR_Report_Path), 3, "Mismatch in downloaded OCR report count.");
+		softAssert.assertEquals(getFilesCount(TestData.SOR_Files_Path), 6, "Mismatch in downloaded SOR files count.");
 	}
 
 	public static int getFilesCount(String folderPath) {
@@ -2426,8 +2472,6 @@ public class BaseClass {
 
 	public static void verify_Reel_Id_And_Remove_Sales_Order_Changes_In_Job_Search_Popup() throws Exception {
 
-		navigateToModule(TestData.fiberTestModuleName);
-
 		searchJobAndNavigationToJobDetailsPage(TestData.fiberTestModuleName, TestData.jobSearchOrg,
 				TestData.fiberTestJobSearchJobNumberForReelIdAndSalesOrderVerification,
 				TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo);
@@ -2465,7 +2509,7 @@ public class BaseClass {
 						.sendKeys(TestData.fiberTestReelItemForReelIdAndSalesOrderVerificationAfterDeletingLastDigit);
 				Dashboard.isLoaderDisplayed();
 				Dashboard.isLoaderNotDisplayed();
-				message = "Fiber test after making reel item as Fail for Job # ";
+				message = "Fiber test after making reel item as non steel for Job # ";
 			} else {
 				message = "Fiber test after removing sales order for Job # ";
 			}
@@ -2482,10 +2526,10 @@ public class BaseClass {
 					"Reel item mismatch in Completion Tab.");
 			softAssert.assertEquals(Completion.reelItem().getAttribute("IsKeyboardFocusable"), "True",
 					"Reel Item field should be editable.");
-			softAssert.assertEquals(Completion.getReelItemResult(), "FAIL",
-					"Reel Item result was supposed to be FAIL.");
+			softAssert.assertEquals(Completion.getReelItemResult(), "PASS",
+					"Reel Item result was supposed to be PASS.");
 			softAssert.assertFalse(Completion.isReelLabelTestDisplayed(),
-					"Reel Label test was not supposed to be displayed as Reel Item was supposed to be failed");
+					"Reel Label test was not supposed to be displayed as Reel Item was updated to non steel");
 		} else {
 			verifyTestResultsCount(TestData.incompleteTestCountForReelIdAndSalesOrderVerification,
 					TestData.passedTestCountForReelIdAndSalesOrderVerification,
@@ -2601,7 +2645,23 @@ public class BaseClass {
 				i = 0;
 			}
 		}
-		Dashboard.waitUntilStopButtonIsNotDisplayed();
+		Dashboard.waitUntilStopButtonsAreNotDisplayed();
+	}
+
+	public static void validateEditingFiberIdAndReTestCount() throws Exception {
+		String fiberId = TestData.getCurrentDateTimeStamp();
+		JobDetailsPage.bufferTubeTab(1).click();
+		FiberResults.fiberID(1).clear();
+		actions.sendKeys(fiberId).build().perform();
+		JobDetailsPage.bufferTubeTab(2).click();
+		Dashboard.waitUntilLoaderIsNotDisplayed();
+		JobDetailsPage.bufferTubeTab(1).click();
+		Dashboard.waitUntilLoaderIsNotDisplayed();
+
+//		System.out.println("Test count of 1st fiber --> " + FiberResults.getTestCount(1));
+//		System.out.println("Test count of 2nd fiber --> " + FiberResults.getTestCount(2));
+		softAssert.assertEquals(FiberResults.getTestCount(1), "2", "Mismatch in test count when fiber id is changed.");
+		softAssert.assertEquals(FiberResults.fiberID(1).getText(), fiberId, "Mismatch in the fiber id after it was edited.");
 	}
 
 	public static void verify_Fiber_Test_Module() throws Exception {
@@ -2624,6 +2684,8 @@ public class BaseClass {
 
 		runFiberTest(TestData.fiberTestModuleName, TestData.numberOfFibersToTest);
 
+		validateEditingFiberIdAndReTestCount();
+
 		downloadSorFiles();
 
 		enterCompletionLayerValues(TestData.fiberTestModuleName);
@@ -2641,14 +2703,15 @@ public class BaseClass {
 
 		updateTestSettings();
 
-		navigateToModule(TestData.wtcTestModuleName);
-
-		createProfile(TestData.connectionProfileName_JGR_One, TestData.connectionProfile_Simulator_IP_Address,
-				TestData.connectionProfile_Simulator_Port);
-
 		searchJobAndNavigationToJobDetailsPage(TestData.wtcTestModuleName, TestData.jobSearchOrg,
 				TestData.wtcTestJobSearchJobNumber, TestData.wtcTestJobSearchCutNumber,
 				TestData.wtcTestJobSearchCutNumberInfo);
+
+		verifyJobDetailsHeader(TestData.jobSearchOrg, TestData.wtcTestJobSearchJobNumber,
+				TestData.wtcTestJobSearchCutNumber, TestData.wtcTestJobSearchCutNumberInfo,
+				"WTC test with Job # " + TestData.wtcTestJobSearchJobNumber, TestData.wtcTestExpectedItemNumber);
+
+		enterProtectionLayerValues(TestData.wtcTestModuleName);
 
 		runGetLengthTest(TestData.wtcTestModuleName);
 
@@ -2658,6 +2721,18 @@ public class BaseClass {
 
 		runWtcTests();
 
+		downloadSorFiles();
+
+		JobDetailsPage.opticsTab().click();
+
+		robot.mouseWheel(100);
+
+		enterCompletionLayerValues(TestData.wtcTestModuleName);
+
+		download_OCR_Report();
+
+		verifyTestResultsCount(TestData.wtcTestExpectedIncompleteTestsCount, TestData.wtcTestExpectedPassedTestsCount,
+				TestData.wtcTestExpectedFailedTestsCount, "WTC Test with Job # " + TestData.wtcTestJobSearchJobNumber);
 	}
 
 	public static void verify_Tight_Buffer_Module() throws Exception {

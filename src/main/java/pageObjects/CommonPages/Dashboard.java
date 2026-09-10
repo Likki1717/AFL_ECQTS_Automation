@@ -1,5 +1,7 @@
 package pageObjects.CommonPages;
 
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.By.ByName;
 import org.openqa.selenium.By.ByXPath;
@@ -11,6 +13,7 @@ import base.BaseClass;
 import io.appium.java_client.MobileBy.ByAccessibilityId;
 import io.appium.java_client.windows.WindowsDriver;
 import io.appium.java_client.windows.WindowsElement;
+import pageObjects.Modules.TestJobModule.JobDetails.FiberResults;
 
 public class Dashboard extends BaseClass {
 
@@ -29,7 +32,7 @@ public class Dashboard extends BaseClass {
 	}
 
 	public static boolean isOpenNavigationButtonDisplayed() {
-		return isElementDisplayed(ByName.name("Open Navigation"), 3);
+		return isElementDisplayed(ByName.name("Open Navigation"), 2);
 	}
 
 	public static boolean isFiberTestModuleDisplayed() {
@@ -108,6 +111,10 @@ public class Dashboard extends BaseClass {
 		return driver.findElementByAccessibilityId("CancelButton");
 	}
 
+	public static WebElement continueButton() {
+		return driver.findElementByName("Continue");
+	}
+
 	public static boolean isCancelButtonVisible() {
 		return isElementDisplayed(ByName.name("CancelButton"), 10);
 	}
@@ -142,13 +149,51 @@ public class Dashboard extends BaseClass {
 		return driver.findElement(By.xpath("//Text[contains(@AutomationId, 'Message')]")).getAttribute("Name");
 	}
 
-	public static void waitUntilStopButtonIsNotDisplayed() throws Exception {
-		while (isElementDisplayed(ByName.name("Stop"), 1)) {
+	public static void waitUntilStopButtonsAreNotDisplayed() throws Exception {
+		wait = new WebDriverWait(driver, 500);
+		wait.until(driver -> driver.findElements(By.name("Stop")).isEmpty());
+	}
+
+	public static WebElement stopButton() {
+		return driver.findElement(By.xpath("//*[contains(@Name, 'Stop')]"));
+	}
+
+	public static void clickStopOrCancelButton(String buttonText) {
+		if (buttonText.equals("OK")) {
+			cancelButton().click();
+		} else if (buttonText.equals("STOP")) {
+			stopButton().click();
+		}
+
+	}
+
+	public static void clickContinueButtonAndIgnoreIfOkButton(String buttonText) {
+		if (buttonText.equals("STOP")) {
+			continueButton().click();
+		}
+	}
+
+	public static boolean isStopButtonDisplayed() {
+		return isElementDisplayed(ByAccessibilityId.AccessibilityId("StopButton"), 10);
+	}
+
+	public static void waitUntilStopButtonIsDisplayed() throws InterruptedException {
+		while (!isElementDisplayed(ByAccessibilityId.AccessibilityId("StopButton"), 5)) {
 			Thread.sleep(1000);
 		}
 	}
 
-	public static WebElement stopButton() {
-		return driver.findElementByName("Stop");
+	public static String waitUntilDisplayedAndReturn_OK_Or_STOP_Or_COMPLETED() {
+		String buttonText = "";
+		while (buttonText.equals("")) {
+			if (isElementDisplayed(ByName.name("OK"), 1)) {
+				buttonText = "OK";
+			} else if (isElementDisplayed(ByAccessibilityId.AccessibilityId("StopButton"), 1)) {
+				buttonText = "STOP";
+			} else if (FiberResults.isTestsCompletedTextDisplayed()) {
+				buttonText = "COMPLETED";
+			}
+		}
+		return buttonText;
 	}
 }

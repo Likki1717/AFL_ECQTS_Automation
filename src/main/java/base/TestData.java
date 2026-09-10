@@ -4,22 +4,22 @@ import java.io.File;
 
 public class TestData {
 	public static String systemUsername = "sumeeth"; // veltris // LikhithaR // sumeeth
-	public static String testEnvironment = "Dev"; // Dev/QA/Soft Release Prod/Soft Release Second Prod
+	public static String testEnvironment = "QA"; // Dev/QA/Soft Release Prod/Soft Release Second Prod
 													                   // Prod/Second Prod
 	public static boolean isAppLogInRequired = true;
 	public static boolean useOfficeOtdr = true;
 	public static boolean useExternalCamera = false;
 
-	public static int numberOfFibersToTest = 12; // 12
+	public static int numberOfFibersToTest = 2; // 12
 	public static int numberofRibbonsToTest = 2;
 
 	public static String expectedAppVersion() {
 		switch (testEnvironment) {
 		case "Dev":
-			return "Version: 7.9.4.0";
+			return "Version: 7.9.5.0";
 
 		case "QA":
-			return "Version: 7.9.3.0";
+			return "Version: 7.9.4.0";
 
 		case "Soft Release Prod":
 		case "Soft Release Second Prod":
@@ -99,9 +99,9 @@ public class TestData {
 	public static String fiberTestJobSearchJobNumber = "25305754"; // 25305754
 	public static String fiberTestJobSearchCutNumber = getCurrentDateTimeStamp();
 	public static String fiberTestJobSearchCutNumberInfo = "ZTEST01";
-	public static String fiberTestExpectedIncompleteTestsCount = "0";
-	public static String fiberTestExpectedPassedTestsCount = "64";
-	public static String fiberTestExpectedFailedTestsCount = "27";
+	public static String fiberTestExpectedIncompleteTestsCount = "60";
+	public static String fiberTestExpectedPassedTestsCount = "24";
+	public static String fiberTestExpectedFailedTestsCount = "7";
 	public static String fiberTestEditAdjLengthValue = "9836";
 	public static String fiberTestExpectedItemNumber = "DNA-32673-02";
 	public static String fiberTestCompletionTabIseSeqValue = "9886";
@@ -120,8 +120,8 @@ public class TestData {
 	public static String fiberTestReelItemForReelIdAndSalesOrderVerification = "REL00291";
 	public static String fiberTestReelItemForReelIdAndSalesOrderVerificationAfterDeletingLastDigit = "REL00" ;
 	public static String incompleteTestCountForReelIdAndSalesOrderVerificationAfterDeletingLastDigit = "299";
-	public static String passedTestCountForReelIdAndSalesOrderVerificationAfterDeletingLastDigit = "0";
-	public static String failedTestCountForReelIdAndSalesOrderVerificationAfterDeletingLastDigit = "1";
+	public static String passedTestCountForReelIdAndSalesOrderVerificationAfterDeletingLastDigit = "1";
+	public static String failedTestCountForReelIdAndSalesOrderVerificationAfterDeletingLastDigit = "0";
 
 	public static final String PK_FiberTestModuleName = "PK Fiber Test";
 	public static String PK_FiberTestJobSearchJobNumber = "15811448";
@@ -140,9 +140,9 @@ public class TestData {
 	public static String wtcTestJobSearchCutNumber = getCurrentDateTimeStamp();
 	public static String wtcTestJobSearchCutNumberInfo = "ZTEST01";
 	public static String wtcTestBufferTube = "10-BLUE";
-	public static String wtcTestExpectedIncompleteTestsCount = "883";
-	public static String wtcTestExpectedPassedTestsCount = "20";
-	public static String wtcTestExpectedFailedTestsCount = "6";
+	public static String wtcTestExpectedIncompleteTestsCount = "6720";
+	public static String wtcTestExpectedPassedTestsCount = (testEnvironment.equals("Dev")|| testEnvironment.equals("QA")) ? "203" : "107";
+	public static String wtcTestExpectedFailedTestsCount = (testEnvironment.equals("Dev")|| testEnvironment.equals("QA")) ? "5" : "101";
 	public static String wtcTestCompletionTabIseSeqValue = "9886";
 	public static String wtcTestExpectedItemNumber = "PR02256-01";
 	public static String wtcTestEditAdjLengthValue = "2634";
