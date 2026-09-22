@@ -99,11 +99,17 @@ public class FiberResults extends BaseClass {
 	}
 
 	public static WebElement fiberID(int fiberPosition) {
-		return driver.findElement(By.xpath("(//Edit[contains(@AutomationId, 'StrandId')])["+fiberPosition+"]"));
-	}
-	
-	public static String getTestCount(int fiberPosition) {
-	    return driver.findElement(By.xpath("(//Text[@Name='Test Count:']/following-sibling::Text[1])["+fiberPosition+"]")).getText();
+		return driver.findElement(By.xpath("(//Edit[contains(@AutomationId, 'StrandId')])[" + fiberPosition + "]"));
 	}
 
+	public static int getTestCount(int fiberPosition) {
+		return Integer.parseInt(driver
+				.findElement(
+						By.xpath("(//Text[@Name='Test Count:']/following-sibling::Text[1])[" + fiberPosition + "]"))
+				.getText().trim());
+	}
+
+	public static WebElement reTestButton() {
+		return driver.findElementByAccessibilityId("RetestButton");
+	}
 }

@@ -17,7 +17,7 @@ public class RegressionTests extends BaseClass {
 //BeforeClass - applicationSetupAndLaunch includes - clearPreviousSessionData, launchWinAppDriver, launchOpenVpnAppAndConnect, 
 //launch_ECQTS_Application, verifyIncorrectCredentials, validateRecoverPasswordButtonAvailability, loginToApplication	
 
-			verifyAboutPage();
+			verify_About_Page();
 
 			verify_Delete_Create_And_Edit_Connection_Profiles();
 

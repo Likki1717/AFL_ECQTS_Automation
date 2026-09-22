@@ -22,7 +22,7 @@ public class RunWTCTestsInLoop extends BaseClass {
 
 		loginToApplication();
 		
-		verifyAboutPage();
+		verify_About_Page();
 		
 		updateTestSettings();
 

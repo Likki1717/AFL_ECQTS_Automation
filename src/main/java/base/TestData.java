@@ -4,7 +4,7 @@ import java.io.File;
 
 public class TestData {
 	public static String systemUsername = "sumeeth"; // veltris // LikhithaR // sumeeth
-	public static String testEnvironment = "QA"; // Dev/QA/Soft Release Prod/Soft Release Second Prod
+	public static String testEnvironment = "Dev"; // Dev/QA/Soft Release Prod/Soft Release Second Prod
 													                   // Prod/Second Prod
 	public static boolean isAppLogInRequired = true;
 	public static boolean useOfficeOtdr = true;
@@ -23,7 +23,7 @@ public class TestData {
 
 		case "Soft Release Prod":
 		case "Soft Release Second Prod":
-			return "Version: 7.9.2.2";
+			return "Version: 7.9.4.0";
 
 		case "Prod":
 		case "Second Prod":

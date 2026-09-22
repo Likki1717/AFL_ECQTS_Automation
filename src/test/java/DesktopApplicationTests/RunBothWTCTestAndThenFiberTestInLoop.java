@@ -22,7 +22,7 @@ public class RunBothWTCTestAndThenFiberTestInLoop extends BaseClass {
 
 		loginToApplication();
 
-		verifyAboutPage();
+		verify_About_Page();
 		
 		updateTestSettings();
 		

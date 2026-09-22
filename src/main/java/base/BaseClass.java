@@ -386,7 +386,7 @@ public class BaseClass {
 		}
 	}
 
-	public static void verifyAboutPage() throws Exception {
+	public static void verify_About_Page() throws Exception {
 		try {
 
 			Dashboard.openNavigationButton().click();
@@ -549,11 +549,15 @@ public class BaseClass {
 					"Ip Address did not change when connection profile instrument type is changed");
 			ConnectionProfiles.ipAddressTextBox().clear();
 			ConnectionProfiles.ipAddressTextBox().sendKeys(TestData.connectionProfile_Anritsu_9085_IP_Address);
+			ConnectionProfiles.portTextBox().clear();
+			ConnectionProfiles.portTextBox().sendKeys(TestData.connectionProfile_Simulator_Port);
 			robot.mouseWheel(3);
 			ConnectionProfiles.saveProfileButton().click();
+			wait = new WebDriverWait(driver, 15);
+			wait.until(ExpectedConditions.elementToBeClickable(ConnectionProfiles.testConnection()));
 			ConnectionProfiles.testConnection().click();
 			softAssert.assertTrue(ConnectionProfiles.isConnectionFailurePopupDisplayed(),
-					"Connection failed popup is not displayed for Simulator profile during Edit and changing instrument type");
+					"Connection failed popup is not displayed for Simulator profile after Editing and changing instrument type");
 			ConnectionProfiles.okButton().click();
 			ConnectionProfiles.editButton().click();
 			softAssert.assertTrue(ConnectionProfiles.ipAddressTextBox().getAttribute("Value.Value")
@@ -568,6 +572,12 @@ public class BaseClass {
 			ConnectionProfiles.ipAddressTextBox().sendKeys(TestData.connectionProfile_Simulator_IP_Address);
 			robot.mouseWheel(3);
 			ConnectionProfiles.saveProfileButton().click();
+			wait = new WebDriverWait(driver, 15);
+			wait.until(ExpectedConditions.elementToBeClickable(ConnectionProfiles.testConnection()));
+			ConnectionProfiles.testConnection().click();
+			softAssert.assertTrue(ConnectionProfiles.isConnectionSuccessfulPopupDisplayed(),
+					"Connection success popup is not displayed for Simulator profile after Editing and updating correct details");
+			ConnectionProfiles.okButton().click();
 		} catch (Exception e) {
 			System.out.println("****Exception in editConnectionProfile()****");
 		}
@@ -2106,6 +2116,7 @@ public class BaseClass {
 			boolean isTightBuffer = module.equals(TestData.tightBufferModuleName);
 			boolean isWtc = module.equals(TestData.wtcTestModuleName);
 			boolean isFiber = module.equals(TestData.fiberTestModuleName);
+			boolean isPkFiber = module.equals(TestData.PK_FiberTestModuleName);
 
 			// Reel Size is required for Tight Buffer and WTC
 			if (isTightBuffer || isWtc) {
@@ -2175,9 +2186,12 @@ public class BaseClass {
 				Completion.ISE_Print_Verified().sendKeys("2");
 				Completion.OSE_Print_Verified().sendKeys("2");
 
-				// Print Spacing is common for Fiber, PK Fiber and WTC
-				Completion.OSE_Print_Spacing().sendKeys("2");
-				Completion.ISE_Print_Spacing().sendKeys("2");
+				// Print Spacing is common for Fiber and WTC
+				if(!isPkFiber)
+				{
+					Completion.OSE_Print_Spacing().sendKeys("2");
+					Completion.ISE_Print_Spacing().sendKeys("2");
+				}
 
 				// Module-specific fields
 				if (isWtc) {
@@ -2648,9 +2662,39 @@ public class BaseClass {
 		Dashboard.waitUntilStopButtonsAreNotDisplayed();
 	}
 
-	public static void validateEditingFiberIdAndReTestCount() throws Exception {
-		String fiberId = TestData.getCurrentDateTimeStamp();
+	public static void validate_EditingFiberId_StopButton_ReTestButton_And_TestCount() throws Exception {
+		String fiberId = new java.text.SimpleDateFormat("HHmmss").format(new java.util.Date());
 		JobDetailsPage.bufferTubeTab(1).click();
+		FiberResults.runTestsButtonOfFirstFiber().click();
+		Dashboard.waitUntilOkButtonIsDisplayed();
+		wait = new WebDriverWait(driver, 30);
+		wait.until(ExpectedConditions.elementToBeClickable(Dashboard.okButton()));
+		Thread.sleep(1000);
+		Dashboard.okButton().click();
+		Thread.sleep(500);
+		String buttonOnPopUp = Dashboard.waitUntilDisplayedAndReturn_OK_Or_STOP_Or_COMPLETED();
+		int expectedTestCount = 2;
+		if(buttonOnPopUp.equals("OK") && Dashboard.getMessageDisplayedOnPopup().contains("Maximum Attenuation"))
+		{
+			Dashboard.okButton().click();
+			Thread.sleep(500);
+			buttonOnPopUp = Dashboard.waitUntilDisplayedAndReturn_OK_Or_STOP_Or_COMPLETED();
+		}
+		if(TestData.useOfficeOtdr)
+		{
+			FiberResults.reTestButton().click();
+			Dashboard.waitUntilOkButtonIsDisplayed();
+			wait = new WebDriverWait(driver, 30);
+			wait.until(ExpectedConditions.elementToBeClickable(Dashboard.okButton()));
+			Thread.sleep(1000);
+			Dashboard.okButton().click();
+			Thread.sleep(500);
+			buttonOnPopUp = Dashboard.waitUntilDisplayedAndReturn_OK_Or_STOP_Or_COMPLETED();
+			expectedTestCount = 3;
+		}
+		Dashboard.clickStopOrCancelButton(buttonOnPopUp);
+		Thread.sleep(2000);
+		softAssert.assertEquals(FiberResults.getTestCount(1), expectedTestCount, "Mismatch in test count after ReTest was performed.");
 		FiberResults.fiberID(1).clear();
 		actions.sendKeys(fiberId).build().perform();
 		JobDetailsPage.bufferTubeTab(2).click();
@@ -2658,9 +2702,7 @@ public class BaseClass {
 		JobDetailsPage.bufferTubeTab(1).click();
 		Dashboard.waitUntilLoaderIsNotDisplayed();
 
-//		System.out.println("Test count of 1st fiber --> " + FiberResults.getTestCount(1));
-//		System.out.println("Test count of 2nd fiber --> " + FiberResults.getTestCount(2));
-		softAssert.assertEquals(FiberResults.getTestCount(1), "2", "Mismatch in test count when fiber id is changed.");
+		softAssert.assertEquals(FiberResults.getTestCount(1), (expectedTestCount+1), "Mismatch in test count when fiber id is changed.");
 		softAssert.assertEquals(FiberResults.fiberID(1).getText(), fiberId, "Mismatch in the fiber id after it was edited.");
 	}
 
@@ -2684,7 +2726,7 @@ public class BaseClass {
 
 		runFiberTest(TestData.fiberTestModuleName, TestData.numberOfFibersToTest);
 
-		validateEditingFiberIdAndReTestCount();
+		validate_EditingFiberId_StopButton_ReTestButton_And_TestCount();
 
 		downloadSorFiles();
 
