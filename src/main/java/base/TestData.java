@@ -19,7 +19,7 @@ public class TestData {
 			return "Version: 7.9.5.0";
 
 		case "QA":
-			return "Version: 7.9.4.0";
+			return "Version: 7.9.6.0";
 
 		case "Soft Release Prod":
 		case "Soft Release Second Prod":
