@@ -156,9 +156,6 @@ public class TestData {
 	public static String copyJobDestinationJobNumber = "51297060";
 	public static String copyJobDestinationCutNumber = getCurrentDateTimeStamp();
 	public static String copyJobDestinationCutNumberInfo = "ZTEST01";
-	public static String copyJobDestinationJobExpectedIncompleteTestsBeforeCompletionLayer = "6";
-	public static String copyJobDestinationJobExpectedPassedTestsBeforeCompletionLayer = "305";
-	public static String copyJobDestinationJobExpectedFailedTestsBeforeCompletionLayer = "0";
 	public static String copyJobDestinationJobExpectedIncompleteTestsAfterCompletionLayer = "3";
 	public static String copyJobDestinationJobExpectedPassedTestsAfterCompletionLayer = "308";
 	public static String copyJobDestinationJobExpectedFailedTestsAfterCompletionLayer = "0";

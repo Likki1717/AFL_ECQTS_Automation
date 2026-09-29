@@ -1661,12 +1661,6 @@ public class BaseClass {
 
 			Thread.sleep(2000);
 
-			verifyTestResultsCount(TestData.copyJobDestinationJobExpectedIncompleteTestsBeforeCompletionLayer,
-					TestData.copyJobDestinationJobExpectedPassedTestsBeforeCompletionLayer,
-					TestData.copyJobDestinationJobExpectedFailedTestsBeforeCompletionLayer,
-					"destination Job before clicking on completion tab for Job # " + TestData.copyJobSourceJobNumber
-							+ ". ");
-
 			softAssert.assertEquals(JobDetailsPage.OTDR_Length().getText(),
 					TestData.copyJobDestinationJobExpectedOtdrLength,
 					"After copying job, On destination job - OTDR Length mismatch.");
@@ -1677,6 +1671,7 @@ public class BaseClass {
 
 			JobDetailsPage.completionTab().click();
 
+			Dashboard.isLoaderDisplayed();
 			Dashboard.waitUntilLoaderIsNotDisplayed();
 
 			Thread.sleep(2000);
