@@ -2,16 +2,16 @@
 <testng-results ignored="0" total="1" passed="1" failed="0" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2026-09-17T12:58:34 IST" name="Default suite" finished-at="2026-09-17T13:25:41 IST" duration-ms="1626758">
+  <suite started-at="2026-10-01T15:48:24 IST" name="Default suite" finished-at="2026-10-01T15:55:38 IST" duration-ms="433627">
     <groups>
     </groups>
-    <test started-at="2026-09-17T12:58:34 IST" name="Default test" finished-at="2026-09-17T13:25:41 IST" duration-ms="1626758">
+    <test started-at="2026-10-01T15:48:24 IST" name="Default test" finished-at="2026-10-01T15:55:38 IST" duration-ms="433627">
       <class name="DesktopApplicationTests.RegressionTests">
-        <test-method is-config="true" signature="applicationSetupAndLaunch()[pri:0, instance:DesktopApplicationTests.RegressionTests@74e52ef6]" started-at="2026-09-17T12:58:34 IST" name="applicationSetupAndLaunch" finished-at="2026-09-17T12:59:48 IST" duration-ms="73899" status="PASS">
+        <test-method is-config="true" signature="applicationSetupAndLaunch()[pri:0, instance:DesktopApplicationTests.RegressionTests@6ed3ccb2]" started-at="2026-10-01T15:48:24 IST" name="applicationSetupAndLaunch" finished-at="2026-10-01T15:48:52 IST" duration-ms="27848" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- applicationSetupAndLaunch -->
-        <test-method signature="runRegressionTestSuite()[pri:0, instance:DesktopApplicationTests.RegressionTests@74e52ef6]" started-at="2026-09-17T12:59:48 IST" name="runRegressionTestSuite" finished-at="2026-09-17T13:25:41 IST" duration-ms="1552832" status="PASS">
+        <test-method signature="runRegressionTestSuite()[pri:0, instance:DesktopApplicationTests.RegressionTests@6ed3ccb2]" started-at="2026-10-01T15:48:52 IST" name="runRegressionTestSuite" finished-at="2026-10-01T15:55:38 IST" duration-ms="405738" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- runRegressionTestSuite -->

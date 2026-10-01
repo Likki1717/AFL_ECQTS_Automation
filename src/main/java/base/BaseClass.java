@@ -1574,8 +1574,9 @@ public class BaseClass {
 		}
 	}
 
-	public static void verify_Copy_Results_Module() throws Exception {
-
+	public static void copy_Results(String sourceJobNumber, String sourceCutNumber,
+			String sourceCutNumberInfo, String destinationJobNumber, String destinationCutNumber,
+			String destinationCutNumberInfo) throws Exception {
 		do {
 			navigateToModule(TestData.copyResultsModuleName);
 			CopyResults.waitUntilCopyJobPopupIsDisplayed();
@@ -1586,7 +1587,7 @@ public class BaseClass {
 
 			CopyResults.sourceJobNumber().click();
 			CopyResults.sourceJobNumber().clear();
-			CopyResults.sourceJobNumber().sendKeys(TestData.copyJobSourceJobNumber);
+			CopyResults.sourceJobNumber().sendKeys(sourceJobNumber);
 			Thread.sleep(1000);
 			actions.sendKeys(Keys.TAB).build().perform();
 			Dashboard.isLoaderDisplayed();
@@ -1594,19 +1595,19 @@ public class BaseClass {
 
 			CopyResults.sourceCutNumber().click();
 			CopyResults.sourceCutNumber().clear();
-			CopyResults.sourceCutNumber().sendKeys(TestData.copyJobSourceCutNumber);
+			CopyResults.sourceCutNumber().sendKeys(sourceCutNumber);
 			Thread.sleep(500);
 			actions.sendKeys(Keys.TAB).build().perform();
 			Dashboard.isLoaderDisplayed();
 			Dashboard.waitUntilLoaderIsNotDisplayed();
 			Thread.sleep(1000);
 
-			CopyResults.sourceCutNumberInfo().sendKeys(TestData.copyJobSourceCutNumberInfo);
+			CopyResults.sourceCutNumberInfo().sendKeys(sourceCutNumberInfo);
 			actions.sendKeys(Keys.TAB).build().perform();
 
 			CopyResults.destinationJobNumber().click();
 			CopyResults.destinationJobNumber().clear();
-			CopyResults.destinationJobNumber().sendKeys(TestData.copyJobDestinationJobNumber);
+			CopyResults.destinationJobNumber().sendKeys(destinationJobNumber);
 			Thread.sleep(1000);
 			actions.sendKeys(Keys.TAB).build().perform();
 			Dashboard.isLoaderDisplayed();
@@ -1614,40 +1615,40 @@ public class BaseClass {
 
 			CopyResults.destinationCutNumber().click();
 			CopyResults.destinationCutNumber().clear();
-			CopyResults.destinationCutNumber().sendKeys(TestData.copyJobDestinationCutNumber);
+			CopyResults.destinationCutNumber().sendKeys(destinationCutNumber);
 			Thread.sleep(500);
 			actions.sendKeys(Keys.TAB).build().perform();
 			Dashboard.isLoaderDisplayed();
 			Dashboard.waitUntilLoaderIsNotDisplayed();
 			Thread.sleep(1000);
 
-			CopyResults.destinationCutNumberInfo().sendKeys(TestData.copyJobDestinationCutNumberInfo);
+			CopyResults.destinationCutNumberInfo().sendKeys(destinationCutNumberInfo);
 			actions.sendKeys(Keys.TAB).build().perform();
 
-			if (!CopyResults.destinationCutNumberInfo().getText().contains(TestData.copyJobDestinationCutNumberInfo)
+			if (!CopyResults.destinationCutNumberInfo().getText().contains(destinationCutNumberInfo)
 					|| !CopyResults.processButton().isEnabled()) {
 				Dashboard.cancelButton().click();
 				Thread.sleep(1000);
 			} else {
-				while (CopyResults.isProcessButtonDisplayed()) {
+				while (CopyResults.isProcessButtonDisplayed() && !Dashboard.isOkButtonDisplayed()) {
 					if (CopyResults.processButton().isEnabled()) {
 						CopyResults.processButton().click();
 					} else {
 						Dashboard.cancelButton().click();
 					}
-					Thread.sleep(1000);
 				}
 			}
-		} while (!Dashboard.isLoaderDisplayed());
+		} while (!Dashboard.isLoaderDisplayed() && !Dashboard.isOkButtonDisplayed());
 
 		Dashboard.waitUntilOkButtonIsDisplayed();
 		dismissSyncStatusPopupIfDisplayed();
 		Dashboard.waitUntilOkButtonIsDisplayed();
 
 		boolean isJobCopied = CopyResults.isJobCopySuccessfullPopupDisplayed();
-		softAssert.assertTrue(isJobCopied, "Issue in copy job, Did not find Copy Job successfull popup");
-		Dashboard.okButton().click();
-
+		if (!sourceJobNumber.equals(TestData.copyJobValidationSourceJobNumber)) {
+			softAssert.assertTrue(isJobCopied, "Issue in copy job, Did not find Copy Job successfull popup");
+			Dashboard.okButton().click();
+		}
 		if (isJobCopied) {
 			searchJobAndNavigationToJobDetailsPage(TestData.copyJobModule, TestData.copyJobOrg,
 					TestData.copyJobDestinationJobNumber, TestData.copyJobDestinationCutNumber,
@@ -1680,10 +1681,37 @@ public class BaseClass {
 					TestData.copyJobDestinationJobExpectedPassedTestsAfterCompletionLayer,
 					TestData.copyJobDestinationJobExpectedFailedTestsAfterCompletionLayer,
 					"destination Job after clicking on completion tab for Job # " + TestData.copyJobSourceJobNumber);
+		} else if (sourceJobNumber.equals(TestData.copyJobValidationSourceJobNumber)) {
+			softAssert.assertEquals(Dashboard.getMessageDisplayedOnPopup(),
+					"Please ensure the Source and Destination Items are identical, if you continue some tests might be incomplete.Are you sure you want to continue?",
+					"Mismatch in warning message when source and destination job numbers are different.");
+			Dashboard.okButton().click();
 
+			Dashboard.waitUntilOkButtonIsDisplayed();
+
+			softAssert.assertEquals(Dashboard.getMessageDisplayedOnPopup(),
+					"Fiber keys are mismatched between the Source & Destination Jobs as shown below.\n"
+							+ "Source: BLUE-1 RING-10-10-BLUE, Destination: BLUE-19R-10-10-BLUE.\n"
+							+ "Copy job is not possible due to the above error(s).",
+					"Mismatch in Error message displayed when source and destination jobs have mismatch in fiber name.");
+			Dashboard.okButton().click();
+			Thread.sleep(500);
+			Dashboard.cancelButton().click();
 		} else {
 			Dashboard.cancelButton().click();
 		}
+	}
+
+	public static void verify_Copy_Results_Module() throws Exception {
+
+		copy_Results(TestData.copyJobValidationSourceJobNumber,
+				TestData.copyJobValidationSourceCutNumber, TestData.copyJobValidationSourceCutNumberInfo,
+				TestData.copyJobValidationDestinationJobNumber, TestData.copyJobValidationDestinationCutNumber,
+				TestData.copyJobValidationDestinationCutNumberInfo);
+
+		copy_Results(TestData.copyJobSourceJobNumber, TestData.copyJobSourceCutNumber,
+				TestData.copyJobSourceCutNumberInfo, TestData.copyJobDestinationJobNumber,
+				TestData.copyJobDestinationCutNumber, TestData.copyJobDestinationCutNumberInfo);
 	}
 
 	public static void enterIseOseValuesAndVerifyOverrideMeterMarkFlow(String iseValue, String oseValue,
@@ -2182,8 +2210,7 @@ public class BaseClass {
 				Completion.OSE_Print_Verified().sendKeys("2");
 
 				// Print Spacing is common for Fiber and WTC
-				if(!isPkFiber)
-				{
+				if (!isPkFiber) {
 					Completion.OSE_Print_Spacing().sendKeys("2");
 					Completion.ISE_Print_Spacing().sendKeys("2");
 				}
@@ -2669,14 +2696,12 @@ public class BaseClass {
 		Thread.sleep(500);
 		String buttonOnPopUp = Dashboard.waitUntilDisplayedAndReturn_OK_Or_STOP_Or_COMPLETED();
 		int expectedTestCount = 2;
-		if(buttonOnPopUp.equals("OK") && Dashboard.getMessageDisplayedOnPopup().contains("Maximum Attenuation"))
-		{
+		if (buttonOnPopUp.equals("OK") && Dashboard.getMessageDisplayedOnPopup().contains("Maximum Attenuation")) {
 			Dashboard.okButton().click();
 			Thread.sleep(500);
 			buttonOnPopUp = Dashboard.waitUntilDisplayedAndReturn_OK_Or_STOP_Or_COMPLETED();
 		}
-		if(TestData.useOfficeOtdr)
-		{
+		if (TestData.useOfficeOtdr) {
 			FiberResults.reTestButton().click();
 			Dashboard.waitUntilOkButtonIsDisplayed();
 			wait = new WebDriverWait(driver, 30);
@@ -2689,7 +2714,8 @@ public class BaseClass {
 		}
 		Dashboard.clickStopOrCancelButton(buttonOnPopUp);
 		Thread.sleep(2000);
-		softAssert.assertEquals(FiberResults.getTestCount(1), expectedTestCount, "Mismatch in test count after ReTest was performed.");
+		softAssert.assertEquals(FiberResults.getTestCount(1), expectedTestCount,
+				"Mismatch in test count after ReTest was performed.");
 		FiberResults.fiberID(1).clear();
 		actions.sendKeys(fiberId).build().perform();
 		JobDetailsPage.bufferTubeTab(2).click();
@@ -2697,8 +2723,10 @@ public class BaseClass {
 		JobDetailsPage.bufferTubeTab(1).click();
 		Dashboard.waitUntilLoaderIsNotDisplayed();
 
-		softAssert.assertEquals(FiberResults.getTestCount(1), (expectedTestCount+1), "Mismatch in test count when fiber id is changed.");
-		softAssert.assertEquals(FiberResults.fiberID(1).getText(), fiberId, "Mismatch in the fiber id after it was edited.");
+		softAssert.assertEquals(FiberResults.getTestCount(1), (expectedTestCount + 1),
+				"Mismatch in test count when fiber id is changed.");
+		softAssert.assertEquals(FiberResults.fiberID(1).getText(), fiberId,
+				"Mismatch in the fiber id after it was edited.");
 	}
 
 	public static void verify_Fiber_Test_Module() throws Exception {

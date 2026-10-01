@@ -4,10 +4,10 @@ import java.io.File;
 
 public class TestData {
 	public static String systemUsername = "sumeeth"; // veltris // LikhithaR // sumeeth
-	public static String testEnvironment = "Dev"; // Dev/QA/Soft Release Prod/Soft Release Second Prod
+	public static String testEnvironment = "QA"; // Dev/QA/Soft Release Prod/Soft Release Second Prod
 													                   // Prod/Second Prod
-	public static boolean isAppLogInRequired = true;
-	public static boolean useOfficeOtdr = true;
+	public static boolean isAppLogInRequired = false;
+	public static boolean useOfficeOtdr = false;
 	public static boolean useExternalCamera = false;
 
 	public static int numberOfFibersToTest = 2; // 12
@@ -162,6 +162,13 @@ public class TestData {
 	public static String copyJobDestinationJobExpectedHelixFactor = "1.003";
 	public static String copyJobDestinationJobExpectedOtdrLength = "7030 m";
 	public static String copyJobDestinationJobExpectedItemNumber = "DNS-5869";
+	
+	public static String copyJobValidationSourceJobNumber = "52093375";
+	public static String copyJobValidationSourceCutNumber = "00";
+	public static String copyJobValidationSourceCutNumberInfo = "";
+	public static String copyJobValidationDestinationJobNumber = "52159951";
+	public static String copyJobValidationDestinationCutNumber = getCurrentDateTimeStamp();
+	public static String copyJobValidationDestinationCutNumberInfo = "ZTEST01";
 
 	public static final String downTimeModuleName = "Down Time";
 	public static String expectedStartDateTime = java.time.LocalDate.now()
