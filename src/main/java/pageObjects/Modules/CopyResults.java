@@ -42,19 +42,27 @@ public class CopyResults extends BaseClass {
 		return driver
 				.findElement(By.xpath("//*[@Name='Destination']/following::Edit[@Name='Search Cut Number Info'][1]"));
 	}
-	
-	public static boolean isProcessButtonDisplayed()
-	{
+
+	public static boolean isProcessButtonDisplayed() {
 		return isElementDisplayed(ByAccessibilityId.AccessibilityId("ProcessButton"), 1);
 	}
 
 	public static WebElement processButton() {
 		return driver.findElementByAccessibilityId("ProcessButton");
 	}
-	
-	public static boolean isJobCopySuccessfullPopupDisplayed()
-	{
-		return isElementDisplayed(ByAccessibilityId.AccessibilityId("JobSuccessAlertMessage"), 1);
-	}	
 
+	public static boolean isJobCopySuccessfullPopupDisplayed() {
+		return isElementDisplayed(ByAccessibilityId.AccessibilityId("JobSuccessAlertMessage"), 1);
+	}
+
+	public static String getFiberKeysMismatchValidationErrorMessage() {
+		String message = "Did not find fiber keys validation message";
+		try {
+			message = driver.findElement(By.xpath("//Text[@Name = 'Errors:']/following-sibling::Text"))
+					.getAttribute("Name");
+		} catch (Exception e) {
+
+		}
+		return message;
+	}
 }

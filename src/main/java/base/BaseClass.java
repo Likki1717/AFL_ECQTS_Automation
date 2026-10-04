@@ -1574,9 +1574,9 @@ public class BaseClass {
 		}
 	}
 
-	public static void copy_Results(String sourceJobNumber, String sourceCutNumber,
-			String sourceCutNumberInfo, String destinationJobNumber, String destinationCutNumber,
-			String destinationCutNumberInfo) throws Exception {
+	public static void copy_Results(String sourceJobNumber, String sourceCutNumber, String sourceCutNumberInfo,
+			String destinationJobNumber, String destinationCutNumber, String destinationCutNumberInfo)
+			throws Exception {
 		do {
 			navigateToModule(TestData.copyResultsModuleName);
 			CopyResults.waitUntilCopyJobPopupIsDisplayed();
@@ -1645,7 +1645,7 @@ public class BaseClass {
 		Dashboard.waitUntilOkButtonIsDisplayed();
 
 		boolean isJobCopied = CopyResults.isJobCopySuccessfullPopupDisplayed();
-		if (!sourceJobNumber.equals(TestData.copyJobValidationSourceJobNumber)) {
+		if (sourceJobNumber.equals(TestData.copyJobSourceJobNumber)) {
 			softAssert.assertTrue(isJobCopied, "Issue in copy job, Did not find Copy Job successfull popup");
 			Dashboard.okButton().click();
 		}
@@ -1682,14 +1682,14 @@ public class BaseClass {
 					TestData.copyJobDestinationJobExpectedFailedTestsAfterCompletionLayer,
 					"destination Job after clicking on completion tab for Job # " + TestData.copyJobSourceJobNumber);
 		} else if (sourceJobNumber.equals(TestData.copyJobValidationSourceJobNumber)) {
-			softAssert.assertEquals(Dashboard.getMessageDisplayedOnPopup(),
-					"Please ensure the Source and Destination Items are identical, if you continue some tests might be incomplete.Are you sure you want to continue?",
+			softAssert.assertEquals(Dashboard.getMessageDisplayedOnPopup().replaceAll("\\s+", " ").trim(),
+					"Please ensure the Source and Destination Items are identical, if you continue some tests might be incomplete. Are you sure you want to continue?",
 					"Mismatch in warning message when source and destination job numbers are different.");
 			Dashboard.okButton().click();
-
+			Thread.sleep(2000);
 			Dashboard.waitUntilOkButtonIsDisplayed();
-
-			softAssert.assertEquals(Dashboard.getMessageDisplayedOnPopup(),
+			Thread.sleep(500);
+			softAssert.assertEquals(CopyResults.getFiberKeysMismatchValidationErrorMessage(),
 					"Fiber keys are mismatched between the Source & Destination Jobs as shown below.\n"
 							+ "Source: BLUE-1 RING-10-10-BLUE, Destination: BLUE-19R-10-10-BLUE.\n"
 							+ "Copy job is not possible due to the above error(s).",
@@ -1704,10 +1704,9 @@ public class BaseClass {
 
 	public static void verify_Copy_Results_Module() throws Exception {
 
-		copy_Results(TestData.copyJobValidationSourceJobNumber,
-				TestData.copyJobValidationSourceCutNumber, TestData.copyJobValidationSourceCutNumberInfo,
-				TestData.copyJobValidationDestinationJobNumber, TestData.copyJobValidationDestinationCutNumber,
-				TestData.copyJobValidationDestinationCutNumberInfo);
+		copy_Results(TestData.copyJobValidationSourceJobNumber, TestData.copyJobValidationSourceCutNumber,
+				TestData.copyJobValidationSourceCutNumberInfo, TestData.copyJobValidationDestinationJobNumber,
+				TestData.copyJobValidationDestinationCutNumber, TestData.copyJobValidationDestinationCutNumberInfo);
 
 		copy_Results(TestData.copyJobSourceJobNumber, TestData.copyJobSourceCutNumber,
 				TestData.copyJobSourceCutNumberInfo, TestData.copyJobDestinationJobNumber,
