@@ -15,7 +15,7 @@ public class RegressionTests extends BaseClass {
 		try {
 
 //BeforeClass - applicationSetupAndLaunch includes - clearPreviousSessionData, launchWinAppDriver, launchOpenVpnAppAndConnect, 
-//launch_ECQTS_Application, verifyIncorrectCredentials, validateRecoverPasswordButtonAvailability, loginToApplication	
+//launch_ECQTS_Application, verifyIncorrectCredentials, validateRecoverPasswordButtonAvailability, loginToApplication, updateTestSettings, updateApplicationSettings	
 
 			verify_About_Page();
 
@@ -42,10 +42,10 @@ public class RegressionTests extends BaseClass {
 			verify_Override_Meter_Mark_Validation_With_Tester_Role();
 
 			log_Out_And_Close_Application();
-			
-			verify_Override_Meter_Mark_Validation_With_Executive_Role();
 
-			verify_Anomaly_Status();
+			verify_Anomaly_Status(); // DO NOT change order of execution: First anomaly then meter marks
+
+			verify_Override_Meter_Mark_Validation_With_Executive_Role();
 
 			verify_QE_Labs();
 

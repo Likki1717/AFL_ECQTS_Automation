@@ -975,7 +975,13 @@ public class BaseClass {
 		}
 		if (jobNumber.equals(TestData.fiberTestJobSearchJobNumberForReelIdAndSalesOrderVerification)) {
 			Dashboard.waitUntilLoaderIsNotDisplayed();
-			JobSearch.salesOrderValue().click();
+			try {
+				JobSearch.salesOrderValue().click();
+			} catch (Exception e) {
+				JobSearch.salesOrder().click();
+				Thread.sleep(500);
+				JobSearch.salesOrderValue().click();
+			}
 			if (shouldRemoveSalesOrder) {
 				JobSearch.salesOrderClearButton().click();
 				JobSearch.salesOrder().click();
@@ -1168,6 +1174,8 @@ public class BaseClass {
 		JobDetailsPage.adjLengthInputField().clear();
 		JobDetailsPage.adjLengthInputField().sendKeys(adjLengthValue);
 		JobDetailsPage.adjLengthSaveIcon().click();
+		wait = new WebDriverWait(driver, 20);
+		wait.until(ExpectedConditions.invisibilityOfAllElements(JobDetailsPage.adjLengthSaveIcon()));
 		Thread.sleep(1000);
 		softAssert.assertEquals(JobDetailsPage.getAdjLengthValue(), adjLengthValue + " m",
 				"Adj length did not get updated.");
@@ -1835,7 +1843,7 @@ public class BaseClass {
 		Dashboard.waitUntilOkButtonIsDisplayed();
 		softAssert.assertTrue(
 				Dashboard.getMessageDisplayedOnPopup().contains(expectedMessageOnDownloadReportWarningPopup),
-				"Mismatch in the meter mark validation text displayed on popup while downloading report.");
+				"Mismatch in the meter mark validation text displayed on popup while downloading report. Expected - " + expectedMessageOnDownloadReportWarningPopup + ", but found - " + Dashboard.getMessageDisplayedOnPopup());
 		Dashboard.okButton().click();
 		if (expectedMeterMarkValidationStatus.equals("Pass")) {
 			Dashboard.waitUntilLoaderIsNotDisplayed();
@@ -2857,6 +2865,8 @@ public class BaseClass {
 
 //		download_OCR_Report();
 
+			Thread.sleep(1000);
+			
 			verifyTestResultsCount(TestData.PK_FiberTestExpectedIncompleteTestsCount,
 					TestData.PK_FiberTestExpectedPassedTestsCount, TestData.PK_FiberTestExpectedFailedTestsCount,
 					"PK Fiber Test with Job # " + TestData.PK_FiberTestJobSearchJobNumber);

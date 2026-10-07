@@ -4,10 +4,10 @@ import java.io.File;
 
 public class TestData {
 	public static String systemUsername = "sumeeth"; // veltris // LikhithaR // sumeeth
-	public static String testEnvironment = "QA"; // Dev/QA/Soft Release Prod/Soft Release Second Prod
+	public static String testEnvironment = "Dev"; // Dev/QA/Soft Release Prod/Soft Release Second Prod
 													                   // Prod/Second Prod
-	public static boolean isAppLogInRequired = false;
-	public static boolean useOfficeOtdr = false;
+	public static boolean isAppLogInRequired = true;
+	public static boolean useOfficeOtdr = true;
 	public static boolean useExternalCamera = false;
 
 	public static int numberOfFibersToTest = 2; // 12
@@ -16,18 +16,18 @@ public class TestData {
 	public static String expectedAppVersion() {
 		switch (testEnvironment) {
 		case "Dev":
-			return "Version: 7.9.5.0";
+			return "Version: 7.10.7.0";
 
 		case "QA":
 			return "Version: 7.9.6.0";
 
 		case "Soft Release Prod":
 		case "Soft Release Second Prod":
-			return "Version: 7.9.4.0";
+			return "Version: 7.9.8.0";
 
 		case "Prod":
 		case "Second Prod":
-			return "Version: 7.9.2.1";
+			return "Version: 7.9.4.0";
 
 		default:
 			return null;
