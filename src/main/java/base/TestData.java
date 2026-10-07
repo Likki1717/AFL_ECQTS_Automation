@@ -4,7 +4,7 @@ import java.io.File;
 
 public class TestData {
 	public static String systemUsername = "sumeeth"; // veltris // LikhithaR // sumeeth
-	public static String testEnvironment = "Dev"; // Dev/QA/Soft Release Prod/Soft Release Second Prod
+	public static String testEnvironment = "Prod"; // Dev/QA/Soft Release Prod/Soft Release Second Prod
 													                   // Prod/Second Prod
 	public static boolean isAppLogInRequired = true;
 	public static boolean useOfficeOtdr = true;

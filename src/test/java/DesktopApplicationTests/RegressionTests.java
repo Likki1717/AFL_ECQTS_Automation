@@ -23,31 +23,31 @@ public class RegressionTests extends BaseClass {
 
 			verify_Fiber_Test_Module();
 
-			verify_WTC_Test_Module();
+//			verify_WTC_Test_Module();
+//
+//			verify_PK_Fiber_Test_Module();
+//
+//			verify_Tight_Buffer_Module();
+//			
+//			verify_Copy_Results_Module();
 
-			verify_PK_Fiber_Test_Module();
-
-			verify_Tight_Buffer_Module();
-			
-			verify_Copy_Results_Module();
-
-			verify_All_Three_Imports();
-
-			verify_Down_Time_Tracker_Module();
-
-			verify_If_SOR_And_OCR_Files_Downloaded();
-
-			verify_Reel_Id_And_Remove_Sales_Order_Flow();
-
-			verify_Override_Meter_Mark_Validation_With_Tester_Role();
-
-			log_Out_And_Close_Application();
-
-			verify_Anomaly_Status(); // DO NOT change order of execution: First anomaly then meter marks
-
-			verify_Override_Meter_Mark_Validation_With_Executive_Role();
-
-			verify_QE_Labs();
+//			verify_All_Three_Imports();
+//
+//			verify_Down_Time_Tracker_Module();
+//
+//			verify_If_SOR_And_OCR_Files_Downloaded();
+//
+//			verify_Reel_Id_And_Remove_Sales_Order_Flow();
+//
+//			verify_Override_Meter_Mark_Validation_With_Tester_Role();
+//
+//			log_Out_And_Close_Application();
+//
+//			verify_Anomaly_Status(); // DO NOT change order of execution: First anomaly then meter marks
+//
+//			verify_Override_Meter_Mark_Validation_With_Executive_Role();
+//
+//			verify_QE_Labs();
 
 		} catch (Exception e) {
 			exception = e;

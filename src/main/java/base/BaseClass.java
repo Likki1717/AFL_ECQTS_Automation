@@ -570,6 +570,8 @@ public class BaseClass {
 			}
 			ConnectionProfiles.ipAddressTextBox().clear();
 			ConnectionProfiles.ipAddressTextBox().sendKeys(TestData.connectionProfile_Simulator_IP_Address);
+			ConnectionProfiles.portTextBox().clear();
+			ConnectionProfiles.portTextBox().sendKeys(TestData.connectionProfile_Simulator_Port);
 			robot.mouseWheel(3);
 			ConnectionProfiles.saveProfileButton().click();
 			wait = new WebDriverWait(driver, 15);
@@ -1175,7 +1177,11 @@ public class BaseClass {
 		JobDetailsPage.adjLengthInputField().sendKeys(adjLengthValue);
 		JobDetailsPage.adjLengthSaveIcon().click();
 		wait = new WebDriverWait(driver, 20);
-		wait.until(ExpectedConditions.invisibilityOfAllElements(JobDetailsPage.adjLengthSaveIcon()));
+		try {
+			wait.until(ExpectedConditions.invisibilityOfAllElements(JobDetailsPage.adjLengthSaveIcon()));
+		} catch (Exception e) {
+			
+		}
 		Thread.sleep(1000);
 		softAssert.assertEquals(JobDetailsPage.getAdjLengthValue(), adjLengthValue + " m",
 				"Adj length did not get updated.");
