@@ -48,7 +48,7 @@ public class RunWTCTestsInLoop extends BaseClass {
 				Dashboard.okButton().click();
 			}
 //			takeDump("afterJobSearch", 1);
-			runGetLengthTest(TestData.wtcTestModuleName);
+			runGetLengthTest(TestData.wtcTestModuleName, TestData.wtcTestJobSearchJobNumber);
 			runWtcTestForAllRibbonsInJob(200, 1);
 		}
 	}

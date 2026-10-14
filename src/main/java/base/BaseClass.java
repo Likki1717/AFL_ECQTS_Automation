@@ -1017,7 +1017,7 @@ public class BaseClass {
 			softAssert.assertTrue(JobSearch.isProcessHeaderDisplayed(),
 					"Process Header in cut number field table is not displayed during " + module + " for " + jobNumber);
 			softAssert.assertTrue(JobSearch.listOfRowsInCutNumberFieldTable().size() > 0,
-					"No rows present in Cut number field table");
+					"No rows present in Cut number field table during " + module + " of job number - " + jobNumber);
 		}
 
 		JobSearch.searchCutNumber().sendKeys(cutNumber);
@@ -1134,7 +1134,7 @@ public class BaseClass {
 		}
 	}
 
-	public static void runGetLengthTest(String module) throws Exception {
+	public static void runGetLengthTest(String module, String jobNumber) throws Exception {
 		dismissSyncStatusPopupIfDisplayed();
 		JobDetailsPage.waitUntilOtdrSettingsTabIsDisplayed();
 		wait = new WebDriverWait(driver, 20);
@@ -1160,13 +1160,15 @@ public class BaseClass {
 		OTDR_Settings.getLengthButton().click();
 		dismissSyncStatusPopupIfDisplayed();
 		softAssert.assertTrue(OTDR_Settings.isOkButtonDisplayed(),
-				"Waited for 50 seconds, Ok button on get length popup is not displayed");
+				"Waited for 50 seconds, Ok button on get length popup is not displayed during " + module
+						+ " for job number - " + jobNumber);
 		wait.until(ExpectedConditions.elementToBeClickable(OTDR_Settings.okButton()));
 		OTDR_Settings.okButton().click();
 		Dashboard.isLoaderDisplayed();
 		Dashboard.waitUntilLoaderIsNotDisplayed();
 		softAssert.assertTrue(OTDR_Settings.isGetLengthHistoryDropDownFieldDisplayed(),
-				"Waited for 50 seconds, Get Length history drop down field is not displayed");
+				"Waited for 50 seconds, Get Length history drop down field is not displayed during " + module
+						+ " for job number - " + jobNumber);
 	}
 
 	public static void editAdjLength(String adjLengthValue) throws Exception {
@@ -1180,7 +1182,7 @@ public class BaseClass {
 		try {
 			wait.until(ExpectedConditions.invisibilityOfAllElements(JobDetailsPage.adjLengthSaveIcon()));
 		} catch (Exception e) {
-			
+
 		}
 		Thread.sleep(1000);
 		softAssert.assertEquals(JobDetailsPage.getAdjLengthValue(), adjLengthValue + " m",
@@ -1849,7 +1851,9 @@ public class BaseClass {
 		Dashboard.waitUntilOkButtonIsDisplayed();
 		softAssert.assertTrue(
 				Dashboard.getMessageDisplayedOnPopup().contains(expectedMessageOnDownloadReportWarningPopup),
-				"Mismatch in the meter mark validation text displayed on popup while downloading report. Expected - " + expectedMessageOnDownloadReportWarningPopup + ", but found - " + Dashboard.getMessageDisplayedOnPopup());
+				"Mismatch in the meter mark validation text displayed on popup while downloading report. Expected - "
+						+ expectedMessageOnDownloadReportWarningPopup + ", but found - "
+						+ Dashboard.getMessageDisplayedOnPopup());
 		Dashboard.okButton().click();
 		if (expectedMeterMarkValidationStatus.equals("Pass")) {
 			Dashboard.waitUntilLoaderIsNotDisplayed();
@@ -1864,7 +1868,9 @@ public class BaseClass {
 		Dashboard.waitUntilOkButtonIsDisplayed();
 		softAssert.assertTrue(
 				Dashboard.getMessageDisplayedOnPopup().contains(expectedMessageOnDownloadReportWarningPopup),
-				"Mismatch in the meter mark validation text displayed on popup while downloading report.");
+				"Mismatch in the meter mark validation text displayed on popup while downloading jacket test report. Expected - "
+						+ expectedMessageOnDownloadReportWarningPopup + " but found - "
+						+ Dashboard.getMessageDisplayedOnPopup());
 		Dashboard.okButton().click();
 		if (expectedMeterMarkValidationStatus.equals("Pass")) {
 			Thread.sleep(2000);
@@ -1876,7 +1882,9 @@ public class BaseClass {
 		Dashboard.waitUntilOkButtonIsDisplayed();
 		softAssert.assertTrue(
 				Dashboard.getMessageDisplayedOnPopup().contains(expectedMessageOnDownloadReportWarningPopup),
-				"Mismatch in the meter mark validation text displayed on popup while downloading report.");
+				"Mismatch in the meter mark validation text displayed on popup while downloading failed test report. Expected - "
+						+ expectedMessageOnDownloadReportWarningPopup + " but found - "
+						+ Dashboard.getMessageDisplayedOnPopup());
 		Dashboard.okButton().click();
 		if (expectedMeterMarkValidationStatus.equals("Pass")) {
 			Thread.sleep(2000);
@@ -1901,7 +1909,7 @@ public class BaseClass {
 				"WTC test with Job # " + TestData.wtcTestJobSearchJobNumber, TestData.wtcTestExpectedItemNumber);
 
 		if (!isGetLengthAndEditAdjLengthDoneForWtcJob) {
-			runGetLengthTest(TestData.wtcTestModuleName);
+			runGetLengthTest(TestData.wtcTestModuleName, TestData.wtcTestJobSearchJobNumber);
 			editAdjLength(TestData.wtcTestEditAdjLengthValue);
 			isGetLengthAndEditAdjLengthDoneForWtcJob = true;
 		}
@@ -1940,7 +1948,7 @@ public class BaseClass {
 				"WTC test with Job # " + TestData.wtcTestJobSearchJobNumber, TestData.wtcTestExpectedItemNumber);
 
 		if (!isGetLengthAndEditAdjLengthDoneForWtcJob) {
-			runGetLengthTest(TestData.wtcTestModuleName);
+			runGetLengthTest(TestData.wtcTestModuleName, TestData.wtcTestJobSearchJobNumber);
 			editAdjLength(TestData.wtcTestEditAdjLengthValue);
 			isGetLengthAndEditAdjLengthDoneForWtcJob = true;
 		}
@@ -2299,7 +2307,7 @@ public class BaseClass {
 				TestData.fiberTestJobSearchCutNumber, TestData.fiberTestJobSearchCutNumberInfo,
 				"Fiber test with Job # " + TestData.fiberTestJobSearchJobNumber, TestData.fiberTestExpectedItemNumber);
 
-		runGetLengthTest(TestData.fiberTestModuleName);
+		runGetLengthTest(TestData.fiberTestModuleName, TestData.fiberTestJobSearchJobNumber);
 
 		runFiberTest(TestData.fiberTestModuleName, TestData.numberOfFibersToTestForAnomalyVerification);
 
@@ -2313,13 +2321,14 @@ public class BaseClass {
 				"Before clicking on Reports tab, Anomaly status is not as expected.");
 		JobDetailsPage.anomalyInfoIcon().click();
 		JobDetailsPage.waitUntilAnomalyDetailsPopupIsDisplayed();
-		softAssert.assertEquals(Dashboard.getMessageDisplayedOnPopup(), "No fibers with detected anomalies.",
+		softAssert.assertEquals(Dashboard.getMessageDisplayedOnPopup(), "No anomaly fibers available.",
 				"Before clicking on Reports tab, Anomaly Details popup message is not as expected.");
 		Dashboard.okButton().click();
 		JobDetailsPage.reportsTab().click();
+		Thread.sleep(1000);
 		Dashboard.waitUntilOkButtonIsDisplayed();
 		String holdForApprovalMessage = Dashboard.getMessageDisplayedOnPopup();
-//		System.out.println(holdForApprovalMessage);
+		System.out.println("HOLD FOR approval message --> " + holdForApprovalMessage);
 		int incompleteOrFailedTestsCountFromHoldForApprovalPopup = holdForApprovalMessage
 				.split("Incomplete or Failed").length - 1;
 		int anomalyFibersCountFromHoldForApprovalPopup = holdForApprovalMessage.split("Anomaly -").length - 1;
@@ -2338,14 +2347,14 @@ public class BaseClass {
 		JobDetailsPage.anomalyInfoIcon().click();
 		JobDetailsPage.waitUntilAnomalyDetailsPopupIsDisplayed();
 		String anomalyDetailsMessage = Dashboard.getMessageDisplayedOnPopup();
-//		System.out.println("After clicking on Reports Tab, Anomaly Details Message - " + anomalyDetailsMessage);
+		System.out.println("After clicking on Reports Tab, Anomaly Details Message --> " + anomalyDetailsMessage);
 		softAssert.assertTrue(anomalyDetailsMessage.contains("The following fibers have detected anomalies:"),
-				"After clicking on Reports tab, Anomaly Details popup message is expected to show detected anomalies.");
+				"After clicking on Reports tab, Anomaly Details popup message is expected to show fibres with detected anomalies.");
 		int anomalyFibersCountFromAnomalyDetailsMessage = anomalyDetailsMessage.contains(":")
 				? anomalyDetailsMessage.split(":", 2)[1].trim().split("\\R").length
 				: 0;
-//		System.out.println(
-//				"anomalyFibersCountFromAnomalyDetailsMessage - " + anomalyFibersCountFromAnomalyDetailsMessage);
+		System.out.println(
+				"anomalyFibersCountFromAnomalyDetailsMessage - " + anomalyFibersCountFromAnomalyDetailsMessage);
 		softAssert.assertEquals(anomalyFibersCountFromAnomalyDetailsMessage, TestData.expectedAnomalyFibersCount,
 				"Mismatch in anomalies detected fibers count in anomaly details popup.");
 		Dashboard.okButton().click();
@@ -2754,7 +2763,7 @@ public class BaseClass {
 
 		enterProtectionLayerValues(TestData.fiberTestModuleName);
 
-		runGetLengthTest(TestData.fiberTestModuleName);
+		runGetLengthTest(TestData.fiberTestModuleName, TestData.fiberTestJobSearchJobNumber);
 
 		editAdjLength(TestData.fiberTestEditAdjLengthValue);
 
@@ -2791,7 +2800,7 @@ public class BaseClass {
 
 		enterProtectionLayerValues(TestData.wtcTestModuleName);
 
-		runGetLengthTest(TestData.wtcTestModuleName);
+		runGetLengthTest(TestData.wtcTestModuleName, TestData.wtcTestJobSearchJobNumber);
 
 		editAdjLength(TestData.wtcTestEditAdjLengthValue);
 
@@ -2830,7 +2839,7 @@ public class BaseClass {
 
 		enterProtectionLayerValues(TestData.tightBufferModuleName);
 
-		runGetLengthTest(TestData.tightBufferModuleName);
+		runGetLengthTest(TestData.tightBufferModuleName, TestData.tightBufferJobNumber);
 
 		verifyOpticsPage();
 
@@ -2872,7 +2881,7 @@ public class BaseClass {
 //		download_OCR_Report();
 
 			Thread.sleep(1000);
-			
+
 			verifyTestResultsCount(TestData.PK_FiberTestExpectedIncompleteTestsCount,
 					TestData.PK_FiberTestExpectedPassedTestsCount, TestData.PK_FiberTestExpectedFailedTestsCount,
 					"PK Fiber Test with Job # " + TestData.PK_FiberTestJobSearchJobNumber);

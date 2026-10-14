@@ -53,7 +53,7 @@ public class RunBothWTCTestAndThenFiberTestInLoop extends BaseClass {
 				Dashboard.okButton().click();
 			}
 //			takeDump("afterJobSearch", 1);
-			runGetLengthTest(TestData.wtcTestModuleName);
+			runGetLengthTest(TestData.wtcTestModuleName, TestData.wtcTestJobSearchJobNumber);
 			runWtcTestForAllRibbonsInJob(200, 1);   
 
 			TestData.useOfficeOtdr = true;
@@ -71,7 +71,7 @@ public class RunBothWTCTestAndThenFiberTestInLoop extends BaseClass {
 				Dashboard.okButton().click();
 			}
 //			takeDump("afterJobSearch", 1);
-			runGetLengthTest(TestData.fiberTestModuleName);
+			runGetLengthTest(TestData.fiberTestModuleName, "45193192-2869194");
 			runFiberTestForAllFibersInJob(true, 200, 1);
 		}
 	}

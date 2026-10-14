@@ -42,7 +42,7 @@ public class RunFiberTestsInLoop extends BaseClass {
 				Dashboard.okButton().click();
 			}
 //			takeDump("afterJobSearch", 1);
-			runGetLengthTest(TestData.fiberTestModuleName);
+			runGetLengthTest(TestData.fiberTestModuleName, "45193192-2869194");
 			runFiberTestForAllFibersInJob(true, 300, 1);
 		}
 	}

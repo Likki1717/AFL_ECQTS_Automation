@@ -2,31 +2,48 @@
 <testng-results ignored="0" total="1" passed="0" failed="1" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2026-10-07T21:19:10 IST" name="Default suite" finished-at="2026-10-07T21:25:00 IST" duration-ms="350029">
+  <suite started-at="2026-10-14T19:21:21 IST" name="Default suite" finished-at="2026-10-14T19:31:04 IST" duration-ms="583704">
     <groups>
     </groups>
-    <test started-at="2026-10-07T21:19:10 IST" name="Default test" finished-at="2026-10-07T21:25:00 IST" duration-ms="350029">
+    <test started-at="2026-10-14T19:21:21 IST" name="Default test" finished-at="2026-10-14T19:31:04 IST" duration-ms="583704">
       <class name="DesktopApplicationTests.RegressionTests">
-        <test-method is-config="true" signature="applicationSetupAndLaunch()[pri:0, instance:DesktopApplicationTests.RegressionTests@6ed3ccb2]" started-at="2026-10-07T21:19:10 IST" name="applicationSetupAndLaunch" finished-at="2026-10-07T21:20:01 IST" duration-ms="50880" status="PASS">
+        <test-method is-config="true" signature="applicationSetupAndLaunch()[pri:0, instance:DesktopApplicationTests.RegressionTests@6ed3ccb2]" started-at="2026-10-14T19:21:21 IST" name="applicationSetupAndLaunch" finished-at="2026-10-14T19:22:37 IST" duration-ms="75895" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- applicationSetupAndLaunch -->
-        <test-method signature="runRegressionTestSuite()[pri:0, instance:DesktopApplicationTests.RegressionTests@6ed3ccb2]" started-at="2026-10-07T21:20:01 IST" name="runRegressionTestSuite" finished-at="2026-10-07T21:24:59 IST" duration-ms="298878" status="FAIL">
-          <exception class="org.openqa.selenium.WebDriverException">
+        <test-method signature="runRegressionTestSuite()[pri:0, instance:DesktopApplicationTests.RegressionTests@6ed3ccb2]" started-at="2026-10-14T19:22:37 IST" name="runRegressionTestSuite" finished-at="2026-10-14T19:31:04 IST" duration-ms="507033" status="FAIL">
+          <exception class="org.openqa.selenium.NoSuchElementException">
             <message>
-              <![CDATA[Connection refused: getsockopt
+              <![CDATA[An element could not be located on the page using the given search parameters. (WARNING: The server did not provide any stacktrace information)
+Command duration or timeout: 0 milliseconds
+For documentation on this error, please visit: https://www.seleniumhq.org/exceptions/no_such_element.html
 Build info: version: '3.141.59', revision: 'e82be7d358', time: '2018-11-14T08:17:03'
 System info: host: 'VELTRISMS785', ip: '192.168.29.113', os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '21.0.4'
-Driver info: driver.version: WindowsDriver]]>
+Driver info: io.appium.java_client.windows.WindowsDriver
+Capabilities {app: com.ecsite.afl.dev_aqd9xyv2..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
+Session ID: FA3DEBCD-B997-40AC-A133-61C7A9B46E35
+*** Element info: {Using=accessibility id, value=GoToFiberButton}]]>
             </message>
             <full-stacktrace>
-              <![CDATA[org.openqa.selenium.WebDriverException: Connection refused: getsockopt
+              <![CDATA[org.openqa.selenium.NoSuchElementException: An element could not be located on the page using the given search parameters. (WARNING: The server did not provide any stacktrace information)
+Command duration or timeout: 0 milliseconds
+For documentation on this error, please visit: https://www.seleniumhq.org/exceptions/no_such_element.html
 Build info: version: '3.141.59', revision: 'e82be7d358', time: '2018-11-14T08:17:03'
 System info: host: 'VELTRISMS785', ip: '192.168.29.113', os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '21.0.4'
-Driver info: driver.version: WindowsDriver
-at io.appium.java_client.remote.AppiumCommandExecutor.lambda$6(AppiumCommandExecutor.java:262)
-at java.base/java.util.Optional.orElseGet(Optional.java:364)
-at io.appium.java_client.remote.AppiumCommandExecutor.execute(AppiumCommandExecutor.java:261)
+Driver info: io.appium.java_client.windows.WindowsDriver
+Capabilities {app: com.ecsite.afl.dev_aqd9xyv2..., javascriptEnabled: true, platform: WINDOWS, platformName: Windows}
+Session ID: FA3DEBCD-B997-40AC-A133-61C7A9B46E35
+*** Element info: {Using=accessibility id, value=GoToFiberButton}
+at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
+at org.openqa.selenium.remote.ErrorHandler.createThrowable(ErrorHandler.java:214)
+at org.openqa.selenium.remote.ErrorHandler.throwIfResponseFailed(ErrorHandler.java:166)
+at org.openqa.selenium.remote.http.JsonHttpResponseCodec.reconstructValue(JsonHttpResponseCodec.java:40)
+at org.openqa.selenium.remote.http.AbstractHttpResponseCodec.decode(AbstractHttpResponseCodec.java:80)
+at org.openqa.selenium.remote.http.AbstractHttpResponseCodec.decode(AbstractHttpResponseCodec.java:44)
+at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:158)
+at io.appium.java_client.remote.AppiumCommandExecutor.execute(AppiumCommandExecutor.java:250)
 at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:552)
 at io.appium.java_client.DefaultGenericMobileDriver.execute(DefaultGenericMobileDriver.java:41)
 at io.appium.java_client.AppiumDriver.execute(AppiumDriver.java:1)
@@ -36,10 +53,10 @@ at io.appium.java_client.DefaultGenericMobileDriver.findElement(DefaultGenericMo
 at io.appium.java_client.AppiumDriver.findElement(AppiumDriver.java:1)
 at io.appium.java_client.windows.WindowsDriver.findElement(WindowsDriver.java:1)
 at io.appium.java_client.FindsByAccessibilityId.findElementByAccessibilityId(FindsByAccessibilityId.java:37)
-at pageObjects.Modules.TestJobModule.JobDetailsPage.editAdjLengthIcon(JobDetailsPage.java:104)
-at base.BaseClass.editAdjLength(BaseClass.java:1171)
-at base.BaseClass.verify_Fiber_Test_Module(BaseClass.java:2757)
-at DesktopApplicationTests.RegressionTests.runRegressionTestSuite(RegressionTests.java:24)
+at pageObjects.Modules.TestJobModule.JobDetails.FiberResults.goToFiberButton(FiberResults.java:58)
+at base.BaseClass.runFiberTest(BaseClass.java:1470)
+at base.BaseClass.verify_Anomaly_Status(BaseClass.java:2312)
+at DesktopApplicationTests.RegressionTests.runRegressionTestSuite(RegressionTests.java:46)
 at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 at org.testng.internal.invokers.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:141)
@@ -66,39 +83,9 @@ at org.testng.TestNG.run(TestNG.java:1079)
 at org.testng.remote.AbstractRemoteTestNG.run(AbstractRemoteTestNG.java:115)
 at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:293)
 at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:91)
-Caused by: java.net.ConnectException: Connection refused: getsockopt
-at java.base/sun.nio.ch.Net.pollConnect(Native Method)
-at java.base/sun.nio.ch.Net.pollConnectNow(Net.java:682)
-at java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:542)
-at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:592)
-at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
-at java.base/java.net.Socket.connect(Socket.java:751)
-at okhttp3.internal.platform.Platform.connectSocket(Platform.java:129)
-at okhttp3.internal.connection.RealConnection.connectSocket(RealConnection.java:245)
-at okhttp3.internal.connection.RealConnection.connect(RealConnection.java:165)
-at okhttp3.internal.connection.StreamAllocation.findConnection(StreamAllocation.java:257)
-at okhttp3.internal.connection.StreamAllocation.findHealthyConnection(StreamAllocation.java:135)
-at okhttp3.internal.connection.StreamAllocation.newStream(StreamAllocation.java:114)
-at okhttp3.internal.connection.ConnectInterceptor.intercept(ConnectInterceptor.java:42)
-at okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.java:147)
-at okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.java:121)
-at okhttp3.internal.cache.CacheInterceptor.intercept(CacheInterceptor.java:93)
-at okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.java:147)
-at okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.java:121)
-at okhttp3.internal.http.BridgeInterceptor.intercept(BridgeInterceptor.java:93)
-at okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.java:147)
-at okhttp3.internal.http.RetryAndFollowUpInterceptor.intercept(RetryAndFollowUpInterceptor.java:126)
-at okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.java:147)
-at okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.java:121)
-at okhttp3.RealCall.getResponseWithInterceptorChain(RealCall.java:200)
-at okhttp3.RealCall.execute(RealCall.java:77)
-at org.openqa.selenium.remote.internal.OkHttpClient.execute(OkHttpClient.java:103)
-at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:155)
-at io.appium.java_client.remote.AppiumCommandExecutor.execute(AppiumCommandExecutor.java:250)
-... 39 more
 ]]>
             </full-stacktrace>
-          </exception> <!-- org.openqa.selenium.WebDriverException -->
+          </exception> <!-- org.openqa.selenium.NoSuchElementException -->
           <reporter-output>
           </reporter-output>
         </test-method> <!-- runRegressionTestSuite -->
